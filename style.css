@@ -30,24 +30,3 @@
     color: #b0b0b0;
     margin-bottom: 1rem;
 }
-/* SCHEMATICS PAGE FIX */
-.schematics-page .item-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-}
-
-.schematics-page .item-card {
-    height: auto;
-    max-width: 100%;
-    padding: 1.5rem;
-    display: block;
-}
-
-.schematics-page .item-card img {
-    width: 100%;
-    height: auto;
-    max-height: 220px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-}
