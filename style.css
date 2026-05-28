@@ -314,4 +314,26 @@ footer {
     border-radius: 6px;
     margin-bottom: 1rem;
     border: 1px solid #00ff88;
+} 
+.item-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 360px; /* adjust if needed */
 }
+.item-card .btn {
+    color: #1a1a2e !important;
+}
+/* Fix button alignment */
+.item-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 360px;
+}
+
+/* Fix button text disappearing */
+.item-card .btn {
+    color: #1a1a2e !important;
+}
+
