@@ -158,9 +158,12 @@ main {
 
 .item-card {
     background-color: #0f3460;
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 8px;
     border: 1px solid #00ff88;
+    max-width: 260px;
+    margin: 0 auto;
+
 }
 
 .item-card h3 {
