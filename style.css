@@ -297,3 +297,18 @@ footer {
     color: #1a1a2e;
     transform: scale(1.05);
 }
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.item-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border: 1px solid #00ff88;
+}
