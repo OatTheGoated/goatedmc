@@ -64,11 +64,9 @@ main {
 
 /* HERO */
 .hero {
-    background: linear-gradient(135deg, #0f3460 0%, #16213e 100
-.video-note {
-    font-size: 0.85rem;
-    color: #888;
-    margin-top: 0.5rem;
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+    padding: 4rem 2rem;
+    text-align: center;
 }
 
 .info-box {
