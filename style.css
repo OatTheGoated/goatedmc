@@ -34,7 +34,7 @@ body {
 .tcg-card {
     position: relative;
     overflow: hidden;
-    background: #1b263b;
+    background: rgba(20, 30, 40, 0.65);
     border: 3px solid #2e7d32;
     border-radius: 10px;
     padding: 15px;
@@ -147,11 +147,11 @@ body {
 }
 
 .mc-card {
-    background: #1b263b;
+    background: rgba(20, 30, 40, 0.65);
     border: 3px solid #2e7d32;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.25);
 }
 
 .mc-btn {
@@ -188,7 +188,7 @@ body {
 
 /* MEMBER CARD */
 .member-card {
-    background: #1b263b;
+    background: rgba(20, 30, 40, 0.65);
     border: 3px solid #2e7d32;
     border-radius: 10px;
     padding: 20px;
@@ -242,5 +242,6 @@ body {
     font-family: 'Minecraft', 'Minecraftia', sans-serif;
     font-size: 0.9rem;
 }
+
 
 
