@@ -1,101 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GoatedMC Admin Panel</title>
+// ===============================
+// INIT SUPABASE
+// ===============================
+const client = supabase.createClient(
+    "https://gthgxmyccwsygbopksgz.supabase.co",
+    "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+);
 
-    <!-- Correct GitHub Pages CSS path -->
-    <link rel="stylesheet" href="https://oatthegoated.github.io/goatedmc/admin/style.css">
-</head>
-<body>
+// ===============================
+// DOM ELEMENTS
+// ===============================
+const loginScreen = document.getElementById("login-screen");
+const dashboard = document.getElementById("dashboard");
+const bootScreen = document.getElementById("boot-screen");
+const bootText = document.getElementById("boot-text");
 
-<!-- Terminal Boot Screen -->
-<div id="boot-screen">
-    <div id="boot-text"></div>
-</div>
+const loginBtn = document.getElementById("login-btn");
+const logoutBtn = document.getElementById("logout-btn");
 
-<!-- Login Screen -->
-<div id="login-screen">
-    <div class="terminal-login">
-        <h2>GoatedMC Admin Terminal</h2>
+const uploadBtn = document.getElementById("upload-btn");
+const uploadStatus = document.getElementById("upload-status");
 
-        <div class="terminal-line">Username:</div>
-        <input id="login-email" type="email" placeholder="admin@example.com">
+const schemInput = document.getElementById("schematic-input");
+const imgInput = document.getElementById("image-input");
 
-        <div class="terminal-line">Password:</div>
-        <input id="login-password" type="password" placeholder="••••••••">
+// ===============================
+// INITIAL STATE
+// ===============================
+loginScreen.style.display = "none";
+dashboard.style.display = "none";
 
-        <button id="login-btn">Access Terminal</button>
-        <div id="login-error"></div>
-    </div>
-</div>
+// ===============================
+// BOOT SEQUENCE
+// ===============================
+const bootLines = [
+    "Initializing GoatedMC Admin Terminal...",
+    "Loading modules...",
+    "Wait… who let the chickens in here?",
+    "Cluckin the Trucks..",
+    "Ready."
+];
 
-<!-- Dashboard -->
-<div id="dashboard">
+let bootIndex = 0;
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <h1 class="logo">GoatedMC</h1>
+function runBoot() {
+    if (bootIndex < bootLines.length) {
+        bootText.innerText += bootLines[bootIndex] + "\n";
+        bootIndex++;
+        setTimeout(runBoot, 600);
+    } else {
+        setTimeout(() => {
+            bootScreen.style.display = "none";
+            loginScreen.style.display = "block";
+        }, 800);
+    }
+}
 
-        <nav>
-            <button class="nav-btn active" data-page="upload">📤 Upload</button>
-            <button class="nav-btn" data-page="manage">📁 Manage Schematics</button>
-            <button class="nav-btn" data-page="settings">⚙️ Settings</button>
-        </nav>
-    </aside>
+runBoot();
 
-    <!-- Main Content -->
-    <main>
+// ===============================
+// LOGIN
+// ===============================
+loginBtn.onclick = async () => {
+    const email = document.getElementById("login-email").value.trim();
+    const pass = document.getElementById("login-password").value.trim();
+    const errorBox = document.getElementById("login-error");
 
-        <!-- Upload Page -->
-        <section id="page-upload" class="page active">
+    if (!email || !pass) {
+        errorBox.innerText = "Missing credentials.";
+        return;
+    }
 
-            <h2>Upload Schematic</h2>
+    const { error } = await client.auth.signInWithPassword({ email, password: pass });
 
-            <div class="card drop-zone" id="schematic-drop">
-                <p>Drop your .schem file here or click to upload</p>
-                <input type="file" id="schematic-input" accept=".schem">
-            </div>
+    if (error) {
+        errorBox.innerText = "Access Denied.";
+    } else {
+        loginScreen.style.display = "none";
+        dashboard.style.display = "flex";
+    }
+};
 
-            <div class="card drop-zone" id="image-drop">
-                <p>Drop your WebP image here or click to upload</p>
-                <input type="file" id="image-input" accept=".webp">
-            </div>
+// ===============================
+// NAVIGATION
+// ===============================
+document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.onclick = () => {
+        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
 
-            <div class="card">
-                <label>Name</label>
-                <input id="schem-name" type="text">
+        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+        document.getElementById("page-" + btn.dataset.page).classList.add("active");
+    };
+});
 
-                <label>Description</label>
-                <textarea id="schem-desc"></textarea>
+// ===============================
+// DRAG & DROP HELPERS
+// ===============================
+function setupDropZone(zoneId, inputId) {
+    const zone = document.getElementById(zoneId);
+    const input = document.getElementById(inputId);
 
-                <label>Tags (comma separated)</label>
-                <input id="schem-tags" type="text">
+    zone.onclick = () => input.click();
 
-                <button id="upload-btn" class="purple-btn">Upload</button>
-                <div id="upload-status"></div>
-            </div>
+    zone.ondragover = e => {
+        e.preventDefault();
+        zone.classList.add("hover");
+    };
 
-        </section>
+    zone.ondragleave = () => zone.classList.remove("hover");
 
-        <!-- Manage Page -->
-        <section id="page-manage" class="page">
-            <h2>Manage Schematics</h2>
-            <div id="schem-list"></div>
-        </section>
+    zone.ondrop = e => {
+        e.preventDefault();
+        zone.classList.remove("hover");
+        input.files = e.dataTransfer.files;
+    };
+}
 
-        <!-- Settings Page -->
-        <section id="page-settings" class="page">
-            <h2>Settings</h2>
-            <button id="logout-btn" class="purple-btn">Logout</button>
-        </section>
+setupDropZone("schematic-drop", "schematic-input");
+setupDropZone("image-drop", "image-input");
 
-    </main>
-</div>
+// ===============================
+// UPLOAD
+// ===============================
+uploadBtn.onclick = async () => {
+    uploadStatus.innerText = "Uploading...";
 
-<!-- Supabase + App Logic -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+    const schemFile = schemInput.files[0];
+    const imgFile = imgInput.files[0];
 
-</body>
-</html>
+    if (!schemFile || !imgFile) {
+        uploadStatus.innerText = "Missing files.";
+        return;
+    }
+
+    const name = document.getElementById("schem-name").value.trim();
+    const desc = document.getElementById("schem-desc").value.trim();
+    const tags = document.getElementById("schem-tags").value.split(",").map(t => t.trim()).filter(Boolean);
+
+    try {
+        // Upload schematic
+        await client.storage.from("schematics").upload(`schems/${schemFile.name}`, schemFile);
+
+        // Upload image
+        await client.storage.from("schematics").upload(`images/${imgFile.name}`, imgFile);
+
+        // Insert DB entry
+        await client.from("schematics").insert({
+            name,
+            description: desc,
+            tags,
+            file: schemFile.name,
+            image: imgFile.name
+        });
+
+        uploadStatus.innerText = "Upload complete!";
+    } catch (err) {
+        uploadStatus.innerText = "Upload failed.";
+        console.error(err);
+    }
+};
+
+// ===============================
+// LOGOUT
+// ===============================
+logoutBtn.onclick = async () => {
+    await client.auth.signOut();
+    location.reload();
+};
