@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <title>GoatedMC Admin Panel</title>
 
-    <!-- Main Website Dark Theme -->
-    <link rel="stylesheet" href="/goatedmc/style.css?v=1">
-
-    <!-- Admin-Specific CSS -->
+    <!-- ONLY Admin CSS (do NOT load main website CSS here) -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="admin">
 
-<div class="site"> <!-- DARK THEME WRAPPER ADDED -->
+<!-- Correct admin wrapper -->
+<div id="admin-panel">
 
     <!-- Terminal Boot Screen -->
     <div id="boot-screen">
@@ -99,7 +97,7 @@
         </main>
     </div>
 
-</div> <!-- END .site WRAPPER -->
+</div> <!-- END #admin-panel -->
 
 <!-- Supabase + App Logic -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -107,3 +105,4 @@
 
 </body>
 </html>
+
