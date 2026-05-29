@@ -1,5 +1,5 @@
 /* =========================================================
-   GLINT HOVER EFFECT FOR TCG CARDS
+   TCG CARD — GLOW EFFECT (NO GLINT)
 ========================================================= */
 
 .tcg-card {
@@ -9,40 +9,16 @@
     border: 3px solid #2e7d32;
     border-radius: 10px;
     padding: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    transition: transform 0.2s ease;
+
+    /* Glow */
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tcg-card:hover {
-    transform: translateY(-4px);
-}
-
-.tcg-card::after {
-    content: "";
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        120deg,
-        transparent 0%,
-        rgba(0, 255, 136, 0.25) 50%,
-        transparent 100%
-    );
-    transform: rotate(25deg);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.tcg-card:hover::after {
-    opacity: 1;
-    animation: glint 0.8s ease forwards;
-}
-
-@keyframes glint {
-    0% { transform: translate(-150%, -150%) rotate(25deg); }
-    100% { transform: translate(150%, 150%) rotate(25deg); }
+    transform: translateY(-6px);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.55);
 }
 
 /* =========================================================
@@ -56,11 +32,19 @@
     margin-top: 20px;
 }
 
+/* IMAGE GLOW */
 .tcg-img img {
     width: 100%;
     border-radius: 6px;
     border: 2px solid #2e7d32;
-    display: block;
+
+    /* Glow */
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.35);
+    transition: box-shadow 0.2s ease;
+}
+
+.tcg-card:hover .tcg-img img {
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
 }
 
 .tcg-body {
