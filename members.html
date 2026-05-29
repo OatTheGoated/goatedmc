@@ -6,7 +6,9 @@
     <title>Members - Goated MC</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+<div class="site">
 
     <nav class="navbar">
         <div class="container">
@@ -28,7 +30,7 @@
         <div class="item-grid">
 
             <div class="item-card">
-               <img src="images/Oat.webp" loading="lazy">
+                <img src="images/Oat.webp" loading="lazy">
                 <h3>Oat</h3>
                 <p>Founder, Modpack Creator, Content Creator.</p>
             </div>
@@ -52,20 +54,22 @@
         <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
     </footer>
 
-    <!-- Fade-in script goes HERE -->
-    <script>
-    window.addEventListener("load", () => {
-        document.querySelectorAll("img, iframe").forEach(el => {
-            if (el.complete) {
+</div> <!-- END .site wrapper -->
+
+<!-- Fade-in script -->
+<script>
+window.addEventListener("load", () => {
+    document.querySelectorAll("img, iframe").forEach(el => {
+        if (el.complete) {
+            el.classList.add("loaded");
+        } else {
+            el.addEventListener("load", () => {
                 el.classList.add("loaded");
-            } else {
-                el.addEventListener("load", () => {
-                    el.classList.add("loaded");
-                });
-            }
-        });
+            });
+        }
     });
-    </script>
+});
+</script>
 
 </body>
 </html>
