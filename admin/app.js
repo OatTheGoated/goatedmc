@@ -70,7 +70,10 @@ loginBtn.onclick = async () => {
         return;
     }
 
-    const { error } = await client.auth.signInWithPassword({ email, password: pass });
+    const { error } = await client.auth.signInWithPassword({
+        email,
+        password: pass
+    });
 
     if (error) {
         errorBox.innerText = "Access Denied.";
@@ -135,7 +138,10 @@ uploadBtn.onclick = async () => {
 
     const name = document.getElementById("schem-name").value.trim();
     const desc = document.getElementById("schem-desc").value.trim();
-    const tags = document.getElementById("schem-tags").value.split(",").map(t => t.trim()).filter(Boolean);
+    const tags = document.getElementById("schem-tags").value
+        .split(",")
+        .map(t => t.trim())
+        .filter(Boolean);
 
     try {
         // Upload schematic
@@ -167,3 +173,4 @@ logoutBtn.onclick = async () => {
     await client.auth.signOut();
     location.reload();
 };
+
