@@ -1,6 +1,6 @@
 /* =========================================================
    GLOBAL
-   ========================================================= */
+========================================================= */
 * {
     margin: 0;
     padding: 0;
@@ -9,7 +9,7 @@
 }
 
 body {
-    background-color: #0d1b2a;
+    background: #0d1b2a;
     color: #e0e0e0;
     height: 100vh;
     overflow: hidden;
@@ -17,7 +17,7 @@ body {
 
 /* =========================================================
    BOOT SCREEN
-   ========================================================= */
+========================================================= */
 #boot-screen {
     position: absolute;
     inset: 0;
@@ -27,12 +27,12 @@ body {
     font-family: "Courier New", monospace;
     font-size: 1rem;
     overflow-y: auto;
-    z-index: 10; /* boot screen on top */
+    z-index: 10;
 }
 
 /* =========================================================
    LOGIN SCREEN
-   ========================================================= */
+========================================================= */
 #login-screen {
     position: absolute;
     inset: 0;
@@ -47,9 +47,9 @@ body {
 .terminal-login {
     background: #1b263b;
     padding: 30px;
+    width: 350px;
     border-radius: 10px;
     border: 2px solid #00ff88;
-    width: 350px;
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
 }
 
@@ -60,8 +60,7 @@ body {
 }
 
 .terminal-line {
-    margin-top: 10px;
-    margin-bottom: 5px;
+    margin: 10px 0 5px;
 }
 
 .terminal-login input {
@@ -77,164 +76,4 @@ body {
 #login-btn {
     width: 100%;
     padding: 10px;
-    background: #00ff88;
-    color: #1b263b;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-}
 
-#login-btn:hover {
-    background: #00cc6d;
-}
-
-#login-error {
-    margin-top: 10px;
-    color: #ff5555;
-    text-align: center;
-}
-
-/* =========================================================
-   DASHBOARD LAYOUT
-   ========================================================= */
-#dashboard {
-    position: absolute;
-    inset: 0;
-    display: none; /* hidden until login */
-    background: #0d1b2a;
-    display: flex;
-    z-index: 1;
-}
-
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
-.sidebar {
-    width: 250px;
-    background: #1b263b;
-    border-right: 2px solid #00ff88;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.logo {
-    color: #00ff88;
-    text-align: center;
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
-.nav-btn {
-    width: 100%;
-    padding: 12px;
-    background: #0f1a25;
-    border: 1px solid #00ff88;
-    border-radius: 6px;
-    color: #e0e0e0;
-    cursor: pointer;
-    text-align: left;
-    transition: 0.2s;
-}
-
-.nav-btn:hover {
-    background: #00ff88;
-    color: #1b263b;
-}
-
-.nav-btn.active {
-    background: #00ff88;
-    color: #1b263b;
-}
-
-/* =========================================================
-   MAIN CONTENT
-   ========================================================= */
-main {
-    flex: 1;
-    padding: 30px;
-    overflow-y: auto;
-}
-
-.page {
-    display: none;
-}
-
-.page.active {
-    display: block;
-}
-
-h2 {
-    color: #00ff88;
-    margin-bottom: 20px;
-}
-
-/* =========================================================
-   CARDS + UPLOAD ZONES
-   ========================================================= */
-.card {
-    background: #1b263b;
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #00ff88;
-    margin-bottom: 20px;
-}
-
-.drop-zone {
-    text-align: center;
-    padding: 40px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.drop-zone:hover,
-.drop-zone.hover {
-    background: #0f1a25;
-    box-shadow: 0 0 15px #00ff88;
-}
-
-.drop-zone input {
-    display: none;
-}
-
-.card input,
-.card textarea {
-    width: 100%;
-    padding: 10px;
-    background: #0f1a25;
-    border: 1px solid #00ff88;
-    border-radius: 6px;
-    color: #e0e0e0;
-    margin-bottom: 10px;
-}
-
-.purple-btn {
-    background: #00ff88;
-    color: #1b263b;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-}
-
-.purple-btn:hover {
-    background: #00cc6d;
-}
-
-#upload-status {
-    margin-top: 10px;
-}
-
-/* =========================================================
-   MANAGE LIST
-   ========================================================= */
-#schem-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
