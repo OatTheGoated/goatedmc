@@ -15,6 +15,25 @@ body {
 }
 
 /* =========================================================
+   IMAGE + VIDEO FADE-IN + NO-JUMP FIXES
+   ========================================================= */
+img, iframe {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background-color: #0f1a25; /* placeholder while loading */
+}
+
+img.loaded, iframe.loaded {
+    opacity: 1;
+}
+
+/* reserve space so layout doesn't jump */
+.item-card img,
+.video-container iframe {
+    min-height: 200px;
+}
+
+/* =========================================================
    CONTAINER
    ========================================================= */
 .container {
@@ -111,6 +130,9 @@ body {
     border: 1px solid #00ff88;
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .feature-card h3 {
@@ -121,6 +143,7 @@ body {
 .feature-card p {
     color: #b0b0b0;
     margin-bottom: 1.5rem;
+    min-height: 60px; /* keeps Explore buttons aligned */
 }
 
 /* =========================================================
