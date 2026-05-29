@@ -1,23 +1,22 @@
 /* =========================================================
-   GLOBAL GLASS BACKGROUND FIX — MAKES GLASS VISIBLE ON ALL PAGES
+   GLOBAL BACKGROUND — NOW VISIBLE
 ========================================================= */
 
 body {
     margin: 0;
     padding: 0;
 
-    /* Visible background */
+    /* Your background image */
     background: url('background.png') center/cover no-repeat fixed;
     background-color: #000; /* fallback */
 
-    /* Glass blur */
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
 /* Make wrappers transparent so background shows */
 .site, .container, main {
-    background: rgba(0, 0, 0, 0.25); /* lighter so background is visible */
+    background: rgba(0, 0, 0, 0.20); /* lighter so background is visible */
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border-radius: 12px;
@@ -26,23 +25,23 @@ body {
 }
 
 /* =========================================================
-   HOMEPAGE BUTTONS — EMERALD GLASS STYLE
+   HOMEPAGE BUTTONS — MATCHES YOUR HTML (.index-links)
 ========================================================= */
 
-.home-buttons {
+.index-links {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-width: 320px;
-    margin: 40px auto;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 25px;
 }
 
-.home-buttons a {
-    display: block;
-    text-align: center;
-    padding: 14px 20px;
+.index-links a {
+    display: inline-block;
+    padding: 12px 22px;
     border-radius: 10px;
 
+    /* Emerald glass look */
     background: rgba(0, 255, 136, 0.15);
     border: 2px solid rgba(0, 255, 136, 0.5);
     backdrop-filter: blur(6px);
@@ -50,14 +49,14 @@ body {
 
     color: #00ff88;
     font-family: 'Minecraft', 'Minecraftia', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     text-decoration: none;
 
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.35);
     transition: 0.25s ease;
 }
 
-.home-buttons a:hover {
+.index-links a:hover {
     background: rgba(0, 255, 136, 0.25);
     border-color: rgba(0, 255, 136, 0.8);
     box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
@@ -65,7 +64,7 @@ body {
 }
 
 /* =========================================================
-   TCG CARD — GLOW EFFECT (NO GLINT)
+   TCG CARD — GLOW EFFECT
 ========================================================= */
 
 .tcg-card {
@@ -86,7 +85,7 @@ body {
 }
 
 /* =========================================================
-   TCG CARD GRID + BODY
+   TCG GRID + BODY
 ========================================================= */
 
 .tcg-grid {
@@ -150,7 +149,7 @@ body {
 }
 
 /* =========================================================
-   MEMBERS PAGE — CLEAN GRID + GLOW EFFECTS
+   MEMBERS PAGE
 ========================================================= */
 
 .member-grid {
