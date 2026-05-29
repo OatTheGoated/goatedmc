@@ -4,6 +4,10 @@ const client = supabase.createClient(
     "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
+// FORCE-HIDE EVERYTHING EXCEPT BOOT
+document.getElementById("login-screen").classList.add("hidden");
+document.getElementById("dashboard").classList.add("hidden");
+
 // BOOT SEQUENCE
 const bootLines = [
     "Initializing GoatedMC Admin Terminal...",
@@ -24,6 +28,7 @@ function runBoot() {
     } else {
         setTimeout(() => {
             document.getElementById("boot-screen").classList.add("hidden");
+            document.getElementById("login-screen").style.display = "block";
             document.getElementById("login-screen").classList.remove("hidden");
         }, 800);
     }
@@ -45,6 +50,7 @@ document.getElementById("login-btn").onclick = async () => {
         document.getElementById("login-error").innerText = "Access Denied.";
     } else {
         document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("dashboard").style.display = "flex";
         document.getElementById("dashboard").classList.remove("hidden");
     }
 };
@@ -118,4 +124,3 @@ document.getElementById("logout-btn").onclick = async () => {
     await client.auth.signOut();
     location.reload();
 };
-
