@@ -1,11 +1,62 @@
 /* =========================================================
+   GLOBAL MISTY GLASS BACKGROUND
+========================================================= */
+
+body {
+    margin: 0;
+    padding: 0;
+    background: rgba(15, 25, 35, 0.6); /* dark mist */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-image: url("https://i.imgur.com/8fKQJQF.png"); /* subtle texture */
+    background-size: cover;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    color: #e0e0e0;
+}
+
+/* Optional cinematic vignette */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4));
+    z-index: -1;
+}
+
+/* =========================================================
+   GLASS PANELS FOR CONTENT
+========================================================= */
+
+.container,
+.item-card,
+.tcg-card,
+.member-card,
+.schematic-slide {
+    background: rgba(20, 30, 40, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+/* =========================================================
+   NAVBAR GLASS
+========================================================= */
+
+.navbar {
+    background: rgba(20, 30, 40, 0.65);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 3px solid #2e7d32;
+}
+
+/* =========================================================
    TCG CARD — GLOW EFFECT (NO GLINT)
 ========================================================= */
 
 .tcg-card {
     position: relative;
     overflow: hidden;
-    background: #1b263b;
     border: 3px solid #2e7d32;
     border-radius: 10px;
     padding: 15px;
@@ -118,7 +169,6 @@
 }
 
 .mc-card {
-    background: #1b263b;
     border: 3px solid #2e7d32;
     border-radius: 8px;
     padding: 20px;
@@ -159,7 +209,6 @@
 
 /* MEMBER CARD */
 .member-card {
-    background: #1b263b;
     border: 3px solid #2e7d32;
     border-radius: 10px;
     padding: 20px;
@@ -168,10 +217,8 @@
     /* Glow */
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
 
-    /* Hover animation */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    /* Make all cards same height */
     min-height: 360px;
     display: flex;
     flex-direction: column;
@@ -190,7 +237,6 @@
     border-radius: 8px;
     border: 3px solid #2e7d32;
     margin: 0 auto 15px auto;
-    display: block;
 
     /* Glow */
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.35);
@@ -213,4 +259,5 @@
     font-family: 'Minecraft', 'Minecraftia', sans-serif;
     font-size: 0.9rem;
 }
+
 
