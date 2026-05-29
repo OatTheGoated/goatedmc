@@ -36,13 +36,12 @@ body {
 #login-screen {
     position: absolute;
     inset: 0;
+    height: 100vh; /* ensures perfect vertical centering */
     display: none; /* hidden until boot finishes */
     justify-content: center;
     align-items: center;
-    z-index: 9; /* BELOW boot screen, ABOVE dashboard */
-    height: 100vh; /* <-- ADD THIS LINE HERE */
+    z-index: 9; /* below boot, above dashboard */
 }
-
 
 .terminal-login {
     background: #1b263b;
@@ -51,7 +50,6 @@ body {
     border: 2px solid #00ff88;
     width: 350px;
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-    margin: 0 auto;
 }
 
 .terminal-login h2 {
@@ -101,10 +99,12 @@ body {
    DASHBOARD LAYOUT
    ========================================================= */
 #dashboard {
-    display: none;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
+    display: none; /* hidden until login */
+    background: #0d1b2a;
     display: flex;
+    z-index: 1;
 }
 
 /* =========================================================
