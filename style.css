@@ -159,6 +159,29 @@ iframe {
 }
 
 /* =========================================================
+   SEARCH BAR
+   ========================================================= */
+.search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.7rem 1rem;
+    margin: 0 auto 2rem auto;
+    display: block;
+    border-radius: 8px;
+    border: 2px solid #00ff88;
+    background-color: #0f1a25;
+    color: #e0e0e0;
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.search-bar:focus {
+    border-color: #00cc6d;
+    box-shadow: 0 0 10px #00ff88;
+}
+
+/* =========================================================
    SCHEMATICS SLIDESHOW (NEW)
    ========================================================= */
 .schematic-slideshow {
