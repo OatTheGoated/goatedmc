@@ -159,7 +159,7 @@ iframe {
 }
 
 /* =========================================================
-   SWIPEABLE SCHEMATICS CAROUSEL (FINAL + FIXED)
+   SWIPEABLE SCHEMATICS CAROUSEL (GUARANTEED SCROLLING)
    ========================================================= */
 .schematic-carousel {
     display: flex;
@@ -167,7 +167,7 @@ iframe {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
 
-    /* FORCE full-width scrolling */
+    /* FULL WIDTH */
     width: 100vw;
     margin-left: calc(50% - 50vw);
     padding: 1rem 2rem;
@@ -185,8 +185,297 @@ iframe {
 
 /* FORCE cards to be wider so scrolling is visible */
 .schematic-carousel .item-card {
-    min-width: 420px;
-    max-width: 420px;
+    min-width: 500px;
+    max-width: 500px;
+    scroll-snap-align: start;
+}
+
+/* =========================================================
+   UNIVERSAL CARD STYLE
+   ========================================================= */
+.item-card {
+    background-color: #1b263b;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #00ff88;
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-card img {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #00ff88;
+}
+
+.item-card h3 {
+    color: #00ff88;
+    margin-bottom: 0.5rem;
+}
+
+.item-card p {
+    color: #b0b0b0;
+    margin-bottom: 1rem;
+}
+
+/* =========================================================
+   VIDEO GRID + VIDEO CARDS
+   ========================================================= */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.video-card {
+    background-color: #16213e;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #00ff88;
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.video-card h3 {
+    color: #00ff88;
+    margin-bottom: 0.5rem;
+}
+
+.video-card p {
+    color: #b0b0b0;
+    margin-bottom: 1rem;
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    border: none;
+}
+
+/* =========================================================
+   GLOW ANIMATIONS
+   ========================================================= */
+.feature-card:hover,
+.item-card:hover,
+.video-card:hover {
+    box-shadow: 0 0 20px #00ff88;
+    transform: translateY(-5px);
+}
+
+.btn:hover {
+    box-shadow: 0 0 15px #00ff88;
+    transform: translateY(-3px);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    background-color: #1b263b;
+    border-top: 2px solid #00ff88;
+}
+
+footer p {
+    color: #b0b0b0;
+}
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    background-color: #0d1b2a;
+    color: #e0e0e0;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   IMAGE FADE-IN (VIDEOS DO NOT FADE-IN)
+   ========================================================= */
+img {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background-color: #0f1a25;
+}
+
+img.loaded {
+    opacity: 1;
+}
+
+iframe {
+    opacity: 1 !important;
+}
+
+.item-card img,
+.video-container iframe {
+    min-height: 200px;
+}
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+.navbar {
+    background-color: #1b263b;
+    padding: 1rem 0;
+    border-bottom: 2px solid #00ff88;
+}
+
+.navbar .logo {
+    color: #00ff88;
+    font-size: 1.8rem;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: #00ff88;
+}
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+.hero {
+    background: linear-gradient(to bottom right, #1b263b, #0f3460);
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.hero h2 {
+    color: #00ff88;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    color: #b0b0b0;
+    font-size: 1.2rem;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn {
+    display: inline-block;
+    background-color: #00ff88;
+    color: #1b263b;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #00cc6d;
+    transform: translateY(-3px);
+}
+
+/* =========================================================
+   FEATURE CARDS (HOME PAGE)
+   ========================================================= */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.feature-card {
+    background-color: #1b263b;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid #00ff88;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.feature-card h3 {
+    color: #00ff88;
+    margin-bottom: 1rem;
+}
+
+.feature-card p {
+    color: #b0b0b0;
+    margin-bottom: 1.5rem;
+    min-height: 60px;
+}
+
+/* =========================================================
+   UNIVERSAL GRID (MODPACKS, MEMBERS)
+   ========================================================= */
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* =========================================================
+   SWIPEABLE SCHEMATICS CAROUSEL (GUARANTEED SCROLLING)
+   ========================================================= */
+.schematic-carousel {
+    display: flex;
+    gap: 2rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+
+    /* FULL WIDTH */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    padding: 1rem 2rem;
+}
+
+/* Neon scrollbar */
+.schematic-carousel::-webkit-scrollbar {
+    height: 10px;
+}
+
+.schematic-carousel::-webkit-scrollbar-thumb {
+    background: #00ff88;
+    border-radius: 10px;
+}
+
+/* FORCE cards to be wider so scrolling is visible */
+.schematic-carousel .item-card {
+    min-width: 500px;
+    max-width: 500px;
     scroll-snap-align: start;
 }
 
