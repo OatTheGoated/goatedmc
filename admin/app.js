@@ -70,7 +70,7 @@ if (document.body.classList.contains("admin")) {
         list.innerHTML = "<p>Loading...</p>";
 
         const { data, error } = await client
-            .from("schematics")
+          .from("schematica")
             .select("*")
             .order("id", { ascending: false });
 
@@ -196,23 +196,32 @@ if (document.body.classList.contains("admin")) {
             .map(t => t.trim())
             .filter(Boolean);
 
-        try {
-            await client.storage.from("schematics").upload(`schems/${schemFile.name}`, schemFile);
-            await client.storage.from("schematics").upload(`images/${imgFile.name}`, imgFile);
+    try {
+    // Upload schematic file
+    await client.storage
+        .from("schematics")
+        .upload(`schems/${schemFile.name}`, schemFile);
 
-            await client.from("schematics").insert({
-                name,
-                description: desc,
-                tags,
-                file: schemFile.name,
-                image: imgFile.name
-            });
+    // Upload image file
+    await client.storage
+        .from("schematics")
+        .upload(`images/${imgFile.name}`, imgFile);
 
-            uploadStatus.innerText = "Upload complete!";
-        } catch (err) {
-            uploadStatus.innerText = "Upload failed.";
-            console.error(err);
-        }
+    // Insert into the correct table (schematica)
+    await client.from("schematica").insert({
+        name,
+        description: desc,
+        tags,
+        file: schemFile.name,
+        image: imgFile.name
+    });
+
+    uploadStatus.innerText = "Upload complete!";
+}  catch (err) {
+    uploadStatus.innerText = "Upload failed.";
+    console.error(err);
+}
+
     };
 
     // ===============================
