@@ -1,14 +1,17 @@
 /* =========================================================
-   GLOBAL RESET
+   MAIN SITE NAMESPACE
    ========================================================= */
-* {
-    margin: 0;
-    padding: 0;
+.site * {
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
+/* =========================================================
+   GLOBAL RESET (site only)
+   ========================================================= */
+.site {
+    margin: 0;
+    padding: 0;
     background-color: #0d1b2a;
     color: #e0e0e0;
     line-height: 1.6;
@@ -17,89 +20,89 @@ body {
 /* =========================================================
    IMAGE FADE-IN
    ========================================================= */
-img {
+.site img {
     opacity: 0;
     transition: opacity 0.4s ease;
     background-color: #0f1a25;
 }
 
-img.loaded {
+.site img.loaded {
     opacity: 1;
 }
 
-iframe {
+.site iframe {
     opacity: 1 !important;
 }
 
-.item-card img,
-.video-container iframe {
+.site .item-card img,
+.site .video-container iframe {
     min-height: 200px;
 }
 
 /* =========================================================
    CONTAINER
    ========================================================= */
-.container {
+.site .container {
     width: 90%;
     max-width: 1200px;
     margin: auto;
 }
 
 /* =========================================================
-   CENTER THE SCHEMATICS PAGE
+   SCHEMATICS PAGE CENTERING
    ========================================================= */
-.schematics-page {
+.site .schematics-page {
     text-align: center;
 }
 
 /* =========================================================
    NAVBAR
    ========================================================= */
-.navbar {
+.site .navbar {
     background-color: #1b263b;
     padding: 1rem 0;
     border-bottom: 2px solid #00ff88;
 }
 
-.navbar .logo {
+.site .navbar .logo {
     color: #00ff88;
     font-size: 1.8rem;
 }
 
-.nav-links {
+.site .nav-links {
     list-style: none;
     display: flex;
     gap: 1.5rem;
 }
 
-.nav-links a {
+.site .nav-links a {
     color: #e0e0e0;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s;
 }
 
-.nav-links a:hover {
+.site .nav-links a:hover {
     color: #00ff88;
 }
 
 /* =========================================================
    HERO SECTION
    ========================================================= */
-.hero {
+.site .hero {
     background: linear-gradient(to bottom right, #1b263b, #0f3460);
     padding: 4rem 0;
     text-align: center;
     margin-bottom: 2rem;
 }
 
-.hero h2 {
+.site .hero h2 {
     color: #00ff88;
     font-size: 2.5rem;
     margin-bottom: 1rem;
 }
 
-.hero p {
+.site .hero p {
     color: #b0b0b0;
     font-size: 1.2rem;
 }
@@ -107,7 +110,7 @@ iframe {
 /* =========================================================
    BUTTONS
    ========================================================= */
-.btn {
+.site .btn {
     display: inline-block;
     background-color: #00ff88;
     color: #1b263b;
@@ -118,7 +121,7 @@ iframe {
     transition: transform 0.2s, background-color 0.3s;
 }
 
-.btn:hover {
+.site .btn:hover {
     background-color: #00cc6d;
     transform: translateY(-3px);
 }
@@ -126,14 +129,14 @@ iframe {
 /* =========================================================
    FEATURE CARDS
    ========================================================= */
-.features {
+.site .features {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 2rem;
     margin: 3rem 0;
 }
 
-.feature-card {
+.site .feature-card {
     background-color: #1b263b;
     padding: 2rem;
     border-radius: 10px;
@@ -145,12 +148,12 @@ iframe {
     justify-content: space-between;
 }
 
-.feature-card h3 {
+.site .feature-card h3 {
     color: #00ff88;
     margin-bottom: 1rem;
 }
 
-.feature-card p {
+.site .feature-card p {
     color: #b0b0b0;
     margin-bottom: 1.5rem;
     min-height: 60px;
@@ -159,7 +162,7 @@ iframe {
 /* =========================================================
    UNIVERSAL GRID
    ========================================================= */
-.item-grid {
+.site .item-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
@@ -168,7 +171,7 @@ iframe {
 /* =========================================================
    SEARCH BAR
    ========================================================= */
-.search-bar {
+.site .search-bar {
     width: 100%;
     max-width: 400px;
     padding: 0.7rem 1rem;
@@ -183,7 +186,7 @@ iframe {
     transition: box-shadow 0.3s, border-color 0.3s;
 }
 
-.search-bar:focus {
+.site .search-bar:focus {
     border-color: #00cc6d;
     box-shadow: 0 0 10px #00ff88;
 }
@@ -191,21 +194,21 @@ iframe {
 /* =========================================================
    SCHEMATICS SLIDESHOW
    ========================================================= */
-.schematic-slideshow {
+.site .schematic-slideshow {
     max-width: 600px;
     margin: 2rem auto;
     position: relative;
 }
 
-.schematic-slide {
+.site .schematic-slide {
     display: none;
 }
 
-.schematic-slide.active {
+.site .schematic-slide.active {
     display: block;
 }
 
-.schematic-controls {
+.site .schematic-controls {
     display: flex;
     justify-content: center;
     gap: 1rem;
@@ -215,7 +218,7 @@ iframe {
 /* =========================================================
    UNIVERSAL CARD STYLE
    ========================================================= */
-.item-card {
+.site .item-card {
     background-color: #1b263b;
     padding: 1.5rem;
     border-radius: 10px;
@@ -224,7 +227,7 @@ iframe {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.item-card img {
+.site .item-card img {
     width: 100%;
     height: auto;
     max-height: 220px;
@@ -234,12 +237,12 @@ iframe {
     border: 1px solid #00ff88;
 }
 
-.item-card h3 {
+.site .item-card h3 {
     color: #00ff88;
     margin-bottom: 0.5rem;
 }
 
-.item-card p {
+.site .item-card p {
     color: #b0b0b0;
     margin-bottom: 1rem;
 }
@@ -247,14 +250,14 @@ iframe {
 /* =========================================================
    VIDEO GRID
    ========================================================= */
-.video-grid {
+.site .video-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 2.5rem;
     margin-top: 2rem;
 }
 
-.video-card {
+.site .video-card {
     background-color: #16213e;
     padding: 1.5rem;
     border-radius: 10px;
@@ -263,17 +266,17 @@ iframe {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.video-card h3 {
+.site .video-card h3 {
     color: #00ff88;
     margin-bottom: 0.5rem;
 }
 
-.video-card p {
+.site .video-card p {
     color: #b0b0b0;
     margin-bottom: 1rem;
 }
 
-.video-container iframe {
+.site .video-container iframe {
     width: 100%;
     height: 200px;
     border-radius: 8px;
@@ -283,14 +286,14 @@ iframe {
 /* =========================================================
    GLOW ANIMATIONS
    ========================================================= */
-.feature-card:hover,
-.item-card:hover,
-.video-card:hover {
+.site .feature-card:hover,
+.site .item-card:hover,
+.site .video-card:hover {
     box-shadow: 0 0 20px #00ff88;
     transform: translateY(-5px);
 }
 
-.btn:hover {
+.site .btn:hover {
     box-shadow: 0 0 15px #00ff88;
     transform: translateY(-3px);
 }
@@ -298,7 +301,7 @@ iframe {
 /* =========================================================
    FOOTER
    ========================================================= */
-footer {
+.site footer {
     text-align: center;
     padding: 2rem 0;
     margin-top: 3rem;
@@ -306,6 +309,7 @@ footer {
     border-top: 2px solid #00ff88;
 }
 
-footer p {
+.site footer p {
     color: #b0b0b0;
 }
+
