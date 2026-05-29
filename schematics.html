@@ -69,6 +69,63 @@
                 </div>
             </div>
 
+            <!-- ============================
+                TCG CARD GRID (NEW)
+            ============================= -->
+            <h2 style="color:#00ff88; margin-top:3rem;">All Schematics</h2>
+
+            <section class="tcg-grid">
+
+                <!-- CARD 1 -->
+                <div class="tcg-card">
+                    <div class="tcg-img">
+                        <img src="images/ClockTower.webp" alt="Clock Tower">
+                    </div>
+                    <div class="tcg-body">
+                        <h3>🏰 Clock Tower</h3>
+                        <p>A tall medieval-style clock tower perfect for towns or spawn areas.</p>
+                        <div class="tcg-stats">
+                            <span>Size: Medium</span>
+                            <span>Blocks: 4,200</span>
+                        </div>
+                        <a class="btn" href="schematics/ClockTower.litematic" download>Download</a>
+                    </div>
+                </div>
+
+                <!-- CARD 2 -->
+                <div class="tcg-card">
+                    <div class="tcg-img">
+                        <img src="images/DarkOak.webp" alt="Dark Oak Tree">
+                    </div>
+                    <div class="tcg-body">
+                        <h3>🌲 Dark Oak Tree</h3>
+                        <p>Custom made dark oak trees, perfect for a fantasy theme.</p>
+                        <div class="tcg-stats">
+                            <span>Size: Small</span>
+                            <span>Blocks: 900</span>
+                        </div>
+                        <a class="btn" href="schematics/DarkOak.litematic" download>Download</a>
+                    </div>
+                </div>
+
+                <!-- CARD 3 -->
+                <div class="tcg-card">
+                    <div class="tcg-img">
+                        <img src="images/LightHouse.webp" alt="Lighthouse">
+                    </div>
+                    <div class="tcg-body">
+                        <h3>⚓ Lighthouse</h3>
+                        <p>A bright and detailed lighthouse perfect for coastal builds.</p>
+                        <div class="tcg-stats">
+                            <span>Size: Large</span>
+                            <span>Blocks: 7,600</span>
+                        </div>
+                        <a class="btn" href="schematics/Lighthouse.litematic" download>Download</a>
+                    </div>
+                </div>
+
+            </section>
+
             <!-- HOW TO USE -->
             <div class="how-to" style="margin-top:3rem;">
                 <h2 style="color:#00ff88; margin-bottom:1rem;">How to Use Schematics</h2>
@@ -141,7 +198,6 @@
             }
         });
 
-        // Reset slideshow to first visible result
         const visibleSlides = [...slides].filter(s => s.style.display !== "none");
         if (visibleSlides.length > 0) {
             slides.forEach(s => s.classList.remove("active"));
@@ -152,4 +208,3 @@
 
 </body>
 </html>
-
