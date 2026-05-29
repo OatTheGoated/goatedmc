@@ -12,6 +12,7 @@
 .site {
     margin: 0;
     padding: 0;
+    width: 100%;   /* ← THIS is the fix */
     background-color: #0d1b2a;
     color: #e0e0e0;
     line-height: 1.6;
