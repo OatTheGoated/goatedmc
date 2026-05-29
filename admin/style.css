@@ -11,7 +11,6 @@
 body {
     background-color: #0d1b2a;
     color: #e0e0e0;
-    display: flex;
     height: 100vh;
     overflow: hidden;
 }
@@ -28,6 +27,7 @@ body {
     font-family: "Courier New", monospace;
     font-size: 1rem;
     overflow-y: auto;
+    z-index: 10; /* boot screen on top */
 }
 
 /* =========================================================
@@ -36,9 +36,10 @@ body {
 #login-screen {
     position: absolute;
     inset: 0;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
+    display: none; /* hidden until boot finishes */
+    justify-content: center;
+    align-items: center;
+    z-index: 9; /* BELOW boot screen, ABOVE dashboard */
 }
 
 .terminal-login {
@@ -48,7 +49,7 @@ body {
     border: 2px solid #00ff88;
     width: 350px;
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-    margin: 0 auto; /* ensures perfect centering */
+    margin: 0 auto;
 }
 
 .terminal-login h2 {
@@ -98,9 +99,12 @@ body {
    DASHBOARD LAYOUT
    ========================================================= */
 #dashboard {
+    position: absolute;
+    inset: 0;
+    display: none; /* hidden until login */
+    z-index: 1; /* lowest layer */
+    background: #0d1b2a;
     display: flex;
-    width: 100%;
-    height: 100%;
 }
 
 /* =========================================================
