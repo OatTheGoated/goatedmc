@@ -1,18 +1,22 @@
 /* =========================================================
-   ADMIN PANEL — GLOBAL (FULLY ISOLATED)
+   HARD ISOLATION — Prevent main site CSS from leaking in
+   (Safe version that does NOT break layout)
 ========================================================= */
-
-/* Reset body margin for admin pages so no white border appears */
 body.admin {
+    all: revert;
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
-    padding: 0;          /* ← ADDED */
+    padding: 0;
     background-color: #0d1b2a;
-    width: 100vw;        /* ← ADDED */
-    height: 100vh;       /* ← ADDED */
-    overflow: hidden;    /* ← ADDED */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* Main admin wrapper */
+/* =========================================================
+   ADMIN PANEL — GLOBAL
+========================================================= */
+
 #admin-panel * {
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
@@ -247,5 +251,6 @@ body.admin {
     flex-direction: column;
     gap: 15px;
 }
+
 
 
