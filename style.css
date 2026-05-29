@@ -1,19 +1,22 @@
-/* ===== Global body reset ===== */
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
 body {
     margin: 0;
     padding: 0;
     background-color: #0d1b2a;
     font-family: Arial, Helvetica, sans-serif;
-}
-
-/* ===== Site wrapper ===== */
-.site {
-    min-height: 100vh;
-    background-color: #0d1b2a;
     color: #e0e0e0;
 }
 
-/* ===== Navbar ===== */
+.site {
+    min-height: 100vh;
+    background-color: #0d1b2a;
+}
+
+/* =========================================================
+   NAVBAR
+========================================================= */
 .navbar {
     background: #1b263b;
     border-bottom: 2px solid #00ff88;
@@ -34,7 +37,6 @@ body {
     font-weight: bold;
 }
 
-/* ===== Nav links ===== */
 .nav-links {
     list-style: none;
     display: flex;
@@ -56,7 +58,9 @@ body {
     color: #1b263b;
 }
 
-/* ===== Hero ===== */
+/* =========================================================
+   HERO
+========================================================= */
 .hero {
     padding: 60px 20px;
     text-align: center;
@@ -74,57 +78,18 @@ body {
     font-size: 1.1rem;
 }
 
-/* ===== Main container ===== */
-main.container {
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+.container {
     max-width: 1100px;
     margin: 40px auto;
     padding: 0 20px;
 }
 
-/* ===== Showcase image ===== */
-.showcase {
-    border: 2px solid #00ff88;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 30px;
-}
-
-.showcase img {
-    width: 100%;
-    display: block;
-}
-
-/* ===== Feature cards ===== */
-.features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-}
-
-.feature-card {
-    background: #1b263b;
-    border: 2px solid #00ff88;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
-    transition: 0.2s;
-}
-
-.feature-card:hover {
-    box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
-    transform: translateY(-3px);
-}
-
-.feature-card h3 {
-    color: #00ff88;
-    margin-bottom: 10px;
-}
-
-.feature-card p {
-    color: #e0e0e0;
-}
-
-/* ===== Buttons ===== */
+/* =========================================================
+   BUTTONS
+========================================================= */
 .btn {
     display: inline-block;
     margin-top: 10px;
@@ -141,7 +106,116 @@ main.container {
     background: #00cc6d;
 }
 
-/* ===== Footer ===== */
+/* =========================================================
+   SLIDESHOW
+========================================================= */
+.schematic-slideshow {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.schematic-slide {
+    display: none;
+    background: #1b263b;
+    border: 2px solid #00ff88;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.schematic-slide.active {
+    display: block;
+}
+
+.schematic-slide img {
+    width: 100%;
+    border-radius: 10px;
+    border: 2px solid #00ff88;
+}
+
+.schematic-controls {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* =========================================================
+   SEARCH BAR
+========================================================= */
+.search-bar {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 1.5rem;
+    background: #0f1a25;
+    border: 2px solid #00ff88;
+    border-radius: 6px;
+    color: #e0e0e0;
+}
+
+/* =========================================================
+   TCG CARD GRID
+========================================================= */
+.tcg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px;
+    margin-top: 30px;
+}
+
+/* =========================================================
+   TCG CARD
+========================================================= */
+.tcg-card {
+    background: #1b263b;
+    border: 2px solid #00ff88;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 18px rgba(0, 255, 136, 0.25);
+    transition: 0.25s ease;
+}
+
+.tcg-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 28px rgba(0, 255, 136, 0.45);
+}
+
+.tcg-img img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+    border-bottom: 2px solid #00ff88;
+}
+
+.tcg-body {
+    padding: 18px;
+}
+
+.tcg-body h3 {
+    color: #00ff88;
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.tcg-body p {
+    color: #e0e0e0;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+}
+
+.tcg-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
+    color: #9eeec7;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
 footer {
     margin-top: 40px;
     padding: 20px;
