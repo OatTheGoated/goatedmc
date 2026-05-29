@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Goated MC - Minecraft Hub</title>
-    <link rel="stylesheet" href="style.css?v=1">
+
+    <!-- Main Site CSS -->
+    <link rel="stylesheet" href="style.css?v=2">
+
+    <!-- Minecraft Pixel Font -->
+    <link href="https://fonts.cdnfonts.com/css/minecraft-4" rel="stylesheet">
 </head>
 
 <body>
@@ -14,7 +19,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
-            <h1 class="logo">⛏️ Goated MC</h1>
+            <h1 class="logo pixel">⛏️ Goated MC</h1>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="modpacks.html">Modpacks</a></li>
@@ -26,9 +31,9 @@
     </nav>
 
     <!-- HERO -->
-    <header class="hero">
-        <h2>Welcome to Goated MC</h2>
-        <p>Premium Modpacks & Schematics — crafted with care.</p>
+    <header class="hero minecraft-hero">
+        <h2 class="pixel">Welcome to Goated MC</h2>
+        <p class="pixel-small">Premium Modpacks & Schematics — crafted with care.</p>
     </header>
 
     <!-- MAIN CONTENT -->
@@ -36,29 +41,30 @@
 
         <!-- SHOWCASE -->
         <section class="showcase">
-            <img src="https://via.placeholder.com/1200x400?text=Goated+MC" 
-                 alt="Goated MC Showcase">
+            <img src="https://via.placeholder.com/1200x400/2d2d2d/ffffff?text=Goated+MC+Showcase" 
+                 alt="Goated MC Showcase"
+                 class="showcase-img">
         </section>
 
         <!-- FEATURE CARDS -->
         <section class="features">
 
-            <div class="feature-card">
-                <h3>📦 Modpacks</h3>
+            <div class="feature-card mc-card">
+                <h3 class="pixel">📦 Modpacks</h3>
                 <p>Exclusive modpacks crafted by our team.</p>
-                <a href="modpacks.html" class="btn">Explore</a>
+                <a href="modpacks.html" class="mc-btn">Explore</a>
             </div>
 
-            <div class="feature-card">
-                <h3>🏗️ Schematics</h3>
+            <div class="feature-card mc-card">
+                <h3 class="pixel">🏗️ Schematics</h3>
                 <p>Custom-designed schematics ready for your world.</p>
-                <a href="schematics.html" class="btn">Explore</a>
+                <a href="schematics.html" class="mc-btn">Explore</a>
             </div>
 
-            <div class="feature-card">
-                <h3>📺 Videos</h3>
+            <div class="feature-card mc-card">
+                <h3 class="pixel">📺 Videos</h3>
                 <p>Watch our latest Minecraft content.</p>
-                <a href="videos.html" class="btn">Explore</a>
+                <a href="videos.html" class="mc-btn">Explore</a>
             </div>
 
         </section>
@@ -66,7 +72,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer>
+    <footer class="pixel-small">
         <p>&copy; 2026 Goated MC — All Rights Reserved</p>
     </footer>
 
