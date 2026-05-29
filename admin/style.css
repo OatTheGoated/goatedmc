@@ -1,0 +1,114 @@
+/* GENERAL */
+body {
+    margin: 0;
+    background: #0d0d0d;
+    color: white;
+    font-family: Consolas, monospace;
+}
+
+/* HIDDEN CLASS */
+.hidden { display: none; }
+
+/* BOOT SCREEN */
+#boot-screen {
+    position: fixed;
+    inset: 0;
+    background: black;
+    color: #a855f7;
+    padding: 40px;
+    font-size: 18px;
+    white-space: pre-line;
+}
+
+/* TERMINAL LOGIN */
+.terminal-login {
+    width: 400px;
+    margin: 120px auto;
+    padding: 30px;
+    background: #111;
+    border: 2px solid #a855f7;
+    box-shadow: 0 0 20px #a855f7;
+}
+
+.terminal-line {
+    margin-top: 15px;
+}
+
+#login-btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background: #a855f7;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+/* DASHBOARD LAYOUT */
+#dashboard {
+    display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 300px;
+    background: #111;
+    padding: 20px;
+    border-right: 2px solid #a855f7;
+}
+
+.logo {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #a855f7;
+}
+
+.nav-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #222;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+}
+
+.nav-btn.active {
+    background: #a855f7;
+}
+
+/* MAIN CONTENT */
+main {
+    flex: 1;
+    padding: 30px;
+}
+
+/* CARDS */
+.card {
+    background: #1a1a1a;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #333;
+    border-radius: 8px;
+}
+
+.drop-zone {
+    text-align: center;
+    border: 2px dashed #a855f7;
+    cursor: pointer;
+}
+
+.drop-zone:hover {
+    background: #2a2a2a;
+}
+
+/* BUTTONS */
+.purple-btn {
+    background: #a855f7;
+    border: none;
+    padding: 12px 20px;
+    color: white;
+    cursor: pointer;
+}
