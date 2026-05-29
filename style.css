@@ -15,16 +15,23 @@ body {
 }
 
 /* =========================================================
-   IMAGE + VIDEO FADE-IN + NO-JUMP FIXES
+   IMAGE FADE-IN (VIDEOS DO NOT FADE-IN)
    ========================================================= */
-img, iframe {
+
+/* Images fade in */
+img {
     opacity: 0;
     transition: opacity 0.4s ease;
     background-color: #0f1a25; /* placeholder while loading */
 }
 
-img.loaded, iframe.loaded {
+img.loaded {
     opacity: 1;
+}
+
+/* Videos should always be visible */
+iframe {
+    opacity: 1 !important;
 }
 
 /* reserve space so layout doesn't jump */
@@ -143,7 +150,7 @@ img.loaded, iframe.loaded {
 .feature-card p {
     color: #b0b0b0;
     margin-bottom: 1.5rem;
-    min-height: 60px; /* keeps Explore buttons aligned */
+    min-height: 60px;
 }
 
 /* =========================================================
@@ -224,7 +231,7 @@ img.loaded, iframe.loaded {
 }
 
 /* =========================================================
-   GLOW ANIMATIONS (NEW)
+   GLOW ANIMATIONS
    ========================================================= */
 .feature-card:hover,
 .item-card:hover,
