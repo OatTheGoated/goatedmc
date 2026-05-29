@@ -1,169 +1,103 @@
-// ===============================
-// INIT SUPABASE
-// ===============================
-const client = supabase.createClient(
-    "https://gthgxmyccwsygbopksgz.supabase.co",
-    "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
-);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GoatedMC Admin Panel</title>
 
-// ===============================
-// DOM ELEMENTS
-// ===============================
-const loginScreen = document.getElementById("login-screen");
-const dashboard = document.getElementById("dashboard");
-const bootScreen = document.getElementById("boot-screen");
-const bootText = document.getElementById("boot-text");
+    <!-- Admin CSS (namespaced) -->
+    <link rel="stylesheet" href="style.css">
+</head>
 
-const loginBtn = document.getElementById("login-btn");
-const logoutBtn = document.getElementById("logout-btn");
+<body class="admin">
 
-const uploadBtn = document.getElementById("upload-btn");
-const uploadStatus = document.getElementById("upload-status");
+    <!-- Terminal Boot Screen -->
+    <div id="boot-screen">
+        <div id="boot-text"></div>
+    </div>
 
-const schemInput = document.getElementById("schematic-input");
-const imgInput = document.getElementById("image-input");
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="terminal-login">
+            <h2>GoatedMC Admin Terminal</h2>
 
-// ===============================
-// INITIAL STATE
-// ===============================
-loginScreen.style.display = "none";
-dashboard.style.display = "none";
+            <div class="terminal-line">Username:</div>
+            <input id="login-email" type="email" placeholder="admin@example.com">
 
-// ===============================
-// BOOT SEQUENCE
-// ===============================
-const bootLines = [
-    "Initializing GoatedMC Admin Terminal...",
-    "Loading modules...",
-    "Wait… who let the chickens in here?",
-    "Cluckin the Trucks..",
-    "Ready."
-];
+            <div class="terminal-line">Password:</div>
+            <input id="login-password" type="password" placeholder="••••••••">
 
-let bootIndex = 0;
+            <button id="login-btn">Access Terminal</button>
+            <div id="login-error"></div>
+        </div>
+    </div>
 
-function runBoot() {
-    if (bootIndex < bootLines.length) {
-        bootText.innerText += bootLines[bootIndex] + "\n";
-        bootIndex++;
-        setTimeout(runBoot, 600);
-    } else {
-        setTimeout(() => {
-            bootScreen.style.display = "none";
-            loginScreen.style.display = "block";
-        }, 800);
-    }
-}
+    <!-- Dashboard -->
+    <div id="dashboard">
 
-runBoot();
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h1 class="logo">GoatedMC</h1>
 
-// ===============================
-// LOGIN
-// ===============================
-loginBtn.onclick = async () => {
-    const email = document.getElementById("login-email").value.trim();
-    const pass = document.getElementById("login-password").value.trim();
-    const errorBox = document.getElementById("login-error");
+            <nav>
+                <button class="nav-btn active" data-page="upload">📤 Upload</button>
+                <button class="nav-btn" data-page="manage">📁 Manage Schematics</button>
+                <button class="nav-btn" data-page="settings">⚙️ Settings</button>
+            </nav>
+        </aside>
 
-    if (!email || !pass) {
-        errorBox.innerText = "Missing credentials.";
-        return;
-    }
+        <!-- Main Content -->
+        <main>
 
-    const { error } = await client.auth.signInWithPassword({ email, password: pass });
+            <!-- Upload Page -->
+            <section id="page-upload" class="page active">
 
-    if (error) {
-        errorBox.innerText = "Access Denied.";
-    } else {
-        loginScreen.style.display = "none";
-        dashboard.style.display = "flex";
-    }
-};
+                <h2>Upload Schematic</h2>
 
-// ===============================
-// NAVIGATION
-// ===============================
-document.querySelectorAll(".nav-btn").forEach(btn => {
-    btn.onclick = () => {
-        document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
+                <div class="card drop-zone" id="schematic-drop">
+                    <p>Drop your .schem file here or click to upload</p>
+                    <input type="file" id="schematic-input" accept=".schem">
+                </div>
 
-        document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-        document.getElementById("page-" + btn.dataset.page).classList.add("active");
-    };
-});
+                <div class="card drop-zone" id="image-drop">
+                    <p>Drop your WebP image here or click to upload</p>
+                    <input type="file" id="image-input" accept=".webp">
+                </div>
 
-// ===============================
-// DRAG & DROP HELPERS
-// ===============================
-function setupDropZone(zoneId, inputId) {
-    const zone = document.getElementById(zoneId);
-    const input = document.getElementById(inputId);
+                <div class="card">
+                    <label>Name</label>
+                    <input id="schem-name" type="text">
 
-    zone.onclick = () => input.click();
+                    <label>Description</label>
+                    <textarea id="schem-desc"></textarea>
 
-    zone.ondragover = e => {
-        e.preventDefault();
-        zone.classList.add("hover");
-    };
+                    <label>Tags (comma separated)</label>
+                    <input id="schem-tags" type="text">
 
-    zone.ondragleave = () => zone.classList.remove("hover");
+                    <button id="upload-btn" class="purple-btn">Upload</button>
+                    <div id="upload-status"></div>
+                </div>
 
-    zone.ondrop = e => {
-        e.preventDefault();
-        zone.classList.remove("hover");
-        input.files = e.dataTransfer.files;
-    };
-}
+            </section>
 
-setupDropZone("schematic-drop", "schematic-input");
-setupDropZone("image-drop", "image-input");
+            <!-- Manage Page -->
+            <section id="page-manage" class="page">
+                <h2>Manage Schematics</h2>
+                <div id="schem-list"></div>
+            </section>
 
-// ===============================
-// UPLOAD
-// ===============================
-uploadBtn.onclick = async () => {
-    uploadStatus.innerText = "Uploading...";
+            <!-- Settings Page -->
+            <section id="page-settings" class="page">
+                <h2>Settings</h2>
+                <button id="logout-btn" class="purple-btn">Logout</button>
+            </section>
 
-    const schemFile = schemInput.files[0];
-    const imgFile = imgInput.files[0];
+        </main>
+    </div>
 
-    if (!schemFile || !imgFile) {
-        uploadStatus.innerText = "Missing files.";
-        return;
-    }
+    <!-- Supabase + App Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
 
-    const name = document.getElementById("schem-name").value.trim();
-    const desc = document.getElementById("schem-desc").value.trim();
-    const tags = document.getElementById("schem-tags").value.split(",").map(t => t.trim()).filter(Boolean);
+</body>
+</html>
 
-    try {
-        // Upload schematic
-        await client.storage.from("schematics").upload(`schems/${schemFile.name}`, schemFile);
-
-        // Upload image
-        await client.storage.from("schematics").upload(`images/${imgFile.name}`, imgFile);
-
-        // Insert DB entry
-        await client.from("schematics").insert({
-            name,
-            description: desc,
-            tags,
-            file: schemFile.name,
-            image: imgFile.name
-        });
-
-        uploadStatus.innerText = "Upload complete!";
-    } catch (err) {
-        uploadStatus.innerText = "Upload failed.";
-        console.error(err);
-    }
-};
-
-// ===============================
-// LOGOUT
-// ===============================
-logoutBtn.onclick = async () => {
-    await client.auth.signOut();
-    location.reload();
-};
