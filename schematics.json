@@ -10,13 +10,202 @@
         "image": "images/DarkOak.webp",
         "file": "schematics/DarkOak.litematic",
         "author": "OatTheGoated",
-        "description": "Custom-made dark oak trees ideal for fantasy, medieval, or enchanted forests."
+        "description": "Custom-made dark oak trees ideal for fantasy or enchanted forests."
     },
 
     "Lighthouse": {
         "image": "images/LightHouse.webp",
         "file": "schematics/Lighthouse.litematic",
         "author": "OatTheGoated",
-        "description": "A bright and detailed lighthouse perfect for coastal builds and survival worlds."
+        "description": "A bright and detailed lighthouse perfect for coastal builds."
+    },
+
+    "MedievalHouse": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/MedievalHouse.litematic",
+        "author": "Unknown",
+        "description": "A cozy medieval-style house with timber framing."
+    },
+
+    "StoneBridge": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/StoneBridge.litematic",
+        "author": "Unknown",
+        "description": "A sturdy stone bridge ideal for rivers and valleys."
+    },
+
+    "WizardTower": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/WizardTower.litematic",
+        "author": "Unknown",
+        "description": "A tall magical tower perfect for fantasy worlds."
+    },
+
+    "SmallFarm": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/SmallFarm.litematic",
+        "author": "Unknown",
+        "description": "A compact farm layout with crops and a barn."
+    },
+
+    "NetherPortalShrine": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/NetherPortalShrine.litematic",
+        "author": "Unknown",
+        "description": "A decorative shrine built around a Nether portal."
+    },
+
+    "CastleGate": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/CastleGate.litematic",
+        "author": "Unknown",
+        "description": "A fortified castle gate with towers and battlements."
+    },
+
+    "MarketplaceStall": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/MarketplaceStall.litematic",
+        "author": "Unknown",
+        "description": "A colorful market stall for medieval towns."
+    },
+
+    "FishingHut": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/FishingHut.litematic",
+        "author": "Unknown",
+        "description": "A small fishing hut perfect for lakeside builds."
+    },
+
+    "Windmill": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/Windmill.litematic",
+        "author": "Unknown",
+        "description": "A classic windmill with rotating blades."
+    },
+
+    "BlacksmithShop": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/BlacksmithShop.litematic",
+        "author": "Unknown",
+        "description": "A medieval blacksmith with forge and tools."
+    },
+
+    "TownFountain": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/TownFountain.litematic",
+        "author": "Unknown",
+        "description": "A decorative fountain for town squares."
+    },
+
+    "LibraryTower": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/LibraryTower.litematic",
+        "author": "Unknown",
+        "description": "A tall tower filled with books and study rooms."
+    },
+
+    "GuardTower": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/GuardTower.litematic",
+        "author": "Unknown",
+        "description": "A defensive tower for castle walls."
+    },
+
+    "FarmBarn": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/FarmBarn.litematic",
+        "author": "Unknown",
+        "description": "A large barn for storing hay and animals."
+    },
+
+    "Treehouse": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/Treehouse.litematic",
+        "author": "Unknown",
+        "description": "A cozy treehouse built high in the branches."
+    },
+
+    "DesertTempleRemake": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/DesertTempleRemake.litematic",
+        "author": "Unknown",
+        "description": "A redesigned version of the classic desert temple."
+    },
+
+    "SnowCabin": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/SnowCabin.litematic",
+        "author": "Unknown",
+        "description": "A warm cabin perfect for snowy biomes."
+    },
+
+    "JungleRuins": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/JungleRuins.litematic",
+        "author": "Unknown",
+        "description": "Ancient ruins hidden deep in the jungle."
+    },
+
+    "MountainShrine": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/MountainShrine.litematic",
+        "author": "Unknown",
+        "description": "A sacred shrine built into a mountain cliff."
+    },
+
+    "HarborDock": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/HarborDock.litematic",
+        "author": "Unknown",
+        "description": "A wooden dock for ships and fishing boats."
+    },
+
+    "MageAcademy": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/MageAcademy.litematic",
+        "author": "Unknown",
+        "description": "A magical academy for aspiring wizards."
+    },
+
+    "ForestCamp": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/ForestCamp.litematic",
+        "author": "Unknown",
+        "description": "A campsite with tents and a campfire."
+    },
+
+    "UndergroundBase": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/UndergroundBase.litematic",
+        "author": "Unknown",
+        "description": "A hidden underground survival base."
+    },
+
+    "NetherFortRoom": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/NetherFortRoom.litematic",
+        "author": "Unknown",
+        "description": "A custom room for Nether fortresses."
+    },
+
+    "EndIslandGarden": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/EndIslandGarden.litematic",
+        "author": "Unknown",
+        "description": "A peaceful garden floating in the End."
+    },
+
+    "VillageWell": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/VillageWell.litematic",
+        "author": "Unknown",
+        "description": "A decorative well for villages."
+    },
+
+    "StarterHouse": {
+        "image": "images/placeholder.webp",
+        "file": "schematics/StarterHouse.litematic",
+        "author": "Unknown",
+        "description": "A simple starter house for early survival."
     }
 }
