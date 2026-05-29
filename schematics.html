@@ -34,35 +34,8 @@
             <input type="text" id="schematic-search" placeholder="Search schematics..." class="search-bar">
 
             <!-- ============================
-                FEATURED SCHEMATICS (NO IMAGES)
-            ============================= -->
-            <div class="featured-schematics">
-
-                <div class="schematic-feature item-card">
-                    <h3>Clock Tower</h3>
-                    <p>A tall medieval-style clock tower perfect for towns or spawn areas.</p>
-                    <a href="schematics/ClockTower.litematic" class="btn" download>Download</a>
-                </div>
-
-                <div class="schematic-feature item-card">
-                    <h3>Dark Oak Tree</h3>
-                    <p>Custom made dark oak trees, perfect for a fantasy theme.</p>
-                    <a href="schematics/DarkOak.litematic" class="btn" download>Download</a>
-                </div>
-
-                <div class="schematic-feature item-card">
-                    <h3>Lighthouse</h3>
-                    <p>A bright and detailed lighthouse perfect for coastal builds.</p>
-                    <a href="schematics/Lighthouse.litematic" class="btn" download>Download</a>
-                </div>
-
-            </div>
-
-            <!-- ============================
                 ALL SCHEMATICS (AUTO FROM JSON)
             ============================= -->
-            <h2 style="color:#00ff88; margin-top:3rem;">All Schematics</h2>
-
             <section class="tcg-grid" id="tcg-container">
                 <!-- Cards auto‑insert here -->
             </section>
@@ -96,7 +69,7 @@
 
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.toLowerCase();
-        const cards = document.querySelectorAll(".tcg-card, .schematic-feature");
+        const cards = document.querySelectorAll(".tcg-card");
 
         cards.forEach(card => {
             const title = card.querySelector("h3").textContent.toLowerCase();
