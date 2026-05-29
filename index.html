@@ -7,10 +7,11 @@
     <link rel="stylesheet" href="style.css?v=1">
 </head>
 
-
 <body>
+
 <div class="site">
 
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
             <h1 class="logo">⛏️ Goated MC</h1>
@@ -24,38 +25,39 @@
         </div>
     </nav>
 
+    <!-- HERO -->
     <header class="hero">
-        <div class="hero-content">
-            <h2>Welcome to Goated MC</h2>
-            <p>Download Premium Custom made Modpacks & Schematics handmade for you!</p>
-        </div>
+        <h2>Welcome to Goated MC</h2>
+        <p>Premium Modpacks & Schematics — crafted with care.</p>
     </header>
 
+    <!-- MAIN CONTENT -->
     <main class="container">
 
+        <!-- SHOWCASE -->
         <section class="showcase">
             <img src="https://via.placeholder.com/1200x400?text=Goated+MC" 
-                 alt="Goated MC Showcase" 
-                 class="showcase-image">
+                 alt="Goated MC Showcase">
         </section>
 
+        <!-- FEATURE CARDS -->
         <section class="features">
 
             <div class="feature-card">
                 <h3>📦 Modpacks</h3>
-                <p>A Collection of exclusive modpacks crafted by our team</p>
+                <p>Exclusive modpacks crafted by our team.</p>
                 <a href="modpacks.html" class="btn">Explore</a>
             </div>
 
             <div class="feature-card">
                 <h3>🏗️ Schematics</h3>
-                <p>Custom-designed schematics ready for your world!</p>
+                <p>Custom-designed schematics ready for your world.</p>
                 <a href="schematics.html" class="btn">Explore</a>
             </div>
 
             <div class="feature-card">
-                <h3>📺 Videos!</h3>
-                <p>Lots of content to be watched</p>
+                <h3>📺 Videos</h3>
+                <p>Watch our latest Minecraft content.</p>
                 <a href="videos.html" class="btn">Explore</a>
             </div>
 
@@ -63,26 +65,12 @@
 
     </main>
 
+    <!-- FOOTER -->
     <footer>
-        <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
+        <p>&copy; 2026 Goated MC — All Rights Reserved</p>
     </footer>
 
-</div> <!-- END .site wrapper -->
-
-<!-- Fade-in script -->
-<script>
-window.addEventListener("load", () => {
-    document.querySelectorAll("img, iframe").forEach(el => {
-        if (el.complete) {
-            el.classList.add("loaded");
-        } else {
-            el.addEventListener("load", () => {
-                el.classList.add("loaded");
-            });
-        }
-    });
-});
-</script>
+</div>
 
 </body>
 </html>
