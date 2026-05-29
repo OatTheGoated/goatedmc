@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="site">
+<body>
+<div class="site">
 
     <!-- NAVBAR -->
     <nav class="navbar">
@@ -84,66 +85,69 @@
         <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
     </footer>
 
-    <!-- Fade-in script + slideshow + search -->
-    <script>
-        // Fade-in images
-        window.addEventListener("load", () => {
-            document.querySelectorAll("img, iframe").forEach(el => {
-                if (el.complete) {
+</div> <!-- END .site WRAPPER -->
+
+<!-- Fade-in script + slideshow + search -->
+<script>
+    // Fade-in images
+    window.addEventListener("load", () => {
+        document.querySelectorAll("img, iframe").forEach(el => {
+            if (el.complete) {
+                el.classList.add("loaded");
+            } else {
+                el.addEventListener("load", () => {
                     el.classList.add("loaded");
-                } else {
-                    el.addEventListener("load", () => {
-                        el.classList.add("loaded");
-                    });
-                }
-            });
-        });
-
-        // Slideshow logic
-        const slides = document.querySelectorAll(".schematic-slide");
-        let currentSlide = 0;
-
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.classList.toggle("active", i === index);
-            });
-        }
-
-        document.getElementById("next-schematic").addEventListener("click", () => {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
-        });
-
-        document.getElementById("prev-schematic").addEventListener("click", () => {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            showSlide(currentSlide);
-        });
-
-        // SEARCH FUNCTION
-        const searchInput = document.getElementById("schematic-search");
-
-        searchInput.addEventListener("input", () => {
-            const query = searchInput.value.toLowerCase();
-
-            slides.forEach((slide, index) => {
-                const title = slide.querySelector("h3").textContent.toLowerCase();
-
-                if (title.includes(query)) {
-                    slide.style.display = "block";
-                } else {
-                    slide.style.display = "none";
-                }
-            });
-
-            // Reset slideshow to first visible result
-            const visibleSlides = [...slides].filter(s => s.style.display !== "none");
-            if (visibleSlides.length > 0) {
-                slides.forEach(s => s.classList.remove("active"));
-                visibleSlides[0].classList.add("active");
+                });
             }
         });
-    </script>
+    });
+
+    // Slideshow logic
+    const slides = document.querySelectorAll(".schematic-slide");
+    let currentSlide = 0;
+
+    function showSlide(index) {
+        slides.forEach((slide, i) => {
+            slide.classList.toggle("active", i === index);
+        });
+    }
+
+    document.getElementById("next-schematic").addEventListener("click", () => {
+        currentSlide = (currentSlide + 1) % slides.length;
+        showSlide(currentSlide);
+    });
+
+    document.getElementById("prev-schematic").addEventListener("click", () => {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        showSlide(currentSlide);
+    });
+
+    // SEARCH FUNCTION
+    const searchInput = document.getElementById("schematic-search");
+
+    searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase();
+
+        slides.forEach((slide, index) => {
+            const title = slide.querySelector("h3").textContent.toLowerCase();
+
+            if (title.includes(query)) {
+                slide.style.display = "block";
+            } else {
+                slide.style.display = "none";
+            }
+        });
+
+        // Reset slideshow to first visible result
+        const visibleSlides = [...slides].filter(s => s.style.display !== "none");
+        if (visibleSlides.length > 0) {
+            slides.forEach(s => s.classList.remove("active"));
+            visibleSlides[0].classList.add("active");
+        }
+    });
+</script>
 
 </body>
 </html>
+
 
