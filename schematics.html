@@ -70,60 +70,12 @@
             </div>
 
             <!-- ============================
-                TCG CARD GRID
+                TCG CARD GRID (AUTO FROM JSON)
             ============================= -->
             <h2 style="color:#00ff88; margin-top:3rem;">All Schematics</h2>
 
-            <section class="tcg-grid">
-
-                <!-- CARD 1 -->
-                <div class="tcg-card">
-                    <div class="tcg-img">
-                        <img src="images/ClockTower.webp" alt="Clock Tower">
-                    </div>
-                    <div class="tcg-body">
-                        <h3>🏰 Clock Tower</h3>
-                        <p>A tall medieval-style clock tower perfect for towns or spawn areas.</p>
-                        <div class="tcg-stats">
-                            <span>Size: Medium</span>
-                            <span>Blocks: 4,200</span>
-                        </div>
-                        <a class="btn" href="schematics/ClockTower.litematic" download>Download</a>
-                    </div>
-                </div>
-
-                <!-- CARD 2 -->
-                <div class="tcg-card">
-                    <div class="tcg-img">
-                        <img src="images/DarkOak.webp" alt="Dark Oak Tree">
-                    </div>
-                    <div class="tcg-body">
-                        <h3>🌲 Dark Oak Tree</h3>
-                        <p>Custom made dark oak trees, perfect for a fantasy theme.</p>
-                        <div class="tcg-stats">
-                            <span>Size: Small</span>
-                            <span>Blocks: 900</span>
-                        </div>
-                        <a class="btn" href="schematics/DarkOak.litematic" download>Download</a>
-                    </div>
-                </div>
-
-                <!-- CARD 3 -->
-                <div class="tcg-card">
-                    <div class="tcg-img">
-                        <img src="images/LightHouse.webp" alt="Lighthouse">
-                    </div>
-                    <div class="tcg-body">
-                        <h3>⚓ Lighthouse</h3>
-                        <p>A bright and detailed lighthouse perfect for coastal builds.</p>
-                        <div class="tcg-stats">
-                            <span>Size: Large</span>
-                            <span>Blocks: 7,600</span>
-                        </div>
-                        <a class="btn" href="schematics/Lighthouse.litematic" download>Download</a>
-                    </div>
-                </div>
-
+            <section class="tcg-grid" id="tcg-container">
+                <!-- Cards auto‑insert here -->
             </section>
 
             <!-- HOW TO USE -->
@@ -190,12 +142,7 @@
 
         slides.forEach((slide, index) => {
             const title = slide.querySelector("h3").textContent.toLowerCase();
-
-            if (title.includes(query)) {
-                slide.style.display = "block";
-            } else {
-                slide.style.display = "none";
-            }
+            slide.style.display = title.includes(query) ? "block" : "none";
         });
 
         const visibleSlides = [...slides].filter(s => s.style.display !== "none");
@@ -206,5 +153,43 @@
     });
 </script>
 
+<!-- ===============================
+     LOAD TCG CARDS FROM JSON
+=============================== -->
+<script>
+fetch("/goatedmc/schematics.json")
+    .then(res => res.json())
+    .then(data => {
+        const container = document.getElementById("tcg-container");
+
+        Object.keys(data).forEach(key => {
+            const item = data[key];
+
+            const card = document.createElement("div");
+            card.className = "tcg-card";
+
+            card.innerHTML = `
+                <div class="tcg-img">
+                    <img src="${item.image}" alt="${key}">
+                </div>
+
+                <div class="tcg-body">
+                    <h3>${key.replace(/([A-Z])/g, ' $1').trim()}</h3>
+                    <p>${item.description || "A custom Minecraft schematic."}</p>
+
+                    <div class="tcg-stats">
+                        <span>Author: ${item.author}</span>
+                    </div>
+
+                    <a class="btn" href="${item.file}" download>Download</a>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+    });
+</script>
+
 </body>
 </html>
+
