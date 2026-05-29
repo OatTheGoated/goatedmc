@@ -4,9 +4,9 @@ const client = supabase.createClient(
     "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
-// FORCE-HIDE EVERYTHING EXCEPT BOOT
-document.getElementById("login-screen").classList.add("hidden");
-document.getElementById("dashboard").classList.add("hidden");
+// FORCE-HIDE LOGIN + DASHBOARD ON LOAD
+document.getElementById("login-screen").style.display = "none";
+document.getElementById("dashboard").style.display = "none";
 
 // BOOT SEQUENCE
 const bootLines = [
@@ -27,9 +27,8 @@ function runBoot() {
         setTimeout(runBoot, 600);
     } else {
         setTimeout(() => {
-            document.getElementById("boot-screen").classList.add("hidden");
+            document.getElementById("boot-screen").style.display = "none";
             document.getElementById("login-screen").style.display = "block";
-            document.getElementById("login-screen").classList.remove("hidden");
         }, 800);
     }
 }
@@ -49,9 +48,8 @@ document.getElementById("login-btn").onclick = async () => {
     if (error) {
         document.getElementById("login-error").innerText = "Access Denied.";
     } else {
-        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("login-screen").style.display = "none";
         document.getElementById("dashboard").style.display = "flex";
-        document.getElementById("dashboard").classList.remove("hidden");
     }
 };
 
