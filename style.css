@@ -52,7 +52,7 @@
 .tcg-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    gap: 25px;
     margin-top: 20px;
 }
 
@@ -71,6 +71,7 @@
 .tcg-body h3 {
     color: #00ff88;
     margin-bottom: 6px;
+    font-family: 'Minecraft', 'Minecraftia', sans-serif;
 }
 
 .tcg-body p {
@@ -161,124 +162,3 @@
     box-shadow: 0 2px 0 #1b5e20;
 }
 
-/* =========================================================
-   TCG CARD GRID
-========================================================= */
-
-.tcg-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
-}
-
-/* =========================================================
-   TCG CARD BASE
-========================================================= */
-
-.tcg-card {
-    background: #1b263b;
-    border: 3px solid #2e7d32;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease;
-}
-
-.tcg-card:hover {
-    transform: translateY(-4px);
-}
-
-/* Glint overlay */
-.tcg-card::after {
-    content: "";
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        120deg,
-        transparent 0%,
-        rgba(0, 255, 136, 0.25) 50%,
-        transparent 100%
-    );
-    transform: rotate(25deg);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.tcg-card:hover::after {
-    opacity: 1;
-    animation: glint 0.8s ease forwards;
-}
-
-@keyframes glint {
-    0% { transform: translate(-150%, -150%) rotate(25deg); }
-    100% { transform: translate(150%, 150%) rotate(25deg); }
-}
-
-/* =========================================================
-   IMAGE
-========================================================= */
-
-.tcg-img img {
-    width: 100%;
-    border-radius: 6px;
-    border: 2px solid #2e7d32;
-    display: block;
-}
-
-/* =========================================================
-   BODY TEXT
-========================================================= */
-
-.tcg-body {
-    margin-top: 10px;
-    color: #d0d0d0;
-}
-
-.tcg-body h3 {
-    color: #00ff88;
-    margin-bottom: 6px;
-    font-family: 'Minecraft', 'Minecraftia', sans-serif;
-}
-
-.tcg-body p {
-    font-size: 0.9rem;
-    margin-bottom: 10px;
-}
-
-/* =========================================================
-   STATS
-========================================================= */
-
-.tcg-stats {
-    font-size: 0.8rem;
-    color: #9f9f9f;
-    margin-bottom: 10px;
-}
-
-/* =========================================================
-   BUTTON
-========================================================= */
-
-.tcg-card .btn {
-    display: inline-block;
-    padding: 8px 14px;
-    background: #2e7d32;
-    color: white;
-    border: 2px solid #1b5e20;
-    box-shadow: 0 3px 0 #1b5e20;
-    text-decoration: none;
-    font-family: 'Minecraft', 'Minecraftia', sans-serif;
-    text-transform: uppercase;
-    font-size: 0.85rem;
-}
-
-.tcg-card .btn:hover {
-    background: #43a047;
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 #1b5e20;
