@@ -25,35 +25,42 @@
     <!-- MAIN CONTENT -->
     <main class="container schematics-page">
         <h2 class="page-title" style="color:#00ff88; margin-bottom:1rem;">Minecraft Schematics</h2>
-        <p style="color:#b0b0b0; margin-bottom:2rem;">Download custom-made builds for your world.</p>
+        <p style="color:#b0b0b0; margin-bottom:2rem;">Click through to view each schematic.</p>
 
-        <!-- SCHEMATICS CAROUSEL -->
-        <div class="schematic-carousel">
+        <!-- ============================
+             SCHEMATICS SLIDESHOW
+        ============================= -->
+        <div class="schematic-slideshow">
 
-            <!-- CLOCK TOWER -->
-            <div class="item-card">
+            <!-- SLIDE 1 -->
+            <div class="schematic-slide active item-card">
                 <img src="images/ClockTower.png" alt="Clock Tower">
                 <h3>Clock Tower</h3>
                 <p>A tall medieval-style clock tower perfect for towns or spawn areas.</p>
                 <a href="schematics/ClockTower.litematic" class="btn" download>Download</a>
             </div>
 
-            <!-- DARK OAK HOUSE -->
-            <div class="item-card">
+            <!-- SLIDE 2 -->
+            <div class="schematic-slide item-card">
                 <img src="images/DarkOak.png" alt="Dark Oak House">
                 <h3>Dark Oak House</h3>
                 <p>Custom made dark oak trees, perfect for a fantasy theme.</p>
                 <a href="schematics/DarkOak.litematic" class="btn" download>Download</a>
             </div>
 
-            <!-- LIGHTHOUSE -->
-            <div class="item-card">
+            <!-- SLIDE 3 -->
+            <div class="schematic-slide item-card">
                 <img src="images/LightHouse.png" alt="Lighthouse">
                 <h3>Lighthouse</h3>
                 <p>A bright and detailed lighthouse perfect for coastal builds.</p>
                 <a href="schematics/Lighthouse.litematic" class="btn" download>Download</a>
             </div>
 
+            <!-- SLIDESHOW CONTROLS -->
+            <div class="schematic-controls">
+                <button class="btn" id="prev-schematic">Prev</button>
+                <button class="btn" id="next-schematic">Next</button>
+            </div>
         </div>
 
         <!-- HOW TO USE -->
@@ -74,21 +81,41 @@
         <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
     </footer>
 
-    <!-- Fade-in script -->
+    <!-- Fade-in script + slideshow script -->
     <script>
-    window.addEventListener("load", () => {
-        document.querySelectorAll("img, iframe").forEach(el => {
-            if (el.complete) {
-                el.classList.add("loaded");
-            } else {
-                el.addEventListener("load", () => {
+        // Fade-in images
+        window.addEventListener("load", () => {
+            document.querySelectorAll("img, iframe").forEach(el => {
+                if (el.complete) {
                     el.classList.add("loaded");
-                });
-            }
+                } else {
+                    el.addEventListener("load", () => {
+                        el.classList.add("loaded");
+                    });
+                }
+            });
         });
-    });
+
+        // Slideshow logic
+        const slides = document.querySelectorAll(".schematic-slide");
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.classList.toggle("active", i === index);
+            });
+        }
+
+        document.getElementById("next-schematic").addEventListener("click", () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        });
+
+        document.getElementById("prev-schematic").addEventListener("click", () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        });
     </script>
 
 </body>
 </html>
-
