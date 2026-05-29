@@ -5,7 +5,11 @@
 /* Reset body margin for admin pages so no white border appears */
 body.admin {
     margin: 0;
+    padding: 0;          /* ← ADDED */
     background-color: #0d1b2a;
+    width: 100vw;        /* ← ADDED */
+    height: 100vh;       /* ← ADDED */
+    overflow: hidden;    /* ← ADDED */
 }
 
 /* Main admin wrapper */
@@ -243,4 +247,5 @@ body.admin {
     flex-direction: column;
     gap: 15px;
 }
+
 
