@@ -162,18 +162,41 @@
     box-shadow: 0 2px 0 #1b5e20;
 }
 
-/* MEMBER GRID */
+/* =========================================================
+   MEMBERS PAGE — CLEAN GRID + GLOW EFFECTS
+========================================================= */
+
 .member-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
-    margin-top: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
 }
 
 /* MEMBER CARD */
 .member-card {
-    text-align: center;
+    background: #1b263b;
+    border: 3px solid #2e7d32;
+    border-radius: 10px;
     padding: 20px;
+    text-align: center;
+
+    /* Glow */
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.25);
+
+    /* Hover animation */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    /* Make all cards same height */
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.member-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.55);
 }
 
 /* MEMBER IMAGE */
@@ -182,9 +205,28 @@
     max-width: 180px;
     border-radius: 8px;
     border: 3px solid #2e7d32;
-    margin-bottom: 10px;
+    margin: 0 auto 15px auto;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+
+    /* Glow */
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.35);
+    transition: box-shadow 0.2s ease;
+}
+
+.member-card:hover .member-img {
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+}
+
+/* MEMBER TEXT */
+.member-card h3 {
+    color: #00ff88;
+    margin-bottom: 8px;
+    font-family: 'Minecraft', 'Minecraftia', sans-serif;
+}
+
+.member-card p {
+    color: #d0d0d0;
+    font-family: 'Minecraft', 'Minecraftia', sans-serif;
+    font-size: 0.9rem;
 }
 
