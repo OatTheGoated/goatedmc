@@ -22,7 +22,7 @@ body {
 img {
     opacity: 0;
     transition: opacity 0.4s ease;
-    background-color: #0f1a25; /* placeholder while loading */
+    background-color: #0f1a25;
 }
 
 img.loaded {
@@ -160,6 +160,31 @@ iframe {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
+}
+
+/* =========================================================
+   SWIPEABLE SCHEMATICS CAROUSEL (NEW)
+   ========================================================= */
+.schematic-carousel {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 1rem;
+}
+
+.schematic-carousel::-webkit-scrollbar {
+    height: 8px;
+}
+
+.schematic-carousel::-webkit-scrollbar-thumb {
+    background: #00ff88;
+    border-radius: 10px;
+}
+
+.schematic-carousel .item-card {
+    min-width: 280px;
+    scroll-snap-align: start;
 }
 
 /* =========================================================
