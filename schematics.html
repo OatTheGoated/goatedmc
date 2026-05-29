@@ -34,43 +34,32 @@
             <input type="text" id="schematic-search" placeholder="Search schematics..." class="search-bar">
 
             <!-- ============================
-                SCHEMATICS SLIDESHOW
+                FEATURED SCHEMATICS (NO IMAGES)
             ============================= -->
-            <div class="schematic-slideshow">
+            <div class="featured-schematics">
 
-                <!-- SLIDE 1 -->
-                <div class="schematic-slide active item-card">
-                    <img src="images/ClockTower.webp" loading="lazy">
+                <div class="schematic-feature item-card">
                     <h3>Clock Tower</h3>
                     <p>A tall medieval-style clock tower perfect for towns or spawn areas.</p>
                     <a href="schematics/ClockTower.litematic" class="btn" download>Download</a>
                 </div>
 
-                <!-- SLIDE 2 -->
-                <div class="schematic-slide item-card">
-                    <img src="images/DarkOak.webp" loading="lazy">
+                <div class="schematic-feature item-card">
                     <h3>Dark Oak Tree</h3>
                     <p>Custom made dark oak trees, perfect for a fantasy theme.</p>
                     <a href="schematics/DarkOak.litematic" class="btn" download>Download</a>
                 </div>
 
-                <!-- SLIDE 3 -->
-                <div class="schematic-slide item-card">
-                    <img src="images/LightHouse.webp" loading="lazy">
+                <div class="schematic-feature item-card">
                     <h3>Lighthouse</h3>
                     <p>A bright and detailed lighthouse perfect for coastal builds.</p>
                     <a href="schematics/Lighthouse.litematic" class="btn" download>Download</a>
                 </div>
 
-                <!-- SLIDESHOW CONTROLS -->
-                <div class="schematic-controls">
-                    <button class="btn" id="prev-schematic">Prev</button>
-                    <button class="btn" id="next-schematic">Next</button>
-                </div>
             </div>
 
             <!-- ============================
-                TCG CARD GRID (AUTO FROM JSON)
+                ALL SCHEMATICS (AUTO FROM JSON)
             ============================= -->
             <h2 style="color:#00ff88; margin-top:3rem;">All Schematics</h2>
 
@@ -99,62 +88,26 @@
 
 </div>
 
-<!-- Fade-in script + slideshow + search -->
+<!-- ===============================
+     SEARCH FUNCTION
+=============================== -->
 <script>
-    // Fade-in images
-    window.addEventListener("load", () => {
-        document.querySelectorAll("img, iframe").forEach(el => {
-            if (el.complete) {
-                el.classList.add("loaded");
-            } else {
-                el.addEventListener("load", () => {
-                    el.classList.add("loaded");
-                });
-            }
-        });
-    });
-
-    // Slideshow logic
-    const slides = document.querySelectorAll(".schematic-slide");
-    let currentSlide = 0;
-
-    function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.toggle("active", i === index);
-        });
-    }
-
-    document.getElementById("next-schematic").addEventListener("click", () => {
-        currentSlide = (currentSlide + 1) % slides.length;
-        showSlide(currentSlide);
-    });
-
-    document.getElementById("prev-schematic").addEventListener("click", () => {
-        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-        showSlide(currentSlide);
-    });
-
-    // SEARCH FUNCTION
     const searchInput = document.getElementById("schematic-search");
 
     searchInput.addEventListener("input", () => {
         const query = searchInput.value.toLowerCase();
+        const cards = document.querySelectorAll(".tcg-card, .schematic-feature");
 
-        slides.forEach((slide, index) => {
-            const title = slide.querySelector("h3").textContent.toLowerCase();
-            slide.style.display = title.includes(query) ? "block" : "none";
+        cards.forEach(card => {
+            const title = card.querySelector("h3").textContent.toLowerCase();
+            card.style.display = title.includes(query) ? "block" : "none";
         });
-
-        const visibleSlides = [...slides].filter(s => s.style.display !== "none");
-        if (visibleSlides.length > 0) {
-            slides.forEach(s => s.classList.remove("active"));
-            visibleSlides[0].classList.add("active");
-        }
     });
 </script>
 
 <!-- ===============================
      LOAD TCG CARDS FROM JSON
+     (NO IMAGES, KEEP DOWNLOAD BUTTON)
 =============================== -->
 <script>
 fetch("/goatedmc/schematics.json")
@@ -169,10 +122,6 @@ fetch("/goatedmc/schematics.json")
             card.className = "tcg-card";
 
             card.innerHTML = `
-                <div class="tcg-img">
-                    <img src="${item.image}" alt="${key}">
-                </div>
-
                 <div class="tcg-body">
                     <h3>${key.replace(/([A-Z])/g, ' $1').trim()}</h3>
                     <p>${item.description || "A custom Minecraft schematic."}</p>
@@ -192,4 +141,5 @@ fetch("/goatedmc/schematics.json")
 
 </body>
 </html>
+
 
