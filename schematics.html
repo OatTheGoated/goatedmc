@@ -25,7 +25,10 @@
     <!-- MAIN CONTENT -->
     <main class="container schematics-page">
         <h2 class="page-title" style="color:#00ff88; margin-bottom:1rem;">Minecraft Schematics</h2>
-        <p style="color:#b0b0b0; margin-bottom:2rem;">Click through to view each schematic.</p>
+        <p style="color:#b0b0b0; margin-bottom:1rem;">Search or click through to view each schematic.</p>
+
+        <!-- SEARCH BAR -->
+        <input type="text" id="schematic-search" placeholder="Search schematics..." class="search-bar">
 
         <!-- ============================
              SCHEMATICS SLIDESHOW
@@ -81,7 +84,7 @@
         <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
     </footer>
 
-    <!-- Fade-in script + slideshow script -->
+    <!-- Fade-in script + slideshow + search -->
     <script>
         // Fade-in images
         window.addEventListener("load", () => {
@@ -115,7 +118,32 @@
             currentSlide = (currentSlide - 1 + slides.length) % slides.length;
             showSlide(currentSlide);
         });
+
+        // SEARCH FUNCTION
+        const searchInput = document.getElementById("schematic-search");
+
+        searchInput.addEventListener("input", () => {
+            const query = searchInput.value.toLowerCase();
+
+            slides.forEach((slide, index) => {
+                const title = slide.querySelector("h3").textContent.toLowerCase();
+
+                if (title.includes(query)) {
+                    slide.style.display = "block";
+                } else {
+                    slide.style.display = "none";
+                }
+            });
+
+            // Reset slideshow to first visible result
+            const visibleSlides = [...slides].filter(s => s.style.display !== "none");
+            if (visibleSlides.length > 0) {
+                slides.forEach(s => s.classList.remove("active"));
+                visibleSlides[0].classList.add("active");
+            }
+        });
     </script>
 
 </body>
 </html>
+
