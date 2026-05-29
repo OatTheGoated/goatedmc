@@ -159,24 +159,23 @@ iframe {
 }
 
 /* =========================================================
-   SWIPEABLE SCHEMATICS CAROUSEL (FULL WIDTH + FIXED)
+   SWIPEABLE SCHEMATICS CAROUSEL (FINAL + FIXED)
    ========================================================= */
 .schematic-carousel {
     display: flex;
-    gap: 1.5rem;
+    gap: 2rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
 
-    /* FULL WIDTH FIX */
+    /* FORCE full-width scrolling */
     width: 100vw;
     margin-left: calc(50% - 50vw);
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-bottom: 1rem;
+    padding: 1rem 2rem;
 }
 
+/* Neon scrollbar */
 .schematic-carousel::-webkit-scrollbar {
-    height: 8px;
+    height: 10px;
 }
 
 .schematic-carousel::-webkit-scrollbar-thumb {
@@ -184,8 +183,10 @@ iframe {
     border-radius: 10px;
 }
 
+/* FORCE cards to be wider so scrolling is visible */
 .schematic-carousel .item-card {
-    min-width: 350px;
+    min-width: 420px;
+    max-width: 420px;
     scroll-snap-align: start;
 }
 
@@ -286,4 +287,3 @@ footer {
 footer p {
     color: #b0b0b0;
 }
-
