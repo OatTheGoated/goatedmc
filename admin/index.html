@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>GoatedMC Admin Panel</title>
-    <link rel="stylesheet" href="style.css">
+
+    <!-- Correct GitHub Pages CSS path -->
+    <link rel="stylesheet" href="https://oatthegoated.github.io/goatedmc/admin/style.css">
 </head>
 <body>
 
@@ -13,9 +15,10 @@
 </div>
 
 <!-- Login Screen -->
-<div id="login-screen" class="hidden">
+<div id="login-screen">
     <div class="terminal-login">
         <h2>GoatedMC Admin Terminal</h2>
+
         <div class="terminal-line">Username:</div>
         <input id="login-email" type="email" placeholder="admin@example.com">
 
@@ -28,7 +31,7 @@
 </div>
 
 <!-- Dashboard -->
-<div id="dashboard" class="hidden">
+<div id="dashboard">
 
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -90,7 +93,9 @@
     </main>
 </div>
 
+<!-- Supabase + App Logic -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
+
 </body>
 </html>
