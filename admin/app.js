@@ -1,7 +1,7 @@
 // INIT SUPABASE
 const client = supabase.createClient(
-    "YOUR_SUPABASE_URL",
-    "YOUR_SUPABASE_ANON_KEY"
+    "https://gthgxmyccwsygbopksgz.supabase.co",
+    "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
 // BOOT SEQUENCE
