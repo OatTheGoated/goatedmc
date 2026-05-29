@@ -62,5 +62,21 @@
     <footer>
         <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
     </footer>
+
+    <!-- Fade-in script goes HERE, before </body> -->
+    <script>
+    window.addEventListener("load", () => {
+        document.querySelectorAll("img, iframe").forEach(el => {
+            if (el.complete) {
+                el.classList.add("loaded");
+            } else {
+                el.addEventListener("load", () => {
+                    el.classList.add("loaded");
+                });
+            }
+        });
+    });
+    </script>
+
 </body>
 </html>
