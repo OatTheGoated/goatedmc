@@ -1,12 +1,12 @@
 /* =========================================================
-   ADMIN PANEL — GLOBAL
+   ADMIN PANEL — GLOBAL (FULLY ISOLATED)
 ========================================================= */
-.admin * {
+#admin-panel * {
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.admin {
+#admin-panel {
     margin: 0;
     padding: 0;
     background-color: #0d1b2a;
@@ -18,7 +18,7 @@
 /* =========================================================
    BOOT SCREEN
 ========================================================= */
-.admin #boot-screen {
+#admin-panel #boot-screen {
     position: absolute;
     inset: 0;
     background: #000;
@@ -33,13 +33,12 @@
 /* =========================================================
    LOGIN SCREEN
 ========================================================= */
-.admin #login-screen {
+#admin-panel #login-screen {
     position: absolute;
     inset: 0;
     height: 100vh;
     width: 100vw;
 
-    /* PERFECT CENTERING */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,7 +46,7 @@
     z-index: 9;
 }
 
-.admin .terminal-login {
+#admin-panel .terminal-login {
     background: #1b263b;
     padding: 30px;
     width: 350px;
@@ -56,17 +55,17 @@
     box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
 }
 
-.admin .terminal-login h2 {
+#admin-panel .terminal-login h2 {
     text-align: center;
     margin-bottom: 20px;
     color: #00ff88;
 }
 
-.admin .terminal-line {
+#admin-panel .terminal-line {
     margin: 10px 0 5px;
 }
 
-.admin .terminal-login input {
+#admin-panel .terminal-login input {
     width: 100%;
     padding: 10px;
     background: #0f1a25;
@@ -76,7 +75,7 @@
     margin-bottom: 10px;
 }
 
-.admin #login-btn {
+#admin-panel #login-btn {
     width: 100%;
     padding: 10px;
     background: #00ff88;
@@ -88,11 +87,11 @@
     transition: 0.2s;
 }
 
-.admin #login-btn:hover {
+#admin-panel #login-btn:hover {
     background: #00cc6d;
 }
 
-.admin #login-error {
+#admin-panel #login-error {
     margin-top: 10px;
     color: #ff5555;
     text-align: center;
@@ -101,7 +100,7 @@
 /* =========================================================
    DASHBOARD LAYOUT
 ========================================================= */
-.admin #dashboard {
+#admin-panel #dashboard {
     position: absolute;
     inset: 0;
     display: flex;
@@ -112,7 +111,7 @@
 /* =========================================================
    SIDEBAR
 ========================================================= */
-.admin .sidebar {
+#admin-panel .sidebar {
     width: 250px;
     background: #1b263b;
     border-right: 2px solid #00ff88;
@@ -122,14 +121,14 @@
     gap: 20px;
 }
 
-.admin .logo {
+#admin-panel .logo {
     color: #00ff88;
     text-align: center;
     font-size: 1.8rem;
     margin-bottom: 20px;
 }
 
-.admin .nav-btn {
+#admin-panel .nav-btn {
     width: 100%;
     padding: 12px;
     background: #0f1a25;
@@ -141,8 +140,8 @@
     transition: 0.2s;
 }
 
-.admin .nav-btn:hover,
-.admin .nav-btn.active {
+#admin-panel .nav-btn:hover,
+#admin-panel .nav-btn.active {
     background: #00ff88;
     color: #1b263b;
 }
@@ -150,21 +149,21 @@
 /* =========================================================
    MAIN CONTENT
 ========================================================= */
-.admin main {
+#admin-panel main {
     flex: 1;
     padding: 30px;
     overflow-y: auto;
 }
 
-.admin .page {
+#admin-panel .page {
     display: none;
 }
 
-.admin .page.active {
+#admin-panel .page.active {
     display: block;
 }
 
-.admin h2 {
+#admin-panel h2 {
     color: #00ff88;
     margin-bottom: 20px;
 }
@@ -172,7 +171,7 @@
 /* =========================================================
    CARDS + UPLOAD ZONES
 ========================================================= */
-.admin .card {
+#admin-panel .card {
     background: #1b263b;
     padding: 20px;
     border-radius: 10px;
@@ -180,25 +179,25 @@
     margin-bottom: 20px;
 }
 
-.admin .drop-zone {
+#admin-panel .drop-zone {
     text-align: center;
     padding: 40px;
     cursor: pointer;
     transition: 0.2s;
 }
 
-.admin .drop-zone:hover,
-.admin .drop-zone.hover {
+#admin-panel .drop-zone:hover,
+#admin-panel .drop-zone.hover {
     background: #0f1a25;
     box-shadow: 0 0 15px #00ff88;
 }
 
-.admin .drop-zone input {
+#admin-panel .drop-zone input {
     display: none;
 }
 
-.admin .card input,
-.admin .card textarea {
+#admin-panel .card input,
+#admin-panel .card textarea {
     width: 100%;
     padding: 10px;
     background: #0f1a25;
@@ -208,7 +207,7 @@
     margin-bottom: 10px;
 }
 
-.admin .purple-btn {
+#admin-panel .purple-btn {
     background: #00ff88;
     color: #1b263b;
     padding: 10px 15px;
@@ -219,19 +218,20 @@
     transition: 0.2s;
 }
 
-.admin .purple-btn:hover {
+#admin-panel .purple-btn:hover {
     background: #00cc6d;
 }
 
-.admin #upload-status {
+#admin-panel #upload-status {
     margin-top: 10px;
 }
 
 /* =========================================================
    MANAGE LIST
 ========================================================= */
-.admin #schem-list {
+#admin-panel #schem-list {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
+
