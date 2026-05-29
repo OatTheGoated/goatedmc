@@ -14,25 +14,25 @@ if (document.body.classList.contains("admin")) {
     // ===============================
     // DOM ELEMENTS
     // ===============================
-    const loginScreen = document.getElementById("login-screen");
-    const dashboard = document.getElementById("dashboard");
-    const bootScreen = document.getElementById("boot-screen");
-    const bootText = document.getElementById("boot-text");
+    const loginScreen   = document.getElementById("login-screen");
+    const dashboard     = document.getElementById("dashboard");
+    const bootScreen    = document.getElementById("boot-screen");
+    const bootText      = document.getElementById("boot-text");
 
-    const loginBtn = document.getElementById("login-btn");
-    const logoutBtn = document.getElementById("logout-btn");
+    const loginBtn      = document.getElementById("login-btn");
+    const logoutBtn     = document.getElementById("logout-btn");
 
-    const uploadBtn = document.getElementById("upload-btn");
-    const uploadStatus = document.getElementById("upload-status");
+    const uploadBtn     = document.getElementById("upload-btn");
+    const uploadStatus  = document.getElementById("upload-status");
 
-    const schemInput = document.getElementById("schematic-input");
-    const imgInput = document.getElementById("image-input");
+    const schemInput    = document.getElementById("schematic-input");
+    const imgInput      = document.getElementById("image-input");
 
     // ===============================
     // INITIAL STATE
     // ===============================
     loginScreen.style.display = "none";
-    dashboard.style.display = "none";
+    dashboard.style.display   = "none";
 
     // ===============================
     // BOOT SEQUENCE
@@ -70,13 +70,13 @@ if (document.body.classList.contains("admin")) {
         list.innerHTML = "<p>Loading...</p>";
 
         const { data, error } = await client
-          .from("schematica")
+            .from("schematica")
             .select("*")
             .order("id", { ascending: false });
 
         if (error) {
-            list.innerHTML = "<p>Failed to load schematics.</p>";
             console.error(error);
+            list.innerHTML = "<p>Failed to load schematics.</p>";
             return;
         }
 
@@ -97,7 +97,7 @@ if (document.body.classList.contains("admin")) {
                 <p><strong>Tags:</strong> ${item.tags.join(", ")}</p>
 
                 <img src="https://gthgxmyccwsygbopksgz.supabase.co/storage/v1/object/public/schematics/images/${item.image}"
-                    style="width: 200px; border: 1px solid #00ff88; border-radius: 6px; margin-bottom: 10px;">
+                     style="width: 200px; border: 1px solid #00ff88; border-radius: 6px; margin-bottom: 10px;">
 
                 <p><strong>File:</strong> ${item.file}</p>
             `;
@@ -111,7 +111,7 @@ if (document.body.classList.contains("admin")) {
     // ===============================
     loginBtn.onclick = async () => {
         const email = document.getElementById("login-email").value.trim();
-        const pass = document.getElementById("login-password").value.trim();
+        const pass  = document.getElementById("login-password").value.trim();
         const errorBox = document.getElementById("login-error");
 
         if (!email || !pass) {
@@ -119,7 +119,10 @@ if (document.body.classList.contains("admin")) {
             return;
         }
 
-        const { error } = await client.auth.signInWithPassword({ email, password: pass });
+        const { error } = await client.auth.signInWithPassword({
+            email,
+            password: pass
+        });
 
         if (error) {
             errorBox.innerText = "Access Denied.";
@@ -135,14 +138,17 @@ if (document.body.classList.contains("admin")) {
     document.querySelectorAll(".nav-btn").forEach(btn => {
         btn.onclick = () => {
 
-            document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+            document.querySelectorAll(".nav-btn")
+                .forEach(b => b.classList.remove("active"));
+
             btn.classList.add("active");
 
-            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+            document.querySelectorAll(".page")
+                .forEach(p => p.classList.remove("active"));
+
             const page = document.getElementById("page-" + btn.dataset.page);
             page.classList.add("active");
 
-            // Load schematics when entering Manage page
             if (btn.dataset.page === "manage") {
                 loadSchematics();
             }
@@ -153,7 +159,7 @@ if (document.body.classList.contains("admin")) {
     // DRAG & DROP HELPERS
     // ===============================
     function setupDropZone(zoneId, inputId) {
-        const zone = document.getElementById(zoneId);
+        const zone  = document.getElementById(zoneId);
         const input = document.getElementById(inputId);
 
         zone.onclick = () => input.click();
@@ -182,7 +188,7 @@ if (document.body.classList.contains("admin")) {
         uploadStatus.innerText = "Uploading...";
 
         const schemFile = schemInput.files[0];
-        const imgFile = imgInput.files[0];
+        const imgFile   = imgInput.files[0];
 
         if (!schemFile || !imgFile) {
             uploadStatus.innerText = "Missing files.";
@@ -196,32 +202,28 @@ if (document.body.classList.contains("admin")) {
             .map(t => t.trim())
             .filter(Boolean);
 
-    try {
-    // Upload schematic file
-    await client.storage
-        .from("schematics")
-        .upload(`schems/${schemFile.name}`, schemFile);
+        try {
+            await client.storage
+                .from("schematics")
+                .upload(`schems/${schemFile.name}`, schemFile);
 
-    // Upload image file
-    await client.storage
-        .from("schematics")
-        .upload(`images/${imgFile.name}`, imgFile);
+            await client.storage
+                .from("schematics")
+                .upload(`images/${imgFile.name}`, imgFile);
 
-    // Insert into the correct table (schematica)
-    await client.from("schematica").insert({
-        name,
-        description: desc,
-        tags,
-        file: schemFile.name,
-        image: imgFile.name
-    });
+            await client.from("schematica").insert({
+                name,
+                description: desc,
+                tags,
+                file: schemFile.name,
+                image: imgFile.name
+            });
 
-    uploadStatus.innerText = "Upload complete!";
-}  catch (err) {
-    uploadStatus.innerText = "Upload failed.";
-    console.error(err);
-}
-
+            uploadStatus.innerText = "Upload complete!";
+        } catch (err) {
+            console.error(err);
+            uploadStatus.innerText = "Upload failed.";
+        }
     };
 
     // ===============================
