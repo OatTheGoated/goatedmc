@@ -1,5 +1,5 @@
 // INIT SUPABASE
-const supabase = supabase.createClient(
+const client = supabase.createClient(
     "YOUR_SUPABASE_URL",
     "YOUR_SUPABASE_ANON_KEY"
 );
@@ -36,7 +36,7 @@ document.getElementById("login-btn").onclick = async () => {
     const email = document.getElementById("login-email").value;
     const pass = document.getElementById("login-password").value;
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await client.auth.signInWithPassword({
         email: email,
         password: pass
     });
@@ -96,13 +96,13 @@ document.getElementById("upload-btn").onclick = async () => {
     const tags = document.getElementById("schem-tags").value.split(",");
 
     // Upload schematic
-    await supabase.storage.from("schematics").upload(`schems/${schemFile.name}`, schemFile);
+    await client.storage.from("schematics").upload(`schems/${schemFile.name}`, schemFile);
 
     // Upload image
-    await supabase.storage.from("schematics").upload(`images/${imgFile.name}`, imgFile);
+    await client.storage.from("schematics").upload(`images/${imgFile.name}`, imgFile);
 
     // Insert DB entry
-    await supabase.from("schematics").insert({
+    await client.from("schematics").insert({
         name: name,
         description: desc,
         tags: tags,
@@ -115,6 +115,7 @@ document.getElementById("upload-btn").onclick = async () => {
 
 // LOGOUT
 document.getElementById("logout-btn").onclick = async () => {
-    await supabase.auth.signOut();
+    await client.auth.signOut();
     location.reload();
 };
+
