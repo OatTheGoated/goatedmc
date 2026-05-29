@@ -1,104 +1,311 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GoatedMC Admin Panel</title>
-    <link rel="stylesheet" href="style.css">
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-    <!-- Prevent dashboard/login from flashing before JS loads -->
-    <style>
-        #dashboard,
-        #login-screen {
-            display: none !important;
-        }
-    </style>
-</head>
-<body>
+body {
+    background-color: #0d1b2a;
+    color: #e0e0e0;
+    line-height: 1.6;
+}
 
-<!-- Terminal Boot Screen -->
-<div id="boot-screen">
-    <div id="boot-text"></div>
-</div>
+/* =========================================================
+   IMAGE FADE-IN
+   ========================================================= */
+img {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    background-color: #0f1a25;
+}
 
-<!-- Login Screen -->
-<div id="login-screen" class="hidden">
-    <div class="terminal-login">
-        <h2>GoatedMC Admin Terminal</h2>
-        <div class="terminal-line">Username:</div>
-        <input id="login-email" type="email" placeholder="admin@example.com">
+img.loaded {
+    opacity: 1;
+}
 
-        <div class="terminal-line">Password:</div>
-        <input id="login-password" type="password" placeholder="••••••••">
+iframe {
+    opacity: 1 !important;
+}
 
-        <button id="login-btn">Access Terminal</button>
-        <div id="login-error"></div>
-    </div>
-</div>
+.item-card img,
+.video-container iframe {
+    min-height: 200px;
+}
 
-<!-- Dashboard -->
-<div id="dashboard" class="hidden">
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+}
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <h1 class="logo">GoatedMC</h1>
+/* =========================================================
+   CENTER THE SCHEMATICS PAGE
+   ========================================================= */
+.schematics-page {
+    text-align: center;
+}
 
-        <nav>
-            <button class="nav-btn active" data-page="upload">📤 Upload</button>
-            <button class="nav-btn" data-page="manage">📁 Manage Schematics</button>
-            <button class="nav-btn" data-page="settings">⚙️ Settings</button>
-        </nav>
-    </aside>
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+.navbar {
+    background-color: #1b263b;
+    padding: 1rem 0;
+    border-bottom: 2px solid #00ff88;
+}
 
-    <!-- Main Content -->
-    <main>
+.navbar .logo {
+    color: #00ff88;
+    font-size: 1.8rem;
+}
 
-        <!-- Upload Page -->
-        <section id="page-upload" class="page active">
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+}
 
-            <h2>Upload Schematic</h2>
+.nav-links a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
 
-            <div class="card drop-zone" id="schematic-drop">
-                <p>Drop your .schem file here or click to upload</p>
-                <input type="file" id="schematic-input" accept=".schem">
-            </div>
+.nav-links a:hover {
+    color: #00ff88;
+}
 
-            <div class="card drop-zone" id="image-drop">
-                <p>Drop your WebP image here or click to upload</p>
-                <input type="file" id="image-input" accept=".webp">
-            </div>
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+.hero {
+    background: linear-gradient(to bottom right, #1b263b, #0f3460);
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
 
-            <div class="card">
-                <label>Name</label>
-                <input id="schem-name" type="text">
+.hero h2 {
+    color: #00ff88;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
 
-                <label>Description</label>
-                <textarea id="schem-desc"></textarea>
+.hero p {
+    color: #b0b0b0;
+    font-size: 1.2rem;
+}
 
-                <label>Tags (comma separated)</label>
-                <input id="schem-tags" type="text">
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn {
+    display: inline-block;
+    background-color: #00ff88;
+    color: #1b263b;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s, background-color 0.3s;
+}
 
-                <button id="upload-btn" class="purple-btn">Upload</button>
-                <div id="upload-status"></div>
-            </div>
+.btn:hover {
+    background-color: #00cc6d;
+    transform: translateY(-3px);
+}
 
-        </section>
+/* =========================================================
+   FEATURE CARDS
+   ========================================================= */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
 
-        <!-- Manage Page -->
-        <section id="page-manage" class="page">
-            <h2>Manage Schematics</h2>
-            <div id="schem-list"></div>
-        </section>
+.feature-card {
+    background-color: #1b263b;
+    padding: 2rem;
+    border-radius: 10px;
+    border: 1px solid #00ff88;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-        <!-- Settings Page -->
-        <section id="page-settings" class="page">
-            <h2>Settings</h2>
-            <button id="logout-btn" class="purple-btn">Logout</button>
-        </section>
+.feature-card h3 {
+    color: #00ff88;
+    margin-bottom: 1rem;
+}
 
-    </main>
-</div>
+.feature-card p {
+    color: #b0b0b0;
+    margin-bottom: 1.5rem;
+    min-height: 60px;
+}
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
-</body>
-</html>
+/* =========================================================
+   UNIVERSAL GRID
+   ========================================================= */
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+/* =========================================================
+   SEARCH BAR
+   ========================================================= */
+.search-bar {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.7rem 1rem;
+    margin: 0 auto 2rem auto;
+    display: block;
+    border-radius: 8px;
+    border: 2px solid #00ff88;
+    background-color: #0f1a25;
+    color: #e0e0e0;
+    font-size: 1rem;
+    outline: none;
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.search-bar:focus {
+    border-color: #00cc6d;
+    box-shadow: 0 0 10px #00ff88;
+}
+
+/* =========================================================
+   SCHEMATICS SLIDESHOW
+   ========================================================= */
+.schematic-slideshow {
+    max-width: 600px;
+    margin: 2rem auto;
+    position: relative;
+}
+
+.schematic-slide {
+    display: none;
+}
+
+.schematic-slide.active {
+    display: block;
+}
+
+.schematic-controls {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* =========================================================
+   UNIVERSAL CARD STYLE
+   ========================================================= */
+.item-card {
+    background-color: #1b263b;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #00ff88;
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.item-card img {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #00ff88;
+}
+
+.item-card h3 {
+    color: #00ff88;
+    margin-bottom: 0.5rem;
+}
+
+.item-card p {
+    color: #b0b0b0;
+    margin-bottom: 1rem;
+}
+
+/* =========================================================
+   VIDEO GRID
+   ========================================================= */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2rem;
+}
+
+.video-card {
+    background-color: #16213e;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #00ff88;
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.video-card h3 {
+    color: #00ff88;
+    margin-bottom: 0.5rem;
+}
+
+.video-card p {
+    color: #b0b0b0;
+    margin-bottom: 1rem;
+}
+
+.video-container iframe {
+    width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    border: none;
+}
+
+/* =========================================================
+   GLOW ANIMATIONS
+   ========================================================= */
+.feature-card:hover,
+.item-card:hover,
+.video-card:hover {
+    box-shadow: 0 0 20px #00ff88;
+    transform: translateY(-5px);
+}
+
+.btn:hover {
+    box-shadow: 0 0 15px #00ff88;
+    transform: translateY(-3px);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    background-color: #1b263b;
+    border-top: 2px solid #00ff88;
+}
+
+footer p {
+    color: #b0b0b0;
+}
