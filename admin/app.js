@@ -63,6 +63,50 @@ if (document.body.classList.contains("admin")) {
     runBoot();
 
     // ===============================
+    // LOAD SCHEMATICS LIST
+    // ===============================
+    async function loadSchematics() {
+        const list = document.getElementById("schem-list");
+        list.innerHTML = "<p>Loading...</p>";
+
+        const { data, error } = await client
+            .from("schematics")
+            .select("*")
+            .order("id", { ascending: false });
+
+        if (error) {
+            list.innerHTML = "<p>Failed to load schematics.</p>";
+            console.error(error);
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            list.innerHTML = "<p>No schematics uploaded yet.</p>";
+            return;
+        }
+
+        list.innerHTML = "";
+
+        data.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+                <h3>${item.name}</h3>
+                <p>${item.description}</p>
+                <p><strong>Tags:</strong> ${item.tags.join(", ")}</p>
+
+                <img src="https://gthgxmyccwsygbopksgz.supabase.co/storage/v1/object/public/schematics/images/${item.image}"
+                    style="width: 200px; border: 1px solid #00ff88; border-radius: 6px; margin-bottom: 10px;">
+
+                <p><strong>File:</strong> ${item.file}</p>
+            `;
+
+            list.appendChild(card);
+        });
+    }
+
+    // ===============================
     // LOGIN
     // ===============================
     loginBtn.onclick = async () => {
@@ -90,11 +134,18 @@ if (document.body.classList.contains("admin")) {
     // ===============================
     document.querySelectorAll(".nav-btn").forEach(btn => {
         btn.onclick = () => {
+
             document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
             btn.classList.add("active");
 
             document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-            document.getElementById("page-" + btn.dataset.page).classList.add("active");
+            const page = document.getElementById("page-" + btn.dataset.page);
+            page.classList.add("active");
+
+            // Load schematics when entering Manage page
+            if (btn.dataset.page === "manage") {
+                loadSchematics();
+            }
         };
     });
 
