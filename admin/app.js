@@ -1,14 +1,37 @@
+// ===============================
 // INIT SUPABASE
+// ===============================
 const client = supabase.createClient(
     "https://gthgxmyccwsygbopksgz.supabase.co",
     "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
-// FORCE-HIDE LOGIN + DASHBOARD ON LOAD
-document.getElementById("login-screen").style.display = "none";
-document.getElementById("dashboard").style.display = "none";
+// ===============================
+// DOM ELEMENTS
+// ===============================
+const loginScreen = document.getElementById("login-screen");
+const dashboard = document.getElementById("dashboard");
+const bootScreen = document.getElementById("boot-screen");
+const bootText = document.getElementById("boot-text");
 
+const loginBtn = document.getElementById("login-btn");
+const logoutBtn = document.getElementById("logout-btn");
+
+const uploadBtn = document.getElementById("upload-btn");
+const uploadStatus = document.getElementById("upload-status");
+
+const schemInput = document.getElementById("schematic-input");
+const imgInput = document.getElementById("image-input");
+
+// ===============================
+// INITIAL STATE
+// ===============================
+loginScreen.style.display = "none";
+dashboard.style.display = "none";
+
+// ===============================
 // BOOT SEQUENCE
+// ===============================
 const bootLines = [
     "Initializing GoatedMC Admin Terminal...",
     "Loading modules...",
@@ -18,7 +41,6 @@ const bootLines = [
 ];
 
 let bootIndex = 0;
-const bootText = document.getElementById("boot-text");
 
 function runBoot() {
     if (bootIndex < bootLines.length) {
@@ -27,33 +49,40 @@ function runBoot() {
         setTimeout(runBoot, 600);
     } else {
         setTimeout(() => {
-            document.getElementById("boot-screen").style.display = "none";
-            document.getElementById("login-screen").style.display = "block";
+            bootScreen.style.display = "none";
+            loginScreen.style.display = "block";
         }, 800);
     }
 }
 
 runBoot();
 
+// ===============================
 // LOGIN
-document.getElementById("login-btn").onclick = async () => {
-    const email = document.getElementById("login-email").value;
-    const pass = document.getElementById("login-password").value;
+// ===============================
+loginBtn.onclick = async () => {
+    const email = document.getElementById("login-email").value.trim();
+    const pass = document.getElementById("login-password").value.trim();
+    const errorBox = document.getElementById("login-error");
 
-    const { error } = await client.auth.signInWithPassword({
-        email: email,
-        password: pass
-    });
+    if (!email || !pass) {
+        errorBox.innerText = "Missing credentials.";
+        return;
+    }
+
+    const { error } = await client.auth.signInWithPassword({ email, password: pass });
 
     if (error) {
-        document.getElementById("login-error").innerText = "Access Denied.";
+        errorBox.innerText = "Access Denied.";
     } else {
-        document.getElementById("login-screen").style.display = "none";
-        document.getElementById("dashboard").style.display = "flex";
+        loginScreen.style.display = "none";
+        dashboard.style.display = "flex";
     }
 };
 
+// ===============================
 // NAVIGATION
+// ===============================
 document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.onclick = () => {
         document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
@@ -64,14 +93,22 @@ document.querySelectorAll(".nav-btn").forEach(btn => {
     };
 });
 
+// ===============================
 // DRAG & DROP HELPERS
+// ===============================
 function setupDropZone(zoneId, inputId) {
     const zone = document.getElementById(zoneId);
     const input = document.getElementById(inputId);
 
     zone.onclick = () => input.click();
-    zone.ondragover = e => { e.preventDefault(); zone.classList.add("hover"); };
+
+    zone.ondragover = e => {
+        e.preventDefault();
+        zone.classList.add("hover");
+    };
+
     zone.ondragleave = () => zone.classList.remove("hover");
+
     zone.ondrop = e => {
         e.preventDefault();
         zone.classList.remove("hover");
@@ -82,43 +119,51 @@ function setupDropZone(zoneId, inputId) {
 setupDropZone("schematic-drop", "schematic-input");
 setupDropZone("image-drop", "image-input");
 
+// ===============================
 // UPLOAD
-document.getElementById("upload-btn").onclick = async () => {
-    const status = document.getElementById("upload-status");
-    status.innerText = "Uploading...";
+// ===============================
+uploadBtn.onclick = async () => {
+    uploadStatus.innerText = "Uploading...";
 
-    const schemFile = document.getElementById("schematic-input").files[0];
-    const imgFile = document.getElementById("image-input").files[0];
+    const schemFile = schemInput.files[0];
+    const imgFile = imgInput.files[0];
 
     if (!schemFile || !imgFile) {
-        status.innerText = "Missing files.";
+        uploadStatus.innerText = "Missing files.";
         return;
     }
 
-    const name = document.getElementById("schem-name").value;
-    const desc = document.getElementById("schem-desc").value;
-    const tags = document.getElementById("schem-tags").value.split(",");
+    const name = document.getElementById("schem-name").value.trim();
+    const desc = document.getElementById("schem-desc").value.trim();
+    const tags = document.getElementById("schem-tags").value.split(",").map(t => t.trim()).filter(Boolean);
 
-    // Upload schematic
-    await client.storage.from("schematics").upload(`schems/${schemFile.name}`, schemFile);
+    try {
+        // Upload schematic
+        await client.storage.from("schematics").upload(`schems/${schemFile.name}`, schemFile);
 
-    // Upload image
-    await client.storage.from("schematics").upload(`images/${imgFile.name}`, imgFile);
+        // Upload image
+        await client.storage.from("schematics").upload(`images/${imgFile.name}`, imgFile);
 
-    // Insert DB entry
-    await client.from("schematics").insert({
-        name: name,
-        description: desc,
-        tags: tags,
-        file: schemFile.name,
-        image: imgFile.name
-    });
+        // Insert DB entry
+        await client.from("schematics").insert({
+            name,
+            description: desc,
+            tags,
+            file: schemFile.name,
+            image: imgFile.name
+        });
 
-    status.innerText = "Upload complete!";
+        uploadStatus.innerText = "Upload complete!";
+    } catch (err) {
+        uploadStatus.innerText = "Upload failed.";
+        console.error(err);
+    }
 };
 
+// ===============================
 // LOGOUT
-document.getElementById("logout-btn").onclick = async () => {
+// ===============================
+logoutBtn.onclick = async () => {
     await client.auth.signOut();
     location.reload();
 };
