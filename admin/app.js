@@ -1,163 +1,258 @@
-// admin/app.js
+// ======================================================
+// INIT SUPABASE
+// ======================================================
+const client = supabase.createClient(
+    "https://gthgxmyccwsygbopksgz.supabase.co",
+    "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+);
 
-// ====== CONFIG ======
-const SCHEMATICS_JSON_ELEMENT_ID = "schematicsJsonOutput"; // <textarea> or <pre>
-const SCHEMATIC_LIST_ELEMENT_ID = "schematicsList";        // <div> or <ul>
-const FORM_ID = "schematicForm";                           // <form>
+// ======================================================
+// DOM ELEMENTS
+// ======================================================
+const loginScreen = document.getElementById("login-screen");
+const dashboard = document.getElementById("dashboard");
+const bootScreen = document.getElementById("boot-screen");
 
-// If you already have existing schematics loaded from schematics.json,
-// you can assign them here or fetch them.
-let schematics = [];
+const loginBtn = document.getElementById("login-btn");
+const logoutBtn = document.getElementById("logout-btn");
 
-// ====== HELPERS ======
+const emailInput = document.getElementById("login-email");
+const passInput = document.getElementById("login-password");
+const loginError = document.getElementById("login-error");
 
-function $(id) {
-    return document.getElementById(id);
+const uploadBtn = document.getElementById("upload-btn");
+const uploadStatus = document.getElementById("upload-status");
+
+const schemList = document.getElementById("schem-list");
+
+const schematicDrop = document.getElementById("schematic-drop");
+const schematicInput = document.getElementById("schematic-input");
+
+const imageDrop = document.getElementById("image-drop");
+const imageInput = document.getElementById("image-input");
+
+const nameInput = document.getElementById("schem-name");
+const descInput = document.getElementById("schem-desc");
+const tagsInput = document.getElementById("schem-tags");
+
+const tagSuggestions = document.getElementById("tag-suggestions");
+
+
+// ======================================================
+// BOOT SCREEN ANIMATION
+// ======================================================
+function bootSequence() {
+    const lines = [
+        "Initializing GoatedMC Admin Terminal...",
+        "Loading modules...",
+        "Connecting to Supabase...",
+        "Authenticating...",
+        "System Ready."
+    ];
+
+    let i = 0;
+    const bootText = document.getElementById("boot-text");
+
+    const interval = setInterval(() => {
+        bootText.innerHTML += lines[i] + "<br>";
+        i++;
+
+        if (i >= lines.length) {
+            clearInterval(interval);
+            setTimeout(() => {
+                bootScreen.style.display = "none";
+                loginScreen.style.display = "flex";
+            }, 500);
+        }
+    }, 500);
 }
 
-function showError(message) {
-    alert(message);
-}
+bootSequence();
 
-function createSchematicFromForm(form) {
-    const name = form.name.value.trim();
-    const description = form.description.value.trim();
-    const version = form.version.value.trim();
-    const mcVersion = form.mcVersion.value.trim();
-    const downloadUrl = form.downloadUrl.value.trim();
-    const imageUrl = form.imageUrl.value.trim();
-    const tagsRaw = form.tags.value.trim();
-    const featured = form.featured.checked;
 
-    // Basic validation
-    if (!name || !description || !version || !mcVersion || !downloadUrl) {
-        showError("Please fill in all required fields (name, description, version, MC version, download URL).");
-        return null;
-    }
+// ======================================================
+// LOGIN
+// ======================================================
+loginBtn.onclick = async () => {
+    loginError.textContent = "";
 
-    const tags = tagsRaw
-        ? tagsRaw.split(",").map(t => t.trim()).filter(Boolean)
-        : [];
+    const { data, error } = await client.auth.signInWithPassword({
+        email: emailInput.value,
+        password: passInput.value
+    });
 
-    return {
-        name,
-        description,
-        version,
-        mcVersion,
-        downloadUrl,
-        imageUrl,
-        tags,
-        featured
-    };
-}
-
-function renderSchematicsList() {
-    const container = $(SCHEMATIC_LIST_ELEMENT_ID);
-    if (!container) return;
-
-    container.innerHTML = "";
-
-    if (!schematics.length) {
-        container.innerHTML = "<p>No schematics added yet.</p>";
+    if (error) {
+        loginError.textContent = "Invalid login.";
         return;
     }
 
-    schematics.forEach((s, index) => {
-        const item = document.createElement("div");
-        item.className = "schematic-item";
+    loginScreen.style.display = "none";
+    dashboard.style.display = "flex";
 
-        item.innerHTML = `
-            <h3>${escapeHtml(s.name)}</h3>
-            <p><strong>Description:</strong> ${escapeHtml(s.description)}</p>
-            <p><strong>Version:</strong> ${escapeHtml(s.version)}</p>
-            <p><strong>MC Version:</strong> ${escapeHtml(s.mcVersion)}</p>
-            <p><strong>Download:</strong> <a href="${s.downloadUrl}" target="_blank">Link</a></p>
-            ${s.imageUrl ? `<p><strong>Image:</strong> <a href="${s.imageUrl}" target="_blank">Preview</a></p>` : ""}
-            ${s.tags && s.tags.length ? `<p><strong>Tags:</strong> ${s.tags.map(escapeHtml).join(", ")}</p>` : ""}
-            <p><strong>Featured:</strong> ${s.featured ? "Yes" : "No"}</p>
-            <button type="button" data-index="${index}" class="delete-schematic-btn">Delete</button>
+    loadSchematics();
+};
+
+
+// ======================================================
+// LOGOUT
+// ======================================================
+logoutBtn.onclick = async () => {
+    await client.auth.signOut();
+    location.reload();
+};
+
+
+// ======================================================
+// DRAG & DROP HANDLER
+// ======================================================
+function setupDropZone(zone, input) {
+    zone.addEventListener("click", () => input.click());
+
+    zone.addEventListener("dragover", e => {
+        e.preventDefault();
+        zone.classList.add("drag-over");
+    });
+
+    zone.addEventListener("dragleave", () => {
+        zone.classList.remove("drag-over");
+    });
+
+    zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("drag-over");
+
+        const file = e.dataTransfer.files[0];
+        input.files = e.dataTransfer.files;
+        zone.querySelector("p").textContent = file.name;
+    });
+
+    input.addEventListener("change", () => {
+        if (input.files.length) {
+            zone.querySelector("p").textContent = input.files[0].name;
+        }
+    });
+}
+
+setupDropZone(schematicDrop, schematicInput);
+setupDropZone(imageDrop, imageInput);
+
+
+// ======================================================
+// UPLOAD FILE TO SUPABASE STORAGE
+// ======================================================
+async function uploadFile(bucket, file) {
+    const fileName = `${Date.now()}-${file.name}`;
+
+    const { error } = await client.storage
+        .from(bucket)
+        .upload(fileName, file);
+
+    if (error) return null;
+
+    const { data } = client.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+    return data.publicUrl;
+}
+
+
+// ======================================================
+// UPLOAD SCHEMATIC
+// ======================================================
+uploadBtn.onclick = async () => {
+    uploadStatus.textContent = "Uploading...";
+
+    const schemFile = schematicInput.files[0];
+    const imgFile = imageInput.files[0];
+
+    if (!schemFile || !imgFile) {
+        uploadStatus.textContent = "Please upload both files.";
+        return;
+    }
+
+    const name = nameInput.value.trim();
+    const desc = descInput.value.trim();
+    const tags = tagsInput.value.split(",").map(t => t.trim()).filter(Boolean);
+
+    if (!name || !desc) {
+        uploadStatus.textContent = "Name and description required.";
+        return;
+    }
+
+    // Upload files
+    const schemUrl = await uploadFile("schematics", schemFile);
+    const imgUrl = await uploadFile("images", imgFile);
+
+    if (!schemUrl || !imgUrl) {
+        uploadStatus.textContent = "Upload failed.";
+        return;
+    }
+
+    // Save to database
+    const { error } = await client
+        .from("schematics")
+        .insert({
+            name,
+            description: desc,
+            tags,
+            file_url: schemUrl,
+            image_url: imgUrl
+        });
+
+    if (error) {
+        uploadStatus.textContent = "Database error.";
+        return;
+    }
+
+    uploadStatus.textContent = "Uploaded successfully!";
+    loadSchematics();
+};
+
+
+// ======================================================
+// LOAD SCHEMATICS
+// ======================================================
+async function loadSchematics() {
+    const { data, error } = await client
+        .from("schematics")
+        .select("*")
+        .order("id", { ascending: false });
+
+    if (error) {
+        schemList.innerHTML = "<p>Error loading schematics.</p>";
+        return;
+    }
+
+    renderSchematics(data);
+}
+
+
+// ======================================================
+// RENDER SCHEMATICS
+// ======================================================
+function renderSchematics(list) {
+    schemList.innerHTML = "";
+
+    if (!list.length) {
+        schemList.innerHTML = "<p>No schematics uploaded yet.</p>";
+        return;
+    }
+
+    list.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "schem-card";
+
+        card.innerHTML = `
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <p><strong>Tags:</strong> ${item.tags.join(", ")}</p>
+            <img src="${item.image_url}" class="schem-img">
+            <a href="${item.file_url}" class="purple-btn" download>Download</a>
         `;
 
-        container.appendChild(item);
-    });
-
-    attachDeleteHandlers();
-}
-
-function attachDeleteHandlers() {
-    const buttons = document.querySelectorAll(".delete-schematic-btn");
-    buttons.forEach(btn => {
-        btn.addEventListener("click", () => {
-            const index = parseInt(btn.getAttribute("data-index"), 10);
-            if (!isNaN(index)) {
-                schematics.splice(index, 1);
-                updateJsonOutput();
-                renderSchematicsList();
-            }
-        });
+        schemList.appendChild(card);
     });
 }
 
-function updateJsonOutput() {
-    const output = $(SCHEMATICS_JSON_ELEMENT_ID);
-    if (!output) return;
-
-    const json = JSON.stringify(schematics, null, 2);
-    output.value !== undefined ? (output.value = json) : (output.textContent = json);
-}
-
-// Simple HTML escape to avoid weird rendering in admin
-function escapeHtml(str) {
-    return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-// ====== FORM HANDLING ======
-
-function handleFormSubmit(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    const schematic = createSchematicFromForm(form);
-
-    if (!schematic) return;
-
-    schematics.push(schematic);
-    updateJsonOutput();
-    renderSchematicsList();
-    form.reset();
-}
-
-// ====== INIT ======
-
-function initAdmin() {
-    const form = $(FORM_ID);
-    if (!form) {
-        console.error(`Form with id="${FORM_ID}" not found.`);
-        return;
-    }
-
-    form.addEventListener("submit", handleFormSubmit);
-
-    // If you want to preload existing schematics from a JSON file:
-    // preloadSchematics();
-}
-
-// Example preload (optional)
-// function preloadSchematics() {
-//     fetch("/data/schematics.json")
-//         .then(res => res.json())
-//         .then(data => {
-//             schematics = Array.isArray(data) ? data : [];
-//             updateJsonOutput();
-//             renderSchematicsList();
-//         })
-//         .catch(err => console.error("Failed to load schematics.json", err));
-// }
-
-document.addEventListener("DOMContentLoaded", initAdmin);
 
