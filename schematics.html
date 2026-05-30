@@ -80,7 +80,7 @@
 
 <!-- ===============================
      LOAD TCG CARDS FROM JSON
-     (NO IMAGES, KEEP DOWNLOAD BUTTON)
+     (SHOW IMAGE ONLY IF EXISTS)
 =============================== -->
 <script>
 fetch("/goatedmc/schematics.json")
@@ -94,7 +94,13 @@ fetch("/goatedmc/schematics.json")
             const card = document.createElement("div");
             card.className = "tcg-card";
 
+            const imageHTML = item.image 
+                ? `<div class="tcg-img"><img src="${item.image}" alt="${key}"></div>`
+                : "";
+
             card.innerHTML = `
+                ${imageHTML}
+
                 <div class="tcg-body">
                     <h3>${key.replace(/([A-Z])/g, ' $1').trim()}</h3>
                     <p>${item.description || "A custom Minecraft schematic."}</p>
@@ -114,5 +120,3 @@ fetch("/goatedmc/schematics.json")
 
 </body>
 </html>
-
-
