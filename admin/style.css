@@ -1,109 +1,223 @@
 /* =========================================================
-   GLINT HOVER EFFECT FOR TCG CARDS
+   MINECRAFT ADMIN PANEL THEME
 ========================================================= */
 
-.tcg-card {
-    position: relative;
-    overflow: hidden;
+/* Pixel font */
+@font-face {
+    font-family: "Minecraft";
+    src: url("https://fonts.cdnfonts.com/s/17890/Minecraft.woff") format("woff");
 }
 
-.tcg-card::after {
-    content: "";
-    position: absolute;
-    top: -100%;
-    left: -100%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        120deg,
-        transparent 0%,
-        rgba(0, 255, 136, 0.25) 50%,
-        transparent 100%
-    );
-    transform: rotate(25deg);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.tcg-card:hover::after {
-    opacity: 1;
-    animation: glint 0.8s ease forwards;
-}
-
-@keyframes glint {
-    0% { transform: translate(-150%, -150%) rotate(25deg); }
-    100% { transform: translate(150%, 150%) rotate(25deg); }
+body.admin {
+    font-family: "Minecraft", system-ui, sans-serif;
+    background: #0b0b0b;
+    color: #e0ffe0;
 }
 
 /* ============================
-   MINECRAFT THEME ADD-ON
+   SIDEBAR
 ============================ */
 
-/* Pixel font helpers */
-.pixel {
-    font-family: 'Minecraft', 'Minecraftia', system-ui, sans-serif;
-    letter-spacing: 1px;
-}
-
-.pixel-small {
-    font-family: 'Minecraft', 'Minecraftia', system-ui, sans-serif;
-    font-size: 0.9rem;
-}
-
-/* Hero section */
-.minecraft-hero {
-    background: linear-gradient(to bottom, #1b5e20, #0d1b2a);
-    color: #f5f5f5;
-    text-align: center;
-    padding: 60px 20px;
-    border-bottom: 4px solid #2e7d32;
-}
-
-/* Showcase image */
-.showcase-img {
-    width: 100%;
-    max-width: 1200px;
-    border-radius: 8px;
-    border: 3px solid #2e7d32;
-    display: block;
-    margin: 20px auto;
-}
-
-/* Feature cards */
-.features {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin: 30px 0;
-}
-
-.mc-card {
-    background: #1b263b;
-    border: 3px solid #2e7d32;
-    border-radius: 8px;
+.sidebar {
+    width: 240px;
+    background: #0d1b2a;
+    border-right: 4px solid #2e7d32;
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    box-shadow: 4px 0 0 #1b5e20;
 }
 
-/* Blocky Minecraft button */
-.mc-btn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 10px 18px;
+.sidebar .logo {
+    color: #00ff88;
+    text-align: center;
+    font-size: 1.8rem;
+    text-shadow: 0 0 8px #00ff88;
+}
+
+/* Sidebar buttons */
+.nav-btn {
+    padding: 12px;
+    background: #112233;
+    border: 3px solid #2e7d32;
+    color: #00ff88;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: 0.15s;
+    font-family: "Minecraft";
+}
+
+.nav-btn:hover,
+.nav-btn.active {
     background: #2e7d32;
-    color: #f5f5f5;
-    text-decoration: none;
-    border: 3px solid #1b5e20;
-    box-shadow: 0 4px 0 #1b5e20;
-    font-family: 'Minecraft', 'Minecraftia', system-ui, sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: transform 0.1s, box-shadow 0.1s, background 0.1s;
+    color: #000;
+    box-shadow: inset 0 0 10px #1b5e20;
 }
 
-.mc-btn:hover {
+/* ============================
+   MAIN CONTENT
+============================ */
+
+main {
+    flex: 1;
+    padding: 30px;
+    overflow-y: auto;
+    background: #0b0f14;
+}
+
+.page h2 {
+    color: #00ff88;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 6px #00ff88;
+}
+
+/* ============================
+   CARDS
+============================ */
+
+.card {
+    background: #0f1a24;
+    border: 3px solid #2e7d32;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 12px rgba(0,255,136,0.15);
+}
+
+/* ============================
+   INPUTS
+============================ */
+
+#page-upload input,
+#page-upload textarea {
+    width: 100%;
+    padding: 10px;
+    background: #0b0f14;
+    border: 2px solid #00ff88;
+    border-radius: 6px;
+    color: #e0ffe0;
+    margin-bottom: 10px;
+    font-family: "Minecraft";
+}
+
+#page-upload label {
+    color: #00ff88;
+    margin-top: 10px;
+    display: block;
+}
+
+/* ============================
+   DRAG & DROP ZONES
+============================ */
+
+.drop-zone {
+    border: 3px dashed #00ff88;
+    padding: 25px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    background: rgba(0, 255, 136, 0.05);
+    transition: 0.2s;
+}
+
+.drop-zone.hover {
+    background: rgba(0, 255, 136, 0.15);
+    border-color: #00ffaa;
+}
+
+.drop-zone p {
+    color: #00ff88;
+    margin: 0;
+    font-family: "Minecraft";
+}
+
+/* ============================
+   BUTTONS
+============================ */
+
+.purple-btn {
+    background: #2e7d32;
+    color: #000;
+    padding: 12px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 3px solid #1b5e20;
+    font-family: "Minecraft";
+    box-shadow: 0 4px 0 #1b5e20;
+    transition: 0.1s;
+}
+
+.purple-btn:hover {
     background: #43a047;
     transform: translateY(2px);
     box-shadow: 0 2px 0 #1b5e20;
+}
+
+/* Edit/Delete buttons */
+.btn-edit {
+    background: #00ff88;
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 2px solid #1b5e20;
+    cursor: pointer;
+    font-family: "Minecraft";
+}
+
+.btn-delete {
+    background: #ff4444;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 2px solid #7a0000;
+    cursor: pointer;
+    font-family: "Minecraft";
+}
+
+/* ============================
+   TAG SUGGESTIONS
+============================ */
+
+#tag-suggestions {
+    display: none;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+#tag-suggestions.visible {
+    display: flex;
+}
+
+.tag-chip {
+    background: #112233;
+    border: 2px solid #00ff88;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: "Minecraft";
+}
+
+.tag-chip:hover {
+    background: #00ff88;
+    color: #000;
+}
+
+/* ============================
+   MANAGE PAGE GRID
+============================ */
+
+#schem-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+#schem-list .card img {
+    width: 100%;
+    border-radius: 6px;
 }
 
