@@ -1,10 +1,7 @@
 // ===============================
 // ADMIN NAMESPACE CHECK
 // ===============================
-if (!document.body.classList.contains("admin")) {
-    // Not on admin page, do nothing
-    console.warn("[Admin] Admin namespace not active.");
-} else {
+if (document.body.classList.contains("admin")) {
 
     // ===============================
     // INIT SUPABASE
@@ -35,48 +32,47 @@ if (!document.body.classList.contains("admin")) {
     const schemDescEl   = document.getElementById("schem-desc");
     const schemTagsEl   = document.getElementById("schem-tags");
 
-    const schemList     = document.getElementById("schem-list");
-    const loginError    = document.getElementById("login-error");
-
     // ===============================
-    // SMALL HELPERS
+    // TAG SUGGESTIONS
     // ===============================
-    function setText(el, text) {
-        if (el) el.innerText = text;
+    const TAGS = [
+        "Fantasy","Rustic","Modern","Gothic","Cyber",
+        "Nature","Space","Suburban","Pastel","Coastal","Western",
+        "Tree","House","Shop","Castle","Farm",
+        "Tower","Mansion","Statue","Portal",
+        "MiniGame","Redstone","Commands"
+    ];
+
+    function renderTagSuggestions() {
+        const box = document.getElementById("tag-suggestions");
+        if (!box) return;
+
+        box.innerHTML = "";
+
+        TAGS.forEach(tag => {
+            const chip = document.createElement("div");
+            chip.className = "tag-chip";
+            chip.innerText = tag;
+
+            chip.onclick = () => {
+                let current = schemTagsEl.value.split(",").map(t => t.trim()).filter(Boolean);
+                if (!current.includes(tag)) {
+                    current.push(tag);
+                    schemTagsEl.value = current.join(", ");
+                }
+            };
+
+            box.appendChild(chip);
+        });
     }
 
-    function setHTML(el, html) {
-        if (el) el.innerHTML = html;
-    }
-
-    function setDisplay(el, value) {
-        if (el) el.style.display = value;
-    }
-
-    function disableButton(btn, disabled, labelWhenDisabled) {
-        if (!btn) return;
-        btn.disabled = disabled;
-        if (disabled && labelWhenDisabled) {
-            btn.dataset.originalText = btn.innerText;
-            btn.innerText = labelWhenDisabled;
-        } else if (!disabled && btn.dataset.originalText) {
-            btn.innerText = btn.dataset.originalText;
-            delete btn.dataset.originalText;
-        }
-    }
-
-    function parseTags(raw) {
-        return raw
-            .split(",")
-            .map(t => t.trim())
-            .filter(Boolean);
-    }
+    renderTagSuggestions();
 
     // ===============================
     // INITIAL STATE
     // ===============================
-    setDisplay(loginScreen, "none");
-    setDisplay(dashboard, "none");
+    loginScreen.style.display = "none";
+    dashboard.style.display   = "none";
 
     // ===============================
     // BOOT SEQUENCE
@@ -98,8 +94,8 @@ if (!document.body.classList.contains("admin")) {
             setTimeout(runBoot, 600);
         } else {
             setTimeout(() => {
-                setDisplay(bootScreen, "none");
-                setDisplay(loginScreen, "block");
+                bootScreen.style.display = "none";
+                loginScreen.style.display = "block";
             }, 800);
         }
     }
@@ -110,9 +106,8 @@ if (!document.body.classList.contains("admin")) {
     // LOAD SCHEMATICS LIST
     // ===============================
     async function loadSchematics() {
-        if (!schemList) return;
-
-        setHTML(schemList, "<p>Loading schematics...</p>");
+        const list = document.getElementById("schem-list");
+        list.innerHTML = "<p>Loading...</p>";
 
         const { data, error } = await client
             .from("schematica")
@@ -120,103 +115,140 @@ if (!document.body.classList.contains("admin")) {
             .order("id", { ascending: false });
 
         if (error) {
-            console.error("[Admin] Failed to load schematics:", error);
-            setHTML(schemList, "<p class='error'>Failed to load schematics.</p>");
+            console.error(error);
+            list.innerHTML = "<p>Failed to load schematics.</p>";
             return;
         }
 
         if (!data || data.length === 0) {
-            setHTML(schemList, "<p>No schematics uploaded yet.</p>");
+            list.innerHTML = "<p>No schematics uploaded yet.</p>";
             return;
         }
 
-        setHTML(schemList, "");
+        list.innerHTML = "";
 
         data.forEach(item => {
             const card = document.createElement("div");
             card.className = "card";
 
-            const safeTags = Array.isArray(item.tags) ? item.tags.join(", ") : "";
-
-            const imageUrl = item.image
-                ? `https://gthgxmyccwsygbopksgz.supabase.co/storage/v1/object/public/schematics/images/${item.image}`
-                : "";
+            const imageUrl = `https://gthgxmyccwsygbopksgz.supabase.co/storage/v1/object/public/schematics/images/${item.image}`;
 
             card.innerHTML = `
-                <h3>${item.name || "Untitled Schematic"}</h3>
-                <p>${item.description || "No description provided."}</p>
-                <p><strong>Tags:</strong> ${safeTags || "None"}</p>
+                <h3>${item.name}</h3>
+                <p>${item.description}</p>
+                <p><strong>Tags:</strong> ${item.tags.join(", ")}</p>
 
-                ${imageUrl ? `
-                    <img src="${imageUrl}"
-                         alt="${item.name || "Schematic image"}"
-                         style="width: 200px; border: 1px solid #00ff88; border-radius: 6px; margin-bottom: 10px;">
-                ` : ""}
+                <img src="${imageUrl}"
+                     style="width: 200px; border: 1px solid #00ff88; border-radius: 6px; margin-bottom: 10px;">
 
-                <p><strong>File:</strong> ${item.file || "Unknown"}</p>
+                <p><strong>File:</strong> ${item.file}</p>
+
+                <div class="admin-actions">
+                    <button class="btn-edit" data-id="${item.id}">Edit</button>
+                    <button class="btn-delete" data-id="${item.id}">Delete</button>
+                </div>
             `;
 
-            schemList.appendChild(card);
+            list.appendChild(card);
         });
     }
 
     // ===============================
+    // DELETE SCHEMATIC
+    // ===============================
+    document.addEventListener("click", async (e) => {
+        if (!e.target.classList.contains("btn-delete")) return;
+
+        const id = e.target.dataset.id;
+
+        if (!confirm("Delete this schematic?")) return;
+
+        const { error } = await client
+            .from("schematica")
+            .delete()
+            .eq("id", id);
+
+        if (error) {
+            alert("Delete failed.");
+            console.error(error);
+            return;
+        }
+
+        loadSchematics();
+    });
+
+    // ===============================
+    // EDIT SCHEMATIC
+    // ===============================
+    document.addEventListener("click", async (e) => {
+        if (!e.target.classList.contains("btn-edit")) return;
+
+        const id = e.target.dataset.id;
+
+        const { data, error } = await client
+            .from("schematica")
+            .select("*")
+            .eq("id", id)
+            .single();
+
+        if (error) {
+            alert("Failed to load schematic.");
+            return;
+        }
+
+        schemNameEl.value = data.name;
+        schemDescEl.value = data.description;
+        schemTagsEl.value = data.tags.join(", ");
+
+        uploadBtn.dataset.editId = id;
+
+        document.querySelector('.nav-btn[data-page="upload"]').click();
+    });
+
+    // ===============================
     // LOGIN
     // ===============================
-    if (loginBtn) {
-        loginBtn.onclick = async () => {
-            const email = document.getElementById("login-email")?.value.trim();
-            const pass  = document.getElementById("login-password")?.value.trim();
+    loginBtn.onclick = async () => {
+        const email = document.getElementById("login-email").value.trim();
+        const pass  = document.getElementById("login-password").value.trim();
+        const errorBox = document.getElementById("login-error");
 
-            setText(loginError, "");
+        if (!email || !pass) {
+            errorBox.innerText = "Missing credentials.";
+            return;
+        }
 
-            if (!email || !pass) {
-                setText(loginError, "Missing credentials.");
-                return;
-            }
+        const { error } = await client.auth.signInWithPassword({
+            email,
+            password: pass
+        });
 
-            disableButton(loginBtn, true, "Logging in...");
-
-            const { error } = await client.auth.signInWithPassword({
-                email,
-                password: pass
-            });
-
-            disableButton(loginBtn, false);
-
-            if (error) {
-                console.error("[Admin] Login error:", error);
-                setText(loginError, "Access Denied.");
-            } else {
-                setDisplay(loginScreen, "none");
-                setDisplay(dashboard, "flex");
-                // Default to manage page
-                const manageBtn = document.querySelector('.nav-btn[data-page="manage"]');
-                if (manageBtn) manageBtn.click();
-            }
-        };
-    }
+        if (error) {
+            errorBox.innerText = "Access Denied.";
+        } else {
+            loginScreen.style.display = "none";
+            dashboard.style.display = "flex";
+            document.querySelector('.nav-btn[data-page="manage"]').click();
+        }
+    };
 
     // ===============================
     // NAVIGATION
     // ===============================
     document.querySelectorAll(".nav-btn").forEach(btn => {
         btn.onclick = () => {
-            // Active state on nav buttons
+
             document.querySelectorAll(".nav-btn")
                 .forEach(b => b.classList.remove("active"));
 
             btn.classList.add("active");
 
-            // Page switching
             document.querySelectorAll(".page")
                 .forEach(p => p.classList.remove("active"));
 
-            const pageId = "page-" + btn.dataset.page;
-            const page = document.getElementById(pageId);
-            if (page) page.classList.add("active");
+            const page = document.getElementById("page-" + btn.dataset.page);
+            page.classList.add("active");
 
-            // Load schematics when entering manage page
             if (btn.dataset.page === "manage") {
                 loadSchematics();
             }
@@ -230,8 +262,6 @@ if (!document.body.classList.contains("admin")) {
         const zone  = document.getElementById(zoneId);
         const input = document.getElementById(inputId);
 
-        if (!zone || !input) return;
-
         zone.onclick = () => input.click();
 
         zone.ondragover = e => {
@@ -244,9 +274,7 @@ if (!document.body.classList.contains("admin")) {
         zone.ondrop = e => {
             e.preventDefault();
             zone.classList.remove("hover");
-            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-                input.files = e.dataTransfer.files;
-            }
+            input.files = e.dataTransfer.files;
         };
     }
 
@@ -254,59 +282,45 @@ if (!document.body.classList.contains("admin")) {
     setupDropZone("image-drop", "image-input");
 
     // ===============================
-    // UPLOAD
+    // UPLOAD / UPDATE
     // ===============================
-    if (uploadBtn) {
-        uploadBtn.onclick = async () => {
-            setText(uploadStatus, "");
-            disableButton(uploadBtn, true, "Uploading...");
+    uploadBtn.onclick = async () => {
+        uploadStatus.innerText = "Uploading...";
 
-            const schemFile = schemInput?.files?.[0];
-            const imgFile   = imgInput?.files?.[0];
+        const name = schemNameEl.value.trim();
+        const desc = schemDescEl.value.trim();
+        const tags = schemTagsEl.value.split(",").map(t => t.trim()).filter(Boolean);
 
-            if (!schemFile || !imgFile) {
-                setText(uploadStatus, "Missing files (schematic and image required).");
-                disableButton(uploadBtn, false);
-                return;
-            }
+        const editId = uploadBtn.dataset.editId;
 
-            const name = schemNameEl?.value.trim();
-            const desc = schemDescEl?.value.trim();
-            const tags = parseTags(schemTagsEl?.value || "");
+        const schemFile = schemInput.files[0];
+        const imgFile   = imgInput.files[0];
 
-            if (!name) {
-                setText(uploadStatus, "Please enter a schematic name.");
-                disableButton(uploadBtn, false);
-                return;
-            }
+        try {
+            if (editId) {
+                // UPDATE MODE
+                await client.from("schematica")
+                    .update({
+                        name,
+                        description: desc,
+                        tags
+                    })
+                    .eq("id", editId);
 
-            try {
-                // Upload schematic file
-                const { error: schemErr } = await client.storage
+                uploadStatus.innerText = "Updated successfully!";
+                delete uploadBtn.dataset.editId;
+
+            } else {
+                // CREATE MODE
+                await client.storage
                     .from("schematics")
-                    .upload(`schems/${schemFile.name}`, schemFile, {
-                        upsert: false
-                    });
+                    .upload(`schems/${schemFile.name}`, schemFile);
 
-                if (schemErr) {
-                    console.error("[Admin] Schematic upload error:", schemErr);
-                    throw new Error("Failed to upload schematic file.");
-                }
-
-                // Upload image file
-                const { error: imgErr } = await client.storage
+                await client.storage
                     .from("schematics")
-                    .upload(`images/${imgFile.name}`, imgFile, {
-                        upsert: false
-                    });
+                    .upload(`images/${imgFile.name}`, imgFile);
 
-                if (imgErr) {
-                    console.error("[Admin] Image upload error:", imgErr);
-                    throw new Error("Failed to upload image file.");
-                }
-
-                // Insert DB row
-                const { error: dbErr } = await client.from("schematica").insert({
+                await client.from("schematica").insert({
                     name,
                     description: desc,
                     tags,
@@ -314,45 +328,31 @@ if (!document.body.classList.contains("admin")) {
                     image: imgFile.name
                 });
 
-                if (dbErr) {
-                    console.error("[Admin] DB insert error:", dbErr);
-                    throw new Error("Failed to save schematic record.");
-                }
-
-                setText(uploadStatus, "Upload complete! 🎉");
-                // Clear form
-                if (schemNameEl) schemNameEl.value = "";
-                if (schemDescEl) schemDescEl.value = "";
-                if (schemTagsEl) schemTagsEl.value = "";
-                if (schemInput) schemInput.value = "";
-                if (imgInput) imgInput.value = "";
-
-                // Refresh list
-                loadSchematics();
-
-                // Jump to manage tab
-                const manageBtn = document.querySelector('.nav-btn[data-page="manage"]');
-                if (manageBtn) manageBtn.click();
-
-            } catch (err) {
-                console.error("[Admin] Upload failed:", err);
-                setText(uploadStatus, "Upload failed. Check console for details.");
-            } finally {
-                disableButton(uploadBtn, false);
+                uploadStatus.innerText = "Upload complete!";
             }
-        };
-    }
+
+            schemNameEl.value = "";
+            schemDescEl.value = "";
+            schemTagsEl.value = "";
+            schemInput.value = "";
+            imgInput.value = "";
+
+            loadSchematics();
+            document.querySelector('.nav-btn[data-page="manage"]').click();
+
+        } catch (err) {
+            console.error(err);
+            uploadStatus.innerText = "Upload failed.";
+        }
+    };
 
     // ===============================
     // LOGOUT
     // ===============================
-    if (logoutBtn) {
-        logoutBtn.onclick = async () => {
-            await client.auth.signOut();
-            location.reload();
-        };
-    }
+    logoutBtn.onclick = async () => {
+        await client.auth.signOut();
+        location.reload();
+    };
 
 } // END ADMIN NAMESPACE
-
 
