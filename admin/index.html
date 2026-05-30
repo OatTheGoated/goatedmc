@@ -1,112 +1,257 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>GoatedMC Admin Panel</title>
+// ======================================================
+// INIT SUPABASE
+// ======================================================
+const client = supabase.createClient(
+    "https://gthgxmyccwsygbopksgz.supabase.co",
+    "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+);
 
-    <!-- ONLY Admin CSS -->
-    <link rel="stylesheet" href="style.css">
-</head>
+// ======================================================
+// DOM ELEMENTS
+// ======================================================
+const loginScreen = document.getElementById("login-screen");
+const dashboard = document.getElementById("dashboard");
+const bootScreen = document.getElementById("boot-screen");
 
-<body class="admin">
+const loginBtn = document.getElementById("login-btn");
+const logoutBtn = document.getElementById("logout-btn");
 
-<div id="admin-panel">
+const emailInput = document.getElementById("login-email");
+const passInput = document.getElementById("login-password");
+const loginError = document.getElementById("login-error");
 
-    <!-- Terminal Boot Screen -->
-    <div id="boot-screen">
-        <div id="boot-text"></div>
-    </div>
+const uploadBtn = document.getElementById("upload-btn");
+const uploadStatus = document.getElementById("upload-status");
 
-    <!-- Login Screen -->
-    <div id="login-screen">
-        <div class="terminal-login">
-            <h2>GoatedMC Admin Terminal</h2>
+const schemList = document.getElementById("schem-list");
 
-            <div class="terminal-line">Username:</div>
-            <input id="login-email" type="email" placeholder="admin@example.com">
+const schematicDrop = document.getElementById("schematic-drop");
+const schematicInput = document.getElementById("schematic-input");
 
-            <div class="terminal-line">Password:</div>
-            <input id="login-password" type="password" placeholder="••••••••">
+const imageDrop = document.getElementById("image-drop");
+const imageInput = document.getElementById("image-input");
 
-            <button id="login-btn">Access Terminal</button>
-            <div id="login-error"></div>
-        </div>
-    </div>
+const nameInput = document.getElementById("schem-name");
+const descInput = document.getElementById("schem-desc");
+const tagsInput = document.getElementById("schem-tags");
 
-    <!-- Dashboard -->
-    <div id="dashboard">
+const tagSuggestions = document.getElementById("tag-suggestions");
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <h1 class="logo">GoatedMC</h1>
 
-            <nav>
-                <button class="nav-btn active" data-page="upload">📤 Upload</button>
-                <button class="nav-btn" data-page="manage">📁 Manage Schematics</button>
-                <button class="nav-btn" data-page="settings">⚙️ Settings</button>
-            </nav>
-        </aside>
+// ======================================================
+// BOOT SCREEN ANIMATION
+// ======================================================
+function bootSequence() {
+    const lines = [
+        "Initializing GoatedMC Admin Terminal...",
+        "Loading modules...",
+        "Connecting to Supabase...",
+        "Authenticating...",
+        "System Ready."
+    ];
 
-        <!-- Main Content -->
-        <main>
+    let i = 0;
+    const bootText = document.getElementById("boot-text");
 
-            <!-- Upload Page -->
-            <section id="page-upload" class="page active">
+    const interval = setInterval(() => {
+        bootText.innerHTML += lines[i] + "<br>";
+        i++;
 
-                <h2>Upload Schematic</h2>
+        if (i >= lines.length) {
+            clearInterval(interval);
+            setTimeout(() => {
+                bootScreen.style.display = "none";
+                loginScreen.style.display = "flex";
+            }, 500);
+        }
+    }, 500);
+}
 
-                <!-- DRAG & DROP SCHEMATIC -->
-                <div class="card drop-zone" id="schematic-drop">
-                    <p>Drop your .schem file here or click to upload</p>
-                    <input type="file" id="schematic-input" accept=".schem">
-                </div>
+bootSequence();
 
-                <!-- DRAG & DROP IMAGE -->
-                <div class="card drop-zone" id="image-drop">
-                    <p>Drop your WebP image here or click to upload</p>
-                    <input type="file" id="image-input" accept=".webp">
-                </div>
 
-                <div class="card">
-                    <label>Name</label>
-                    <input id="schem-name" type="text">
+// ======================================================
+// LOGIN
+// ======================================================
+loginBtn.onclick = async () => {
+    loginError.textContent = "";
 
-                    <label>Description</label>
-                    <textarea id="schem-desc"></textarea>
+    const { data, error } = await client.auth.signInWithPassword({
+        email: emailInput.value,
+        password: passInput.value
+    });
 
-                    <label>Tags (comma separated)</label>
-                    <input id="schem-tags" type="text">
+    if (error) {
+        loginError.textContent = "Invalid login.";
+        return;
+    }
 
-                    <!-- TAG SUGGESTIONS -->
-                    <div id="tag-suggestions" class="tag-suggestions"></div>
+    loginScreen.style.display = "none";
+    dashboard.style.display = "flex";
 
-                    <button id="upload-btn" class="purple-btn">Upload</button>
-                    <div id="upload-status"></div>
-                </div>
+    loadSchematics();
+};
 
-            </section>
 
-            <!-- Manage Page -->
-            <section id="page-manage" class="page">
-                <h2>Manage Schematics</h2>
-                <div id="schem-list"></div>
-            </section>
+// ======================================================
+// LOGOUT
+// ======================================================
+logoutBtn.onclick = async () => {
+    await client.auth.signOut();
+    location.reload();
+};
 
-            <!-- Settings Page -->
-            <section id="page-settings" class="page">
-                <h2>Settings</h2>
-                <button id="logout-btn" class="purple-btn">Logout</button>
-            </section>
 
-        </main>
-    </div>
+// ======================================================
+// DRAG & DROP HANDLER
+// ======================================================
+function setupDropZone(zone, input) {
+    zone.addEventListener("click", () => input.click());
 
-</div>
+    zone.addEventListener("dragover", e => {
+        e.preventDefault();
+        zone.classList.add("drag-over");
+    });
 
-<!-- Supabase + App Logic -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="app.js"></script>
+    zone.addEventListener("dragleave", () => {
+        zone.classList.remove("drag-over");
+    });
 
-</body>
-</html>
+    zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("drag-over");
+
+        const file = e.dataTransfer.files[0];
+        input.files = e.dataTransfer.files;
+        zone.querySelector("p").textContent = file.name;
+    });
+
+    input.addEventListener("change", () => {
+        if (input.files.length) {
+            zone.querySelector("p").textContent = input.files[0].name;
+        }
+    });
+}
+
+setupDropZone(schematicDrop, schematicInput);
+setupDropZone(imageDrop, imageInput);
+
+
+// ======================================================
+// UPLOAD FILE TO SUPABASE STORAGE
+// ======================================================
+async function uploadFile(bucket, file) {
+    const fileName = `${Date.now()}-${file.name}`;
+
+    const { error } = await client.storage
+        .from(bucket)
+        .upload(fileName, file);
+
+    if (error) return null;
+
+    const { data } = client.storage
+        .from(bucket)
+        .getPublicUrl(fileName);
+
+    return data.publicUrl;
+}
+
+
+// ======================================================
+// UPLOAD SCHEMATIC
+// ======================================================
+uploadBtn.onclick = async () => {
+    uploadStatus.textContent = "Uploading...";
+
+    const schemFile = schematicInput.files[0];
+    const imgFile = imageInput.files[0];
+
+    if (!schemFile || !imgFile) {
+        uploadStatus.textContent = "Please upload both files.";
+        return;
+    }
+
+    const name = nameInput.value.trim();
+    const desc = descInput.value.trim();
+    const tags = tagsInput.value.split(",").map(t => t.trim()).filter(Boolean);
+
+    if (!name || !desc) {
+        uploadStatus.textContent = "Name and description required.";
+        return;
+    }
+
+    // Upload files
+    const schemUrl = await uploadFile("schematics", schemFile);
+    const imgUrl = await uploadFile("images", imgFile);
+
+    if (!schemUrl || !imgUrl) {
+        uploadStatus.textContent = "Upload failed.";
+        return;
+    }
+
+    // Save to database
+    const { error } = await client
+        .from("schematics")
+        .insert({
+            name,
+            description: desc,
+            tags,
+            file_url: schemUrl,
+            image_url: imgUrl
+        });
+
+    if (error) {
+        uploadStatus.textContent = "Database error.";
+        return;
+    }
+
+    uploadStatus.textContent = "Uploaded successfully!";
+    loadSchematics();
+};
+
+
+// ======================================================
+// LOAD SCHEMATICS
+// ======================================================
+async function loadSchematics() {
+    const { data, error } = await client
+        .from("schematics")
+        .select("*")
+        .order("id", { ascending: false });
+
+    if (error) {
+        schemList.innerHTML = "<p>Error loading schematics.</p>";
+        return;
+    }
+
+    renderSchematics(data);
+}
+
+
+// ======================================================
+// RENDER SCHEMATICS
+// ======================================================
+function renderSchematics(list) {
+    schemList.innerHTML = "";
+
+    if (!list.length) {
+        schemList.innerHTML = "<p>No schematics uploaded yet.</p>";
+        return;
+    }
+
+    list.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "schem-card";
+
+        card.innerHTML = `
+            <h3>${item.name}</h3>
+            <p>${item.description}</p>
+            <p><strong>Tags:</strong> ${item.tags.join(", ")}</p>
+            <img src="${item.image_url}" class="schem-img">
+            <a href="${item.file_url}" class="purple-btn" download>Download</a>
+        `;
+
+        schemList.appendChild(card);
+    });
+}
 
