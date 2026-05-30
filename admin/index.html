@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <title>GoatedMC Admin Panel</title>
 
-    <!-- ONLY Admin CSS (do NOT load main website CSS here) -->
+    <!-- ONLY Admin CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="admin">
 
-<!-- Correct admin wrapper -->
 <div id="admin-panel">
 
     <!-- Terminal Boot Screen -->
@@ -56,11 +55,13 @@
 
                 <h2>Upload Schematic</h2>
 
+                <!-- DRAG & DROP SCHEMATIC -->
                 <div class="card drop-zone" id="schematic-drop">
                     <p>Drop your .schem file here or click to upload</p>
                     <input type="file" id="schematic-input" accept=".schem">
                 </div>
 
+                <!-- DRAG & DROP IMAGE -->
                 <div class="card drop-zone" id="image-drop">
                     <p>Drop your WebP image here or click to upload</p>
                     <input type="file" id="image-input" accept=".webp">
@@ -75,6 +76,9 @@
 
                     <label>Tags (comma separated)</label>
                     <input id="schem-tags" type="text">
+
+                    <!-- TAG SUGGESTIONS -->
+                    <div id="tag-suggestions" class="tag-suggestions"></div>
 
                     <button id="upload-btn" class="purple-btn">Upload</button>
                     <div id="upload-status"></div>
@@ -97,7 +101,7 @@
         </main>
     </div>
 
-</div> <!-- END #admin-panel -->
+</div>
 
 <!-- Supabase + App Logic -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
