@@ -239,6 +239,15 @@
             display: block;
         }
 
+        .tcg-img img.loaded {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .tcg-card:hover .tcg-img img {
             transform: scale(1.1);
         }
@@ -662,13 +671,14 @@
 
             let imageHTML = "";
             if (schematic.image) {
-                const imagePath = `./${schematic.image}`;
+                const imagePath = schematic.image.startsWith('http') ? schematic.image : `./${schematic.image}`;
                 imageHTML = `
                     <div class="tcg-img">
                         <img 
                             src="${imagePath}" 
                             alt="${schematic.name}" 
                             loading="lazy"
+                            class="loaded"
                             onerror="this.parentElement.innerHTML='<div class=\"placeholder-image\">No Image Available</div>'"
                         >
                     </div>
