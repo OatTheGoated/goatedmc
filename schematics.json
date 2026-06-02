@@ -2,21 +2,21 @@
     "ClockTower": {
         "image": "images/ClockTower.webp",
         "file": "schematics/ClockTower.litematic",
-        "author": "OatTheGoated",
+        "author": "Crowqe",
         "description": "A tall medieval-style clock tower perfect for towns, hubs, or spawn areas."
     },
 
     "DarkOakTree": {
         "image": "images/DarkOak.webp",
         "file": "schematics/DarkOak.litematic",
-        "author": "OatTheGoated",
+        "author": "Crowqe",
         "description": "Custom-made dark oak trees ideal for fantasy or enchanted forests."
     },
 
     "Lighthouse": {
         "image": "images/LightHouse.webp",
         "file": "schematics/Lighthouse.litematic",
-        "author": "OatTheGoated",
+        "author": "Crowqe",
         "description": "A bright and detailed lighthouse perfect for coastal builds."
     },
 
