@@ -1,9 +1,157 @@
 /* =========================================================
-   PROFESSIONAL SCHEMATICS PAGE REDESIGN (CLEAN + FIXED)
+   GLOBAL RESET + BASE
 ========================================================= */
 
-/* Cleaner container */
-.container, main {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+.site {
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Pixel fonts */
+.pixel {
+    font-family: 'Minecraft', 'Minecraftia', sans-serif;
+}
+
+.pixel-small {
+    font-family: 'Minecraft', 'Minecraftia', sans-serif;
+    font-size: 0.9rem;
+}
+
+/* Fade-in images */
+img.loaded {
+    opacity: 1 !important;
+}
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.navbar {
+    width: 100%;
+    padding: 20px 0;
+    margin-bottom: 20px;
+}
+
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: #fff;
+    font-size: 1.8rem;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: #ccc;
+    text-decoration: none;
+    font-family: 'Minecraft', 'Minecraftia', sans-serif;
+    transition: 0.25s ease;
+}
+
+.nav-links a:hover {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+}
+
+.nav-links a.active {
+    color: #ff4d4d;
+    text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 20px 0;
+    opacity: 0.7;
+}
+
+/* =========================================================
+   HOMEPAGE — RED NEON THEME
+========================================================= */
+
+.hero {
+    text-align: center;
+    padding: 120px 20px;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    margin-top: 40px;
+    box-shadow: 0 0 40px rgba(255, 0, 0, 0.25);
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    color: #ff2b2b;
+    text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+    margin-bottom: 10px;
+}
+
+.hero p {
+    color: #e6e6e6;
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+/* Red Neon Buttons */
+.btn-red {
+    display: inline-block;
+    padding: 14px 28px;
+    margin: 10px;
+
+    background: rgba(255, 0, 0, 0.15);
+    border: 2px solid rgba(255, 0, 0, 0.6);
+    border-radius: 10px;
+
+    color: #ff4d4d;
+    font-family: 'Minecraft', 'Minecraftia', sans-serif;
+    text-decoration: none;
+    font-size: 1.1rem;
+
+    transition: 0.25s ease;
+    box-shadow: 0 0 18px rgba(255, 0, 0, 0.25);
+}
+
+.btn-red:hover {
+    background: rgba(255, 0, 0, 0.35);
+    border-color: rgba(255, 0, 0, 1);
+    color: #ff7777;
+    transform: translateY(-4px);
+    box-shadow: 0 0 35px rgba(255, 0, 0, 0.7);
+}
+
+/* =========================================================
+   SCHEMATICS PAGE — GREEN TCG THEME
+========================================================= */
+
+.schematics-page .container,
+.schematics-page main {
     background: rgba(0, 0, 0, 0.15);
     backdrop-filter: blur(10px);
     border-radius: 14px;
@@ -110,5 +258,48 @@
     border-color: rgba(0, 255, 136, 0.8);
     box-shadow: 0 0 25px rgba(0, 255, 136, 0.55);
     transform: translateY(-3px);
+}
+
+/* =========================================================
+   MEMBERS PAGE
+========================================================= */
+
+.member-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+    padding: 1rem 0 3rem;
+}
+
+.member-card {
+    background: rgba(0, 0, 0, 0.45);
+    border: 2px solid #00ff88;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    width: 100%;
+    max-width: 260px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: 0 0 12px rgba(0, 255, 136, 0.25);
+}
+
+.member-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.55);
+}
+
+.member-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+}
+
+.member-img.loaded {
+    opacity: 1;
 }
 
