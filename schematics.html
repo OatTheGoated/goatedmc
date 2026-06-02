@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schematics - Goated MC</title>
-    <link rel="stylesheet" href="/goatedmc/style.css?v=1">
+    <link rel="stylesheet" href="./style.css?v=1">
     <style>
         .schematic-controls {
             display: flex;
@@ -159,7 +159,7 @@
 
         async loadSchematics() {
             try {
-                const response = await fetch("/goatedmc/schematics.json");
+                const response = await fetch("./schematics.json");
                 
                 if (!response.ok) {
                     throw new Error(`Failed to load schematics (${response.status})`);
@@ -256,7 +256,7 @@
 
             let imageHTML = "";
             if (schematic.image) {
-                const imagePath = `/goatedmc${schematic.image}`;
+                const imagePath = `./${schematic.image}`;
                 imageHTML = `
                     <div class="tcg-img">
                         <img 
