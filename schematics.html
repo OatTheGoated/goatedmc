@@ -58,6 +58,19 @@
             border-radius: 4px;
             margin-bottom: 1rem;
         }
+
+        .placeholder-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 
@@ -241,9 +254,22 @@
             const card = document.createElement("div");
             card.className = "tcg-card";
 
-            const imageHTML = schematic.image 
-                ? `<div class="tcg-img"><img src="/goatedmc${schematic.image}" alt="${schematic.name}" loading="lazy"></div>`
-                : "";
+            let imageHTML = "";
+            if (schematic.image) {
+                const imagePath = `/goatedmc${schematic.image}`;
+                imageHTML = `
+                    <div class="tcg-img">
+                        <img 
+                            src="${imagePath}" 
+                            alt="${schematic.name}" 
+                            loading="lazy"
+                            onerror="this.parentElement.innerHTML='<div class=\"placeholder-image\">No Image Available</div>'"
+                        >
+                    </div>
+                `;
+            } else {
+                imageHTML = `<div class="tcg-img"><div class="placeholder-image">No Image Available</div></div>`;
+            }
 
             card.innerHTML = `
                 ${imageHTML}
