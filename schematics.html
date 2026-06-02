@@ -5,6 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schematics - Goated MC</title>
     <link rel="stylesheet" href="/goatedmc/style.css?v=1">
+    <style>
+        .schematic-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-bar {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            background-color: #1a1a1a;
+            color: #00ff88;
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .filter-select:hover {
+            background-color: #2a2a2a;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #b0b0b0;
+            padding: 2rem;
+            font-size: 1.2rem;
+        }
+
+        .schematic-count {
+            color: #00ff88;
+            font-size: 0.9rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: #b0b0b0;
+            padding: 2rem;
+        }
+
+        .error {
+            background-color: #ff4444;
+            color: white;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 
 <body>
@@ -29,22 +83,38 @@
         <div class="container">
 
             <h2 class="page-title" style="color:#00ff88; margin-bottom:1rem;">Minecraft Schematics</h2>
+            <p style="color:#b0b0b0; margin-bottom:2rem;">Browse and download custom schematics for your Minecraft worlds</p>
 
-            <!-- SEARCH BAR -->
-            <input type="text" id="schematic-search" placeholder="Search schematics..." class="search-bar">
+            <!-- SEARCH & FILTER CONTROLS -->
+            <div class="schematic-controls">
+                <input type="text" id="schematic-search" placeholder="Search schematics..." class="search-bar">
+                <select id="author-filter" class="filter-select">
+                    <option value="">All Authors</option>
+                </select>
+                <span class="schematic-count" id="schematic-count">Loading...</span>
+            </div>
 
-            <!-- ============================
-                ALL SCHEMATICS (AUTO FROM JSON)
-            ============================= -->
-            <section class="tcg-grid" id="tcg-container">
+            <!-- ERROR MESSAGE (Hidden by default) -->
+            <div id="error-message" class="error" style="display:none;"></div>
+
+            <!-- LOADING STATE -->
+            <div class="loading" id="loading-state">Loading schematics...</div>
+
+            <!-- SCHEMATICS GRID -->
+            <section class="tcg-grid" id="tcg-container" style="display:none;">
                 <!-- Cards auto‑insert here -->
             </section>
+
+            <!-- NO RESULTS MESSAGE -->
+            <div class="no-results" id="no-results" style="display:none;">
+                No schematics found. Try adjusting your search or filters.
+            </div>
 
             <!-- HOW TO USE -->
             <div class="how-to" style="margin-top:3rem;">
                 <h2 style="color:#00ff88; margin-bottom:1rem;">How to Use Schematics</h2>
                 <ol style="color:#b0b0b0; line-height:1.8;">
-                    <li>Install WorldEdit or Litematica</li>
+                    <li>Install <strong>WorldEdit</strong> or <strong>Litematica</strong></li>
                     <li>Place the schematic file in your schematics folder</li>
                     <li>Load it using the mod</li>
                     <li>Paste it into your world</li>
@@ -62,59 +132,157 @@
 </div>
 
 <!-- ===============================
-     SEARCH FUNCTION
+     SCHEMATIC LOADING & FILTERING
 =============================== -->
 <script>
-    const searchInput = document.getElementById("schematic-search");
+    const schematicApp = {
+        data: [],
+        filtered: [],
 
-    searchInput.addEventListener("input", () => {
-        const query = searchInput.value.toLowerCase();
-        const cards = document.querySelectorAll(".tcg-card");
+        init() {
+            this.loadSchematics();
+            this.setupEventListeners();
+        },
 
-        cards.forEach(card => {
-            const title = card.querySelector("h3").textContent.toLowerCase();
-            card.style.display = title.includes(query) ? "block" : "none";
-        });
-    });
-</script>
+        async loadSchematics() {
+            try {
+                const response = await fetch("/goatedmc/schematics.json");
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load schematics (${response.status})`);
+                }
 
-<!-- ===============================
-     LOAD TCG CARDS FROM JSON
-     (SHOW IMAGE ONLY IF EXISTS)
-=============================== -->
-<script>
-fetch("/goatedmc/schematics.json")
-    .then(res => res.json())
-    .then(data => {
-        const container = document.getElementById("tcg-container");
+                const json = await response.json();
+                this.data = this.parseData(json);
+                this.filtered = [...this.data];
 
-        Object.keys(data).forEach(key => {
-            const item = data[key];
+                this.render();
+                this.populateFilters();
+                this.updateCount();
+                
+                document.getElementById("loading-state").style.display = "none";
+                document.getElementById("tcg-container").style.display = "grid";
+            } catch (error) {
+                console.error("Error loading schematics:", error);
+                this.showError(`Failed to load schematics: ${error.message}`);
+                document.getElementById("loading-state").style.display = "none";
+            }
+        },
 
+        parseData(json) {
+            return Object.entries(json).map(([key, item]) => ({
+                id: key,
+                name: key.replace(/([A-Z])/g, ' $1').trim(),
+                description: item.description || "A custom Minecraft schematic.",
+                author: item.author || "Unknown",
+                image: item.image || null,
+                file: item.file,
+                searchText: (key + (item.author || "")).toLowerCase()
+            }));
+        },
+
+        setupEventListeners() {
+            document.getElementById("schematic-search").addEventListener("input", () => {
+                this.filter();
+            });
+
+            document.getElementById("author-filter").addEventListener("change", () => {
+                this.filter();
+            });
+        },
+
+        populateFilters() {
+            const authors = [...new Set(this.data.map(s => s.author))].sort();
+            const select = document.getElementById("author-filter");
+
+            authors.forEach(author => {
+                const option = document.createElement("option");
+                option.value = author;
+                option.textContent = author;
+                select.appendChild(option);
+            });
+        },
+
+        filter() {
+            const searchQuery = document.getElementById("schematic-search").value.toLowerCase();
+            const selectedAuthor = document.getElementById("author-filter").value;
+
+            this.filtered = this.data.filter(schematic => {
+                const matchesSearch = schematic.searchText.includes(searchQuery);
+                const matchesAuthor = !selectedAuthor || schematic.author === selectedAuthor;
+                return matchesSearch && matchesAuthor;
+            });
+
+            this.render();
+            this.updateCount();
+        },
+
+        render() {
+            const container = document.getElementById("tcg-container");
+            const noResults = document.getElementById("no-results");
+
+            if (this.filtered.length === 0) {
+                container.style.display = "none";
+                noResults.style.display = "block";
+                return;
+            }
+
+            container.style.display = "grid";
+            noResults.style.display = "none";
+            container.innerHTML = "";
+
+            this.filtered.forEach(schematic => {
+                const card = this.createCard(schematic);
+                container.appendChild(card);
+            });
+        },
+
+        createCard(schematic) {
             const card = document.createElement("div");
             card.className = "tcg-card";
 
-            const imageHTML = item.image 
-                ? `<div class="tcg-img"><img src="${item.image}" alt="${key}"></div>`
+            const imageHTML = schematic.image 
+                ? `<div class="tcg-img"><img src="${schematic.image}" alt="${schematic.name}" loading="lazy"></div>`
                 : "";
 
             card.innerHTML = `
                 ${imageHTML}
-
                 <div class="tcg-body">
-                    <h3>${key.replace(/([A-Z])/g, ' $1').trim()}</h3>
-                    <p>${item.description || "A custom Minecraft schematic."}</p>
-
+                    <h3>${this.escapeHtml(schematic.name)}</h3>
+                    <p>${this.escapeHtml(schematic.description)}</p>
                     <div class="tcg-stats">
-                        <span>Author: ${item.author}</span>
+                        <span>Author: ${this.escapeHtml(schematic.author)}</span>
                     </div>
-
-                    <a class="btn" href="${item.file}" download>Download</a>
+                    <a class="btn" href="${schematic.file}" download aria-label="Download ${schematic.name}">Download</a>
                 </div>
             `;
 
-            container.appendChild(card);
-        });
+            return card;
+        },
+
+        updateCount() {
+            const count = this.filtered.length;
+            const total = this.data.length;
+            document.getElementById("schematic-count").textContent = 
+                `${count} of ${total} schematic${total !== 1 ? 's' : ''}`;
+        },
+
+        showError(message) {
+            const errorDiv = document.getElementById("error-message");
+            errorDiv.textContent = message;
+            errorDiv.style.display = "block";
+        },
+
+        escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    };
+
+    // Initialize on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        schematicApp.init();
     });
 </script>
 
