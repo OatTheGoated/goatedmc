@@ -61,10 +61,10 @@
 
         .placeholder-image {
             width: 100%;
-            height: 200px;
+            height: 220px;
             background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-            border: 1px solid #00ff88;
-            border-radius: 4px;
+            border: 1px solid rgba(255, 0, 0, 0.35);
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -263,6 +263,7 @@
                             src="${imagePath}" 
                             alt="${schematic.name}" 
                             loading="lazy"
+                            class="loaded"
                             onerror="this.parentElement.innerHTML='<div class=\"placeholder-image\">No Image Available</div>'"
                         >
                     </div>
