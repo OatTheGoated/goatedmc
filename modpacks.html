@@ -10,12 +10,13 @@
 <body>
 <div class="site">
 
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
-            <h1 class="logo">⛏️ Goated MC</h1>
+            <h1 class="logo pixel">⛏️ Goated MC</h1>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="modpacks.html">Modpacks</a></li>
+                <li><a href="modpacks.html" class="active">Modpacks</a></li>
                 <li><a href="schematics.html">Schematics</a></li>
                 <li><a href="videos.html">Videos</a></li>
                 <li><a href="members.html">Members</a></li>
@@ -23,34 +24,38 @@
         </div>
     </nav>
 
-    <main class="container">
-        <h1>📦 Modpacks</h1>
-        <p>Download custom modpacks built for performance and fun.</p>
+    <!-- MAIN CONTENT -->
+    <main class="container fade-in">
+        <h1 class="pixel">📦 Modpacks</h1>
+        <p class="subtext">Download custom modpacks built for performance and fun.</p>
 
         <div class="item-grid">
 
+            <!-- CARD 1 -->
             <div class="item-card">
-                <img src="images/CrazyCraft.png" alt="CrazyCraft">
-                <h3>Crazy Craft</h3>
+                <img src="images/CrazyCraft.png" alt="CrazyCraft" class="item-img">
+                <h3 class="pixel">Crazy Craft</h3>
                 <p>A chaotic, fun, and explosive modpack experience.</p>
-                <a href="modpacks/CrazyCraft.zip" class="btn" download>Download</a>
+                <a href="modpacks/CrazyCraft.zip" class="btn emerald" download>Download</a>
             </div>
 
+            <!-- CARD 2 -->
             <div class="item-card">
-                <img src="images/SurvivalPlus.png" alt="SurvivalPlus">
-                <h3>Survival Plus</h3>
+                <img src="images/SurvivalPlus.png" alt="SurvivalPlus" class="item-img">
+                <h3 class="pixel">Survival Plus</h3>
                 <p>A polished survival overhaul with new biomes and mobs.</p>
-                <a href="modpacks/SurvivalPlus.zip" class="btn" download>Download</a>
+                <a href="modpacks/SurvivalPlus.zip" class="btn emerald" download>Download</a>
             </div>
 
         </div>
     </main>
 
+    <!-- FOOTER -->
     <footer>
         <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
     </footer>
 
-</div> <!-- END .site wrapper -->
+</div>
 
 <!-- Fade-in script -->
 <script>
