@@ -529,9 +529,7 @@
             <div class="loading" id="loading-state">Loading schematics</div>
 
             <!-- SCHEMATICS GRID -->
-            <section class="tcg-grid" id="tcg-container" style="display:none;">
-                <!-- Cards auto‑insert here -->
-            </section>
+            <section class="tcg-grid" id="tcg-container" style="display:none;"></section>
 
             <!-- NO RESULTS MESSAGE -->
             <div class="no-results" id="no-results" style="display:none;">
@@ -672,32 +670,12 @@
             let imageHTML = "";
             if (schematic.image) {
                 const imagePath = schematic.image.startsWith('http') ? schematic.image : `./${schematic.image}`;
-                imageHTML = `
-                    <div class="tcg-img">
-                        <img 
-                            src="${imagePath}" 
-                            alt="${schematic.name}" 
-                            loading="lazy"
-                            class="loaded"
-                            onerror="this.parentElement.innerHTML='<div class=\"placeholder-image\">No Image Available</div>'"
-                        >
-                    </div>
-                `;
+                imageHTML = `<div class="tcg-img"><img src="${imagePath}" alt="${schematic.name}" loading="lazy" class="loaded" onerror="this.parentElement.innerHTML='<div class=\"placeholder-image\">No Image Available</div>'"></div>`;
             } else {
                 imageHTML = `<div class="tcg-img"><div class="placeholder-image">No Image Available</div></div>`;
             }
 
-            card.innerHTML = `
-                ${imageHTML}
-                <div class="tcg-body">
-                    <h3>${this.escapeHtml(schematic.name)}</h3>
-                    <p>${this.escapeHtml(schematic.description)}</p>
-                    <div class="tcg-stats">
-                        <span>${this.escapeHtml(schematic.author)}</span>
-                    </div>
-                    <a class="btn" href="${schematic.file}" download aria-label="Download ${schematic.name}">⬇️ Download</a>
-                </div>
-            `;
+            card.innerHTML = `${imageHTML}<div class="tcg-body"><h3>${this.escapeHtml(schematic.name)}</h3><p>${this.escapeHtml(schematic.description)}</p><div class="tcg-stats"><span>${this.escapeHtml(schematic.author)}</span></div><a class="btn" href="${schematic.file}" download aria-label="Download ${schematic.name}">Download</a></div>`;
 
             return card;
         },
@@ -706,7 +684,7 @@
             const count = this.filtered.length;
             const total = this.data.length;
             document.getElementById("schematic-count").textContent = 
-                `📊 ${count} of ${total} schematic${total !== 1 ? 's' : ''}`;
+                `${count} of ${total} schematic${total !== 1 ? 's' : ''}`;
         },
 
         showError(message) {
@@ -722,7 +700,6 @@
         }
     };
 
-    // Initialize on page load
     document.addEventListener("DOMContentLoaded", () => {
         schematicApp.init();
     });
