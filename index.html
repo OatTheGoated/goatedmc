@@ -61,11 +61,12 @@
 </div>
 
 <!-- SUPABASE + ACCOUNT SYSTEM -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-const supabase = supabase.createClient(
+const { createClient } = supabase;
+
+const client = createClient(
   "https://gthgxmyccwsygbopksgz.supabase.co",
   "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
@@ -75,21 +76,9 @@ async function registerUser() {
   const email = document.getElementById("reg-email").value;
   const password = document.getElementById("reg-password").value;
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password
-  });
+  const { data, error } = await client.auth.signUp({ email, password });
 
-  if (error) {
-    alert("Signup failed: " + error.message);
-    return;
-  }
-
-  if (!data.user) {
-    alert("Signup failed: No user returned.");
-    return;
-  }
-
+  if (error) return alert("Signup failed: " + error.message);
   alert("Account created! Check your email to confirm.");
 }
 
@@ -98,30 +87,16 @@ async function loginUser() {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
+  const { data, error } = await client.auth.signInWithPassword({ email, password });
 
-  if (error) {
-    alert("Login failed: " + error.message);
-    return;
-  }
-
-  if (!data.session) {
-    alert("Login failed: No session returned.");
-    return;
-  }
-
+  if (error) return alert("Login failed: " + error.message);
   alert("Logged in!");
 }
 
 // LOGOUT
 async function logoutUser() {
-  await supabase.auth.signOut();
+  await client.auth.signOut();
   alert("Logged out!");
 }
 </script>
 
-</body>
-</html>
