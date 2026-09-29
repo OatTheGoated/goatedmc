@@ -298,23 +298,51 @@
             text-align: justify;
         }
 
-        .tcg-stats {
+        .schematic-creator {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1.25rem;
-            font-size: 0.9rem;
-            color: var(--primary);
-            font-weight: 600;
-            background: rgba(0, 255, 136, 0.08);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
             padding: 0.75rem;
+            background: rgba(0, 255, 136, 0.08);
             border-radius: 6px;
             border-left: 3px solid var(--primary);
         }
 
-        .tcg-stats span::before {
-            content: '👤 ';
-            margin-right: 0.3rem;
+        .creator-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            background: rgba(0, 255, 136, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .creator-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .creator-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .creator-name {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            word-break: break-word;
+        }
+
+        .creator-minecraft {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
         }
 
         /* ========== PREMIUM BUTTON ========== */
@@ -344,6 +372,24 @@
 
         .btn:active {
             transform: translateY(0);
+        }
+
+        .btn-favorite {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-bottom: 1rem;
+            box-shadow: none;
+        }
+
+        .btn-favorite:hover {
+            transform: scale(1.2);
+        }
+
+        .btn-favorite.favorited {
+            filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.5));
         }
 
         /* ========== STATES ========== */
@@ -496,6 +542,7 @@
                 <li><a href="schematics.html">Schematics</a></li>
                 <li><a href="videos.html">Videos</a></li>
             </ul>
+            <div id="auth-container"></div>
         </div>
     </nav>
 
@@ -559,6 +606,7 @@
 <!-- ===============================
      SCHEMATIC LOADING & FILTERING
  =============================== -->
+<script src="./auth.js"></script>
 <script>
     const schematicApp = {
         data: [],
@@ -600,6 +648,8 @@
                 name: key.replace(/([A-Z])/g, ' $1').trim(),
                 description: item.description || "A custom Minecraft schematic.",
                 author: item.author || "Unknown",
+                minecraftUsername: item.minecraftUsername || null,
+                minecraftUuid: item.minecraftUuid || null,
                 image: item.image || null,
                 file: item.file,
                 searchText: (key + (item.author || "")).toLowerCase()
@@ -665,18 +715,65 @@
         createCard(schematic) {
             const card = document.createElement("div");
             card.className = "tcg-card";
+            const isFavorited = AuthSystem.isFavorited(schematic.id);
 
             let imageHTML = "";
             if (schematic.image) {
                 const imagePath = schematic.image.startsWith('http') ? schematic.image : `./${schematic.image}`;
-                imageHTML = `<div class="tcg-img"><img src="${imagePath}" alt="${schematic.name}" loading="lazy" class="loaded" onerror="this.parentElement.innerHTML='<div class=\"placeholder-image\">No Image Available</div>'"></div>`;
+                imageHTML = `<div class="tcg-img"><img src="${imagePath}" alt="${schematic.name}" loading="lazy" class="loaded"></div>`;
             } else {
                 imageHTML = `<div class="tcg-img"><div class="placeholder-image">No Image Available</div></div>`;
             }
 
-            card.innerHTML = `${imageHTML}<div class="tcg-body"><h3>${this.escapeHtml(schematic.name)}</h3><p>${this.escapeHtml(schematic.description)}</p><div class="tcg-stats"><span>${this.escapeHtml(schematic.author)}</span></div><a href="${schematic.file ? `./${schematic.file}` : '#'}" class="btn" ${schematic.file ? '' : 'aria-disabled="true"'} ${schematic.file ? 'download' : ''}>Download</a></div>`;
+            const favoriteBtn = AuthSystem.isLoggedIn() 
+                ? `<button class="btn-favorite ${isFavorited ? 'favorited' : ''}" onclick="schematicApp.toggleFavorite('${schematic.id}', this)" title="Toggle Favorite">${isFavorited ? '❤️' : '🤍'}</button>`
+                : `<button class="btn-favorite" onclick="AuthSystem.toggleAuthModal('login')" title="Login to favorite">🤍</button>`;
+
+            const creatorAvatar = schematic.minecraftUuid 
+                ? `https://crafatar.com/avatars/${schematic.minecraftUuid}?size=32&default=MHF_Steve`
+                : `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%2300ff88' width='32' height='32' opacity='0.2'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%2300ff88' font-size='20' font-weight='bold'%3E?%3C/text%3E%3C/svg%3E`;
+
+            const creatorMinecraftInfo = schematic.minecraftUsername 
+                ? `<div class="creator-minecraft">⛏️ ${this.escapeHtml(schematic.minecraftUsername)}</div>`
+                : '';
+
+            card.innerHTML = `
+                ${imageHTML}
+                <div class="tcg-body">
+                    <h3>${this.escapeHtml(schematic.name)}</h3>
+                    <p>${this.escapeHtml(schematic.description)}</p>
+                    <div class="schematic-creator">
+                        <div class="creator-avatar">
+                            <img src="${creatorAvatar}" alt="${this.escapeHtml(schematic.author)}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect fill=%2200ff88%22 width=%2232%22 height=%2232%22 opacity=%220.2%22/%3E%3C/svg%3E'">
+                        </div>
+                        <div class="creator-info">
+                            <div class="creator-name">${this.escapeHtml(schematic.author)}</div>
+                            ${creatorMinecraftInfo}
+                        </div>
+                    </div>
+                    ${favoriteBtn}
+                    <a href="${schematic.file}" download class="btn">Download</a>
+                </div>
+            `;
 
             return card;
+        },
+
+        toggleFavorite(schematicId, button) {
+            if (!AuthSystem.isLoggedIn()) {
+                AuthSystem.toggleAuthModal('login');
+                return;
+            }
+
+            if (AuthSystem.isFavorited(schematicId)) {
+                AuthSystem.removeFavorite(schematicId);
+                button.classList.remove('favorited');
+                button.textContent = '🤍';
+            } else {
+                AuthSystem.addFavorite(schematicId);
+                button.classList.add('favorited');
+                button.textContent = '❤️';
+            }
         },
 
         updateCount() {
