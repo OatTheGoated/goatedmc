@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prosper</title>
-    <link rel="stylesheet" href="/goatedmc/style.css?v=2">
+    <link rel="stylesheet" href="/goatedmc/style.css?v=3">
 </head>
 
 <body>
@@ -60,7 +60,7 @@
 </div>
 
 <!-- SUPABASE + ACCOUNT SYSTEM -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js?v=3"></script>
 
 <script>
 const supabase = supabase.createClient(
@@ -74,8 +74,8 @@ async function registerUser() {
   const password = document.getElementById("reg-password").value;
 
   const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password
+    email,
+    password
   });
 
   if (error) {
@@ -83,13 +83,12 @@ async function registerUser() {
     return;
   }
 
-  await supabase.from("Profiles").insert({
-    id: data.user.id,
-    Email: email,
-    Username: email.split("@")[0]
-  });
+  if (!data.user) {
+    alert("Signup failed: No user returned.");
+    return;
+  }
 
-  alert("Account created!");
+  alert("Account created! Check your email to confirm.");
 }
 
 // LOGIN
@@ -98,15 +97,21 @@ async function loginUser() {
   const password = document.getElementById("login-password").value;
 
   const { data, error } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password
+    email,
+    password
   });
 
   if (error) {
     alert("Login failed: " + error.message);
-  } else {
-    alert("Logged in!");
+    return;
   }
+
+  if (!data.session) {
+    alert("Login failed: No session returned.");
+    return;
+  }
+
+  alert("Logged in!");
 }
 
 // LOGOUT
