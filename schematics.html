@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schematics - Goated MC</title>
+    <title>Schematics - Prospere</title>
     <link rel="stylesheet" href="./style.css?v=1">
     <style>
         * {
@@ -489,7 +489,7 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
-            <h1 class="logo">⛏️ Goated MC</h1>
+            <h1 class="logo">⛏️ Prospere</h1>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="modpacks.html">Modpacks</a></li>
@@ -552,14 +552,14 @@
 
     <!-- FOOTER -->
     <footer>
-        <p>&copy; 2026 Goated MC. Made with ❤️ for Minecraft</p>
+        <p>&copy; 2026 Prospere. Made with ❤️ for Minecraft</p>
     </footer>
 
 </div>
 
 <!-- ===============================
      SCHEMATIC LOADING & FILTERING
-=============================== -->
+ =============================== -->
 <script>
     const schematicApp = {
         data: [],
@@ -675,7 +675,7 @@
                 imageHTML = `<div class="tcg-img"><div class="placeholder-image">No Image Available</div></div>`;
             }
 
-            card.innerHTML = `${imageHTML}<div class="tcg-body"><h3>${this.escapeHtml(schematic.name)}</h3><p>${this.escapeHtml(schematic.description)}</p><div class="tcg-stats"><span>${this.escapeHtml(schematic.author)}</span></div><a class="btn" href="${schematic.file}" download aria-label="Download ${schematic.name}">Download</a></div>`;
+            card.innerHTML = `${imageHTML}<div class="tcg-body"><h3>${this.escapeHtml(schematic.name)}</h3><p>${this.escapeHtml(schematic.description)}</p><div class="tcg-stats"><span>${this.escapeHtml(schematic.author)}</span></div><a href="${schematic.file ? `./${schematic.file}` : '#'}" class="btn" ${schematic.file ? '' : 'aria-disabled="true"'} ${schematic.file ? 'download' : ''}>Download</a></div>`;
 
             return card;
         },
