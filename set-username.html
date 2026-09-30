@@ -67,8 +67,8 @@ async function saveUsername() {
   // Check if username is already taken
   const { data: existing } = await client
     .from("profiles")
-    .select("username")
-    .eq("username", username)
+    .select("Username")
+    .eq("Username", username)
     .single();
 
   if (existing) {
@@ -79,7 +79,7 @@ async function saveUsername() {
   // Save username
   const { error } = await client
     .from("profiles")
-    .update({ username })
+    .update({ Username: username })
     .eq("id", user.id);
 
   if (error) {
