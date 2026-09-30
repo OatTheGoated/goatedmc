@@ -114,16 +114,19 @@ async function logoutUser() {
   updateStatus();
 }
 
-// CHECK SESSION
+// CHECK SESSION (Improved)
 async function updateStatus() {
-  const { data } = await client.auth.getSession();
+  const { data: { user } } = await client.auth.getUser();
 
   const status = document.getElementById("status");
+  const authBox = document.querySelector(".auth-box");
 
-  if (data.session) {
-    status.textContent = "Logged in as: " + data.session.user.email;
+  if (user) {
+    status.textContent = `Welcome back, ${user.email}`;
+    authBox.style.display = "none";   // Hide login/register box
   } else {
     status.textContent = "Not logged in.";
+    authBox.style.display = "block";  // Show login/register box
   }
 }
 
@@ -133,3 +136,4 @@ updateStatus();
 
 </body>
 </html>
+
