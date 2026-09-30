@@ -123,15 +123,18 @@ async function logoutUser() {
 async function updateStatus() {
   const { data: { user } } = await client.auth.getUser();
 
-  const status = document.getElementById("status");
-  const authBox = document.querySelector(".auth-box");
+  const logoutBtn = document.getElementById("logout-btn");
 
-  if (user) {
+if (user) {
     status.textContent = `Welcome back, ${user.email}`;
-    authBox.style.display = "none";   // Hide login/register box
-  } else {
+    authBox.style.display = "none";
+    logoutBtn.style.display = "inline-block";  // show logout
+} else {
     status.textContent = "Not logged in.";
-    authBox.style.display = "block";  // Show login/register box
+    authBox.style.display = "block";
+    logoutBtn.style.display = "none";          // hide logout
+}
+
   }
 }
 
