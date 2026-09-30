@@ -91,6 +91,7 @@ async function loginUser() {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
+  // Login
   const { data, error } = await client.auth.signInWithPassword({ email, password });
 
   if (error) {
@@ -98,8 +99,10 @@ async function loginUser() {
     return;
   }
 
-  // Handle both Supabase formats
-  const user = data.user ?? data.session?.user;
+  // Force Supabase to refresh session
+  const sessionRes = await client.auth.getSession();
+  const user = sessionRes.data.session?.user;
+
   if (!user) {
     alert("Login failed: no user returned.");
     return;
@@ -107,17 +110,13 @@ async function loginUser() {
 
   const userId = user.id;
 
-  // Force Supabase to refresh session
-  await client.auth.getSession();
-
-  // AUTO-CREATE PROFILE ROW IF MISSING
+  // Insert profile row (id auto-fills)
   await client.from("profiles").insert({
-    id: userId,
     Email: user.email,
     Username: null
   }).onConflict("id");
 
-  // CHECK USERNAME
+  // Check username
   const { data: profile } = await client
     .from("profiles")
     .select("Username")
@@ -132,6 +131,7 @@ async function loginUser() {
   alert("Logged in!");
   updateStatus();
 }
+
 
 // LOGOUT
 async function logoutUser() {
