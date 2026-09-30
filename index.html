@@ -100,6 +100,7 @@ async function loginUser() {
 
   const userId = data.user.id;
 
+  // Check username
   const { data: profile } = await client
     .from("profiles")
     .select("username")
@@ -131,7 +132,19 @@ async function updateStatus() {
   const logoutBtn = document.getElementById("logout-btn");
 
   if (user) {
-    status.textContent = `Welcome back, ${user.email}`;
+    // Load username
+    const { data: profile } = await client
+      .from("profiles")
+      .select("username")
+      .eq("id", user.id)
+      .single();
+
+    if (profile && profile.username) {
+      status.textContent = `Welcome back, ${profile.username}`;
+    } else {
+      status.textContent = `Welcome back, ${user.email}`;
+    }
+
     authBox.style.display = "none";
     logoutBtn.style.display = "inline-block";
   } else {
@@ -146,5 +159,3 @@ updateStatus();
 
 </body>
 </html>
-
-
