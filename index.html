@@ -36,25 +36,30 @@
         </div>
     </header>
 
-    <!-- ACCOUNT SECTION -->
-    <section id="account" class="hero" style="margin-top:40px;">
-        <h1 class="pixel">Account</h1>
+   <!-- ACCOUNT SECTION -->
+<section id="account" class="hero" style="margin-top:40px;">
+    <h1 class="pixel">Account</h1>
 
-        <div class="auth-box">
+    <div class="auth-box">
 
-            <h3 class="pixel-small">Register</h3>
-            <input id="reg-email" placeholder="Email">
-            <input id="reg-password" placeholder="Password" type="password">
-            <button class="btn-red" onclick="registerUser()">Register</button>
+        <h3 class="pixel-small">Register</h3>
+        <input id="reg-email" placeholder="Email">
+        <input id="reg-password" placeholder="Password" type="password">
+        <button class="btn-red" onclick="registerUser()">Register</button>
 
-            <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
-            <input id="login-email" placeholder="Email">
-            <input id="login-password" placeholder="Password" type="password">
-            <button class="btn-red" onclick="loginUser()">Login</button>
+        <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
+        <input id="login-email" placeholder="Email">
+        <input id="login-password" placeholder="Password" type="password">
+        <button class="btn-red" onclick="loginUser()">Login</button>
 
-            <button class="btn-red" style="margin-top:20px;" onclick="logoutUser()">Logout</button>
+    </div>
 
-            <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+    <!-- Logout button OUTSIDE auth-box -->
+    <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
+
+    <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+</section>
+    
 
         </div>
     </section>
