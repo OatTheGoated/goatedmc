@@ -36,32 +36,28 @@
         </div>
     </header>
 
-   <!-- ACCOUNT SECTION -->
-<section id="account" class="hero" style="margin-top:40px;">
-    <h1 class="pixel">Account</h1>
+    <!-- ACCOUNT SECTION -->
+    <section id="account" class="hero" style="margin-top:40px;">
+        <h1 class="pixel">Account</h1>
 
-    <div class="auth-box">
+        <div class="auth-box">
 
-        <h3 class="pixel-small">Register</h3>
-        <input id="reg-email" placeholder="Email">
-        <input id="reg-password" placeholder="Password" type="password">
-        <button class="btn-red" onclick="registerUser()">Register</button>
+            <h3 class="pixel-small">Register</h3>
+            <input id="reg-email" placeholder="Email">
+            <input id="reg-password" placeholder="Password" type="password">
+            <button class="btn-red" onclick="registerUser()">Register</button>
 
-        <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
-        <input id="login-email" placeholder="Email">
-        <input id="login-password" placeholder="Password" type="password">
-        <button class="btn-red" onclick="loginUser()">Login</button>
-
-    </div>
-
-    <!-- Logout button OUTSIDE auth-box -->
-    <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
-
-    <p id="status" class="pixel-small" style="margin-top:20px;"></p>
-</section>
-    
+            <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
+            <input id="login-email" placeholder="Email">
+            <input id="login-password" placeholder="Password" type="password">
+            <button class="btn-red" onclick="loginUser()">Login</button>
 
         </div>
+
+        <!-- Logout button OUTSIDE auth-box -->
+        <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
+
+        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
     </section>
 
 </div>
@@ -123,18 +119,18 @@ async function logoutUser() {
 async function updateStatus() {
   const { data: { user } } = await client.auth.getUser();
 
+  const status = document.getElementById("status");
+  const authBox = document.querySelector(".auth-box");
   const logoutBtn = document.getElementById("logout-btn");
 
-if (user) {
+  if (user) {
     status.textContent = `Welcome back, ${user.email}`;
     authBox.style.display = "none";
-    logoutBtn.style.display = "inline-block";  // show logout
-} else {
+    logoutBtn.style.display = "inline-block";
+  } else {
     status.textContent = "Not logged in.";
     authBox.style.display = "block";
-    logoutBtn.style.display = "none";          // hide logout
-}
-
+    logoutBtn.style.display = "none";
   }
 }
 
@@ -144,4 +140,3 @@ updateStatus();
 
 </body>
 </html>
-
