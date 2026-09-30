@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prosper</title>
+    <title>Choose Username</title>
     <link rel="stylesheet" href="/goatedmc/style.css?v=3">
 </head>
 
@@ -15,54 +15,30 @@
         <div class="container">
             <h1 class="logo pixel">⛏️ Prosper</h1>
             <ul class="nav-links">
-                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="modpacks.html">Modpacks</a></li>
                 <li><a href="schematics.html">Schematics</a></li>
                 <li><a href="videos.html">Videos</a></li>
-                <li><a href="#account">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
-    <header class="hero">
-        <h1 class="pixel">🔥 Prosper</h1>
-        <p class="pixel-small">Premium Modpacks • Schematics • Minecraft Content</p>
+    <!-- USERNAME SETUP -->
+    <section class="hero" style="margin-top:40px;">
+        <h1 class="pixel">Choose a Username</h1>
+        <p class="pixel-small">This will be your public name on Prosper.</p>
 
-        <div class="hero-buttons">
-            <a href="modpacks.html" class="btn-red">Modpacks</a>
-            <a href="schematics.html" class="btn-red">Schematics</a>
-            <a href="videos.html" class="btn-red">Videos</a>
+        <div class="auth-box" style="margin-top:20px;">
+            <input id="username" placeholder="Enter a username">
+            <button class="btn-red" onclick="saveUsername()">Save Username</button>
+
+            <p id="status" class="pixel-small" style="margin-top:20px;"></p>
         </div>
-    </header>
-
-    <!-- ACCOUNT SECTION -->
-    <section id="account" class="hero" style="margin-top:40px;">
-        <h1 class="pixel">Account</h1>
-
-        <div class="auth-box">
-
-            <h3 class="pixel-small">Register</h3>
-            <input id="reg-email" placeholder="Email">
-            <input id="reg-password" placeholder="Password" type="password">
-            <button class="btn-red" onclick="registerUser()">Register</button>
-
-            <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
-            <input id="login-email" placeholder="Email">
-            <input id="login-password" placeholder="Password" type="password">
-            <button class="btn-red" onclick="loginUser()">Login</button>
-
-        </div>
-
-        <!-- Logout button OUTSIDE auth-box -->
-        <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
-
-        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
     </section>
 
 </div>
 
-<!-- SUPABASE + ACCOUNT SYSTEM -->
+<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -73,87 +49,51 @@ const client = createClient(
   "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
-// REGISTER
-async function registerUser() {
-  const email = document.getElementById("reg-email").value;
-  const password = document.getElementById("reg-password").value;
+// Save username
+async function saveUsername() {
+  const { data: { user } } = await client.auth.getUser();
+  const username = document.getElementById("username").value.trim();
+  const status = document.getElementById("status");
 
-  const { data, error } = await client.auth.signUp({
-    email: email,
-    password: password
-  });
-
-  if (error) {
-    alert("Signup failed: " + error.message);
-  } else {
-    alert("Account created! Check your email to confirm.");
-  }
-}
-
-// LOGIN
-async function loginUser() {
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
-
-  const { data, error } = await client.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    alert("Login failed: " + error.message);
+  if (!user) {
+    status.textContent = "You must be logged in.";
     return;
   }
 
-  // Check if user has a username
-  const userId = data.user.id;
+  if (username.length < 3) {
+    status.textContent = "Username must be at least 3 characters.";
+    return;
+  }
 
-  const { data: profile } = await client
+  // Check if username is already taken
+  const { data: existing } = await client
     .from("profiles")
     .select("username")
-    .eq("id", userId)
+    .eq("username", username)
     .single();
 
-  if (!profile || !profile.username) {
-    // No username yet → redirect to setup page
-    window.location.href = "set-username.html";
+  if (existing) {
+    status.textContent = "That username is already taken.";
     return;
   }
 
-  alert("Logged in!");
-  updateStatus();
-}
+  // Save username
+  const { error } = await client
+    .from("profiles")
+    .update({ username })
+    .eq("id", user.id);
 
-}
-
-// LOGOUT
-async function logoutUser() {
-  await client.auth.signOut();
-  alert("Logged out!");
-  updateStatus();
-}
-
-// CHECK SESSION (Improved)
-async function updateStatus() {
-  const { data: { user } } = await client.auth.getUser();
-
-  const status = document.getElementById("status");
-  const authBox = document.querySelector(".auth-box");
-  const logoutBtn = document.getElementById("logout-btn");
-
-  if (user) {
-    status.textContent = `Welcome back, ${user.email}`;
-    authBox.style.display = "none";
-    logoutBtn.style.display = "inline-block";
-  } else {
-    status.textContent = "Not logged in.";
-    authBox.style.display = "block";
-    logoutBtn.style.display = "none";
+  if (error) {
+    status.textContent = "Error saving username.";
+    return;
   }
-}
 
-// Run on page load
-updateStatus();
+  status.textContent = "Username saved!";
+  
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 1000);
+}
 </script>
 
 </body>
