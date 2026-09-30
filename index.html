@@ -85,8 +85,6 @@ async function registerUser() {
     alert("Account created! Check your email to confirm.");
   }
 }
-
-// LOGIN
 async function loginUser() {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
@@ -98,26 +96,33 @@ async function loginUser() {
     return;
   }
 
-  // ⭐ Force Supabase to refresh session immediately
+  // Handle both possible Supabase formats
+  const user = data.user ?? data.session?.user;
+  if (!user) {
+    alert("Login failed: no user returned.");
+    return;
+  }
+
+  const userId = user.id;
+
+  // Force session refresh
   await client.auth.getSession();
 
-  const userId = data.user.id;
-
-  // ⭐ AUTO-CREATE PROFILE ROW IF MISSING
+  // Auto-create profile row
   await client.from("profiles").insert({
     id: userId,
-    Email: data.user.email,
+    Email: user.email,
     Username: null
   }).onConflict("id");
 
-  // ⭐ CHECK USERNAME
+  // Check username
   const { data: profile } = await client
     .from("profiles")
-    .select("username")
+    .select("Username")
     .eq("id", userId)
     .single();
 
-  if (!profile || !profile.username) {
+  if (!profile || !profile.Username) {
     window.location.href = "set-username.html";
     return;
   }
@@ -125,6 +130,7 @@ async function loginUser() {
   alert("Logged in!");
   updateStatus();
 }
+
 
 // LOGOUT
 async function logoutUser() {
