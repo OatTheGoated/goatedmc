@@ -23,7 +23,6 @@
             </ul>
         </div>
     </nav>
-<!-- force rebuild -->
 
     <!-- HERO SECTION -->
     <header class="hero">
@@ -55,6 +54,8 @@
 
             <button class="btn-red" style="margin-top:20px;" onclick="logoutUser()">Logout</button>
 
+            <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+
         </div>
     </section>
 
@@ -76,10 +77,16 @@ async function registerUser() {
   const email = document.getElementById("reg-email").value;
   const password = document.getElementById("reg-password").value;
 
-  const { data, error } = await client.auth.signUp({ email, password });
+  const { data, error } = await client.auth.signUp({
+    email: email,
+    password: password
+  });
 
-  if (error) return alert("Signup failed: " + error.message);
-  alert("Account created! Check your email to confirm.");
+  if (error) {
+    alert("Signup failed: " + error.message);
+  } else {
+    alert("Account created! Check your email to confirm.");
+  }
 }
 
 // LOGIN
@@ -87,16 +94,42 @@ async function loginUser() {
   const email = document.getElementById("login-email").value;
   const password = document.getElementById("login-password").value;
 
-  const { data, error } = await client.auth.signInWithPassword({ email, password });
+  const { data, error } = await client.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
 
-  if (error) return alert("Login failed: " + error.message);
-  alert("Logged in!");
+  if (error) {
+    alert("Login failed: " + error.message);
+  } else {
+    alert("Logged in!");
+    updateStatus();
+  }
 }
 
 // LOGOUT
 async function logoutUser() {
   await client.auth.signOut();
   alert("Logged out!");
+  updateStatus();
 }
+
+// CHECK SESSION
+async function updateStatus() {
+  const { data } = await client.auth.getSession();
+
+  const status = document.getElementById("status");
+
+  if (data.session) {
+    status.textContent = "Logged in as: " + data.session.user.email;
+  } else {
+    status.textContent = "Not logged in.";
+  }
+}
+
+// Run on page load
+updateStatus();
 </script>
 
+</body>
+</html>
