@@ -100,7 +100,14 @@ async function loginUser() {
 
   const userId = data.user.id;
 
-  // Check username
+  // ⭐ AUTO-CREATE PROFILE ROW IF MISSING
+  await client.from("profiles").insert({
+    id: userId,
+    Email: data.user.email,
+    Username: null
+  }).onConflict("id");
+
+  // ⭐ CHECK USERNAME
   const { data: profile } = await client
     .from("profiles")
     .select("username")
