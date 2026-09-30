@@ -96,15 +96,34 @@ async function loginUser() {
   const password = document.getElementById("login-password").value;
 
   const { data, error } = await client.auth.signInWithPassword({
-    email: email,
-    password: password
+    email,
+    password
   });
 
   if (error) {
     alert("Login failed: " + error.message);
-  } else {
-    alert("Logged in!");
-    updateStatus();
+    return;
+  }
+
+  // Check if user has a username
+  const userId = data.user.id;
+
+  const { data: profile } = await client
+    .from("profiles")
+    .select("username")
+    .eq("id", userId)
+    .single();
+
+  if (!profile || !profile.username) {
+    // No username yet → redirect to setup page
+    window.location.href = "set-username.html";
+    return;
+  }
+
+  alert("Logged in!");
+  updateStatus();
+}
+
   }
 }
 
