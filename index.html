@@ -98,6 +98,9 @@ async function loginUser() {
     return;
   }
 
+  // ⭐ Force Supabase to refresh session immediately
+  await client.auth.getSession();
+
   const userId = data.user.id;
 
   // ⭐ AUTO-CREATE PROFILE ROW IF MISSING
