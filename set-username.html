@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prosper</title>
+    <link rel="stylesheet" href="/goatedmc/style.css?v=3">
+</head>
+
+<body>
+<div class="site">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo pixel">⛏️ Prosper</h1>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="modpacks.html">Modpacks</a></li>
+                <li><a href="schematics.html">Schematics</a></li>
+                <li><a href="videos.html">Videos</a></li>
+                <li><a href="#account">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <h1 class="pixel">🔥 Prosper</h1>
+        <p class="pixel-small">Premium Modpacks • Schematics • Minecraft Content</p>
+
+        <div class="hero-buttons">
+            <a href="modpacks.html" class="btn-red">Modpacks</a>
+            <a href="schematics.html" class="btn-red">Schematics</a>
+            <a href="videos.html" class="btn-red">Videos</a>
+        </div>
+    </header>
+
+    <!-- ACCOUNT SECTION -->
+    <section id="account" class="hero" style="margin-top:40px;">
+        <h1 class="pixel">Account</h1>
+
+        <div class="auth-box">
+
+            <h3 class="pixel-small">Register</h3>
+            <input id="reg-email" placeholder="Email">
+            <input id="reg-password" placeholder="Password" type="password">
+            <button class="btn-red" onclick="registerUser()">Register</button>
+
+            <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
+            <input id="login-email" placeholder="Email">
+            <input id="login-password" placeholder="Password" type="password">
+            <button class="btn-red" onclick="loginUser()">Login</button>
+
+        </div>
+
+        <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
+
+        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+    </section>
+
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const { createClient } = supabase;
+
+const client = createClient(
+  "https://gthgxmyccwsygbopksgz.supabase.co",
+  "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+);
+
+// REGISTER
+async function registerUser() {
+  const email = document.getElementById("reg-email").value;
+  const password = document.getElementById("reg-password").value;
+
+  const { error } = await client.auth.signUp({ email, password });
+
+  if (error) {
+    alert("Signup failed: " + error.message);
+  } else {
+    alert("Account created! Check your email to confirm.");
+  }
+}
+
+// LOGIN
+async function loginUser() {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+
+  const { data, error } = await client.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    alert("Login failed: " + error.message);
+    return;
+  }
+
+  const userId = data.user.id;
+
+  const { data: profile } = await client
+    .from("profiles")
+    .select("username")
+    .eq("id", userId)
+    .single();
+
+  if (!profile || !profile.username) {
+    window.location.href = "set-username.html";
+    return;
+  }
+
+  alert("Logged in!");
+  updateStatus();
+}
+
+// LOGOUT
+async function logoutUser() {
+  await client.auth.signOut();
+  alert("Logged out!");
+  updateStatus();
+}
+
+// STATUS
+async function updateStatus() {
+  const { data: { user } } = await client.auth.getUser();
+
+  const status = document.getElementById("status");
+  const authBox = document.querySelector(".auth-box");
+  const logoutBtn = document.getElementById("logout-btn");
+
+  if (user) {
+    status.textContent = `Welcome back, ${user.email}`;
+    authBox.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+  } else {
+    status.textContent = "Not logged in.";
+    authBox.style.display = "block";
+    logoutBtn.style.display = "none";
+  }
+}
+
+updateStatus();
+</script>
+
+</body>
+</html>
