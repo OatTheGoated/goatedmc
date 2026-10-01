@@ -22,6 +22,11 @@
             --text-muted: #8a8a8a;
         }
 
+        .container {
+            width: min(1200px, calc(100% - 2rem));
+            margin: 0 auto;
+        }
+
         /* ========== PREMIUM HERO SECTION ========== */
         .schematics-hero {
             background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1429 100%);
@@ -183,6 +188,7 @@
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 2rem;
             margin-bottom: 3rem;
+            align-items: stretch;
         }
 
         /* ========== PREMIUM CARD ========== */
@@ -196,6 +202,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            min-height: 100%;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
@@ -229,6 +236,7 @@
             height: 240px;
             overflow: hidden;
             background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            flex-shrink: 0;
         }
 
         .tcg-img img {
@@ -279,12 +287,12 @@
             flex-direction: column;
             position: relative;
             z-index: 2;
+            gap: 0.85rem;
         }
 
         .tcg-body h3 {
             color: var(--primary);
             font-size: 1.3rem;
-            margin-bottom: 0.75rem;
             font-weight: 700;
             line-height: 1.4;
         }
@@ -293,16 +301,15 @@
             color: var(--text-muted);
             font-size: 0.95rem;
             line-height: 1.6;
-            margin-bottom: 1rem;
-            flex-grow: 1;
             text-align: justify;
+            margin: 0;
+            flex: 1;
         }
 
         .schematic-creator {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 1rem;
             padding: 0.75rem;
             background: rgba(0, 255, 136, 0.08);
             border-radius: 6px;
@@ -348,6 +355,7 @@
         /* ========== PREMIUM BUTTON ========== */
         .btn {
             display: inline-block;
+            width: 100%;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: #0a0e27;
             padding: 0.75rem 1.5rem;
@@ -380,8 +388,10 @@
             font-size: 1.5rem;
             cursor: pointer;
             transition: transform 0.2s ease;
-            margin-bottom: 1rem;
+            margin: 0;
             box-shadow: none;
+            line-height: 1;
+            align-self: flex-start;
         }
 
         .btn-favorite:hover {
@@ -731,7 +741,7 @@
 
             const creatorAvatar = schematic.minecraftUuid 
                 ? `https://crafatar.com/avatars/${schematic.minecraftUuid}?size=32&default=MHF_Steve`
-                : `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%2300ff88' width='32' height='32' opacity='0.2'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%2300ff88' font-size='20' font-weight='bold'%3E?%3C/text%3E%3C/svg%3E`;
+                : `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%2300ff88' width='32' height='32' opacity='0.2'/%3E%3Ctext x='16' y='21' text-anchor='middle' fill='%2300ff88' font-size='14' font-family='Arial'%3E%3F%3C/text%3E%3C/svg%3E`;
 
             const creatorMinecraftInfo = schematic.minecraftUsername 
                 ? `<div class="creator-minecraft">⛏️ ${this.escapeHtml(schematic.minecraftUsername)}</div>`
@@ -744,7 +754,7 @@
                     <p>${this.escapeHtml(schematic.description)}</p>
                     <div class="schematic-creator">
                         <div class="creator-avatar">
-                            <img src="${creatorAvatar}" alt="${this.escapeHtml(schematic.author)}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect fill=%2200ff88%22 width=%2232%22 height=%2232%22 opacity=%220.2%22/%3E%3C/svg%3E'">
+                            <img src="${creatorAvatar}" alt="${this.escapeHtml(schematic.author)}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect fill=%22%2300ff88%22 width=%2232%22 height=%2232%22 opacity=%220.2%22/%3E%3Ctext x=%2216%22 y=%2222%22 text-anchor=%22middle%22 fill=%22%2300ff88%22 font-size=%2212%22 font-family=%22Arial%22%3E%3F%3C/text%3E%3C/svg%3E'" />
                         </div>
                         <div class="creator-info">
                             <div class="creator-name">${this.escapeHtml(schematic.author)}</div>
