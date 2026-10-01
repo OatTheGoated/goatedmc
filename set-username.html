@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Username</title>
-    <link rel="stylesheet" href="/goatedmc/style.css?v=3">
+    <link rel="stylesheet" href="./style.css?v=3">
 </head>
 
 <body>
@@ -31,7 +31,7 @@
         <div class="auth-box" style="margin-top:20px;">
             <input id="username" placeholder="Enter a username">
             <button class="btn-red" onclick="saveUsername()">Save Username</button>
-            <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+            <p id="status" class="pixel-small" style="margin-top:20px; color: #00ff88;"></p>
         </div>
     </section>
 
@@ -56,23 +56,38 @@ async function saveUsername() {
 
   if (!user) {
     status.textContent = "You must be logged in.";
+    status.style.color = "#ff6b6b";
+    return;
+  }
+
+  if (!username) {
+    status.textContent = "Please enter a username.";
+    status.style.color = "#ff6b6b";
     return;
   }
 
   if (username.length < 3) {
     status.textContent = "Username must be at least 3 characters.";
+    status.style.color = "#ff6b6b";
     return;
   }
 
   // Check if username is already taken
-  const { data: existing } = await client
+  const { data: existing, error: lookupError } = await client
     .from("profiles")
     .select("Username")
     .eq("Username", username)
-    .single();
+    .maybeSingle();
+
+  if (lookupError) {
+    status.textContent = "Error checking username: " + lookupError.message;
+    status.style.color = "#ff6b6b";
+    return;
+  }
 
   if (existing) {
     status.textContent = "That username is already taken.";
+    status.style.color = "#ff6b6b";
     return;
   }
 
@@ -83,15 +98,18 @@ async function saveUsername() {
     .eq("id", user.id);
 
   if (error) {
-    status.textContent = "Error saving username.";
+    status.textContent = "Error saving username: " + error.message;
+    status.style.color = "#ff6b6b";
+    console.error("Username update error:", error);
     return;
   }
 
-  status.textContent = "Username saved!";
+  status.textContent = "Username saved! Redirecting to dashboard...";
+  status.style.color = "#00ff88";
   
   setTimeout(() => {
-    window.location.href = "index.html";
-  }, 1000);
+    window.location.href = "dashboard.html";
+  }, 1500);
 }
 </script>
 
