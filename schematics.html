@@ -629,6 +629,7 @@
 
         async loadSchematics() {
             try {
+                console.log("Fetching schematics.json...");
                 const response = await fetch("./schematics.json");
                 
                 if (!response.ok) {
@@ -636,7 +637,11 @@
                 }
 
                 const json = await response.json();
+                console.log("Loaded JSON:", json);
+                
                 this.data = this.parseData(json);
+                console.log("Parsed data:", this.data);
+                
                 this.filtered = [...this.data];
 
                 this.render();
@@ -680,6 +685,8 @@
             const authors = [...new Set(this.data.map(s => s.author))].sort();
             const select = document.getElementById("author-filter");
 
+            console.log("Authors found:", authors);
+            
             authors.forEach(author => {
                 const option = document.createElement("option");
                 option.value = author;
@@ -706,6 +713,8 @@
             const container = document.getElementById("tcg-container");
             const noResults = document.getElementById("no-results");
 
+            console.log("Rendering", this.filtered.length, "schematics");
+
             if (this.filtered.length === 0) {
                 container.style.display = "none";
                 noResults.style.display = "block";
@@ -725,7 +734,7 @@
         createCard(schematic) {
             const card = document.createElement("div");
             card.className = "tcg-card";
-            const isFavorited = AuthSystem.isFavorited(schematic.id);
+            const isFavorited = typeof AuthSystem !== 'undefined' && AuthSystem.isFavorited(schematic.id);
 
             let imageHTML = "";
             if (schematic.image) {
@@ -735,9 +744,9 @@
                 imageHTML = `<div class="tcg-img"><div class="placeholder-image">No Image Available</div></div>`;
             }
 
-            const favoriteBtn = AuthSystem.isLoggedIn() 
+            const favoriteBtn = typeof AuthSystem !== 'undefined' && AuthSystem.isLoggedIn() 
                 ? `<button class="btn-favorite ${isFavorited ? 'favorited' : ''}" onclick="schematicApp.toggleFavorite('${schematic.id}', this)" title="Toggle Favorite">${isFavorited ? '❤️' : '🤍'}</button>`
-                : `<button class="btn-favorite" onclick="AuthSystem.toggleAuthModal('login')" title="Login to favorite">🤍</button>`;
+                : `<button class="btn-favorite" onclick="typeof AuthSystem !== 'undefined' && AuthSystem.toggleAuthModal('login')" title="Login to favorite">🤍</button>`;
 
             const creatorAvatar = schematic.minecraftUuid 
                 ? `https://crafatar.com/avatars/${schematic.minecraftUuid}?size=32&default=MHF_Steve`
@@ -770,8 +779,8 @@
         },
 
         toggleFavorite(schematicId, button) {
-            if (!AuthSystem.isLoggedIn()) {
-                AuthSystem.toggleAuthModal('login');
+            if (typeof AuthSystem === 'undefined' || !AuthSystem.isLoggedIn()) {
+                typeof AuthSystem !== 'undefined' && AuthSystem.toggleAuthModal('login');
                 return;
             }
 
@@ -806,9 +815,16 @@
         }
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
+    // Wait for DOM to be fully loaded
+    if (document.readyState === 'loading') {
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM loaded, initializing schematicApp");
+            schematicApp.init();
+        });
+    } else {
+        console.log("DOM already loaded, initializing schematicApp");
         schematicApp.init();
-    });
+    }
 </script>
 
 </body>
