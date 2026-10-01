@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Dashboard - Prosper</title>
+    <link rel="stylesheet" href="./style.css?v=3">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6f;
+            --secondary: #ff6b35;
+            --bg-dark: #0a0e27;
+            --bg-card: #1a1f3a;
+            --text-light: #e0e0e0;
+            --text-muted: #8a8a8a;
+        }
+
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .dashboard-sidebar {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.5), rgba(26, 31, 58, 0.8));
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .dashboard-sidebar h3 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .sidebar-nav button {
+            background: none;
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            color: var(--text-light);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .sidebar-nav button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .sidebar-nav button.active {
+            border-color: var(--primary);
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--primary);
+        }
+
+        .dashboard-content {
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.5), rgba(26, 31, 58, 0.8));
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .dashboard-section {
+            display: none;
+        }
+
+        .dashboard-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-section h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1.25rem;
+            background-color: rgba(10, 14, 39, 0.6);
+            color: var(--text-light);
+            border: 2px solid rgba(0, 255, 136, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: rgba(10, 14, 39, 0.9);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #0a0e27;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff4d4d 0%, #ff2b2b 100%);
+            color: #fff;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(255, 45, 45, 0.2);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(255, 45, 45, 0.4);
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-message.success {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            display: block;
+        }
+
+        .status-message.error {
+            background: rgba(255, 68, 68, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 68, 68, 0.3);
+            display: block;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: rgba(0, 255, 136, 0.05);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .info-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card .value {
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .favorite-item {
+            background: rgba(26, 31, 58, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.15);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .favorite-item p {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .favorite-item button {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 68, 68, 0.4);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-item button:hover {
+            background: rgba(255, 68, 68, 0.3);
+            border-color: rgba(255, 68, 68, 0.6);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 2rem;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-sidebar {
+                position: static;
+            }
+
+            .sidebar-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .sidebar-nav button {
+                flex: 1;
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="site">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo pixel">⛏️ Prosper</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="modpacks.html">Modpacks</a></li>
+                <li><a href="schematics.html">Schematics</a></li>
+                <li><a href="videos.html">Videos</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <h1 class="pixel" style="color: var(--primary); margin-top: 2rem;">Dashboard</h1>
+        <p class="pixel-small" style="color: var(--text-muted); margin-bottom: 2rem;">Manage your account settings and preferences</p>
+
+        <!-- DASHBOARD GRID -->
+        <div class="dashboard-container">
+
+            <!-- SIDEBAR NAV -->
+            <div class="dashboard-sidebar">
+                <h3>Navigation</h3>
+                <div class="sidebar-nav">
+                    <button class="nav-btn active" onclick="switchTab('profile')">Profile</button>
+                    <button class="nav-btn" onclick="switchTab('security')">Security</button>
+                    <button class="nav-btn" onclick="switchTab('favorites')">Favorites</button>
+                    <button class="nav-btn" onclick="switchTab('logout')" style="color: #ff6b6b; border-color: rgba(255, 68, 68, 0.2);">Logout</button>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div class="dashboard-content">
+
+                <!-- PROFILE SECTION -->
+                <div id="profile" class="dashboard-section active">
+                    <h2>Profile Settings</h2>
+                    <div id="profile-status" class="status-message"></div>
+
+                    <div class="profile-info">
+                        <div class="info-card">
+                            <p>Email</p>
+                            <div class="value" id="profile-email">-</div>
+                        </div>
+                        <div class="info-card">
+                            <p>Username</p>
+                            <div class="value" id="profile-username">-</div>
+                        </div>
+                        <div class="info-card">
+                            <p>Member Since</p>
+                            <div class="value" id="profile-joined">-</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new-username">Change Username</label>
+                        <input type="text" id="new-username" placeholder="Enter new username">
+                    </div>
+
+                    <button class="btn-primary" onclick="updateUsername()">Update Username</button>
+                </div>
+
+                <!-- SECURITY SECTION -->
+                <div id="security" class="dashboard-section">
+                    <h2>Security Settings</h2>
+                    <div id="security-status" class="status-message"></div>
+
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" placeholder="Enter current password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" placeholder="Enter new password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" placeholder="Confirm new password">
+                    </div>
+
+                    <button class="btn-primary" onclick="changePassword()">Change Password</button>
+                </div>
+
+                <!-- FAVORITES SECTION -->
+                <div id="favorites" class="dashboard-section">
+                    <h2>Your Favorites</h2>
+                    <div id="favorites-status" class="status-message"></div>
+
+                    <div id="favorites-container" class="favorites-grid">
+                        <div class="empty-state">
+                            <p>No favorites yet. Start adding your favorite schematics!</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer style="margin-top: 4rem;">
+        <p>&copy; 2026 Prosper. Made with ❤️ for Minecraft</p>
+    </footer>
+
+</div>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const { createClient } = supabase;
+
+const client = createClient(
+  "https://gthgxmyccwsygbopksgz.supabase.co",
+  "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+);
+
+let currentUser = null;
+let currentProfile = null;
+
+// Initialize dashboard
+async function initDashboard() {
+  try {
+    const { data: { user } } = await client.auth.getUser();
+    
+    if (!user) {
+      window.location.href = "index.html#account";
+      return;
+    }
+
+    currentUser = user;
+
+    // Load profile
+    const { data: profile } = await client
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (!profile) {
+      window.location.href = "set-username.html";
+      return;
+    }
+
+    currentProfile = profile;
+    loadProfileInfo();
+    loadFavorites();
+
+    console.log("Dashboard initialized for user:", user.email);
+  } catch (error) {
+    console.error("Init error:", error);
+    window.location.href = "index.html";
+  }
+}
+
+// Load profile info
+function loadProfileInfo() {
+  document.getElementById("profile-email").textContent = currentUser.email;
+  document.getElementById("profile-username").textContent = currentProfile.Username || "-";
+  
+  const joined = new Date(currentUser.created_at).toLocaleDateString();
+  document.getElementById("profile-joined").textContent = joined;
+}
+
+// Switch tab
+function switchTab(tabName) {
+  // Hide all sections
+  document.querySelectorAll(".dashboard-section").forEach(section => {
+    section.classList.remove("active");
+  });
+
+  // Remove active from all buttons
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  // Show selected section
+  const section = document.getElementById(tabName);
+  if (section) {
+    section.classList.add("active");
+  }
+
+  // Mark button as active
+  event.target.classList.add("active");
+
+  // Handle logout
+  if (tabName === "logout") {
+    logoutUser();
+  }
+}
+
+// Update username
+async function updateUsername() {
+  const newUsername = document.getElementById("new-username").value.trim();
+  const statusEl = document.getElementById("profile-status");
+
+  if (!newUsername) {
+    showStatus(statusEl, "Please enter a username", "error");
+    return;
+  }
+
+  if (newUsername.length < 3) {
+    showStatus(statusEl, "Username must be at least 3 characters", "error");
+    return;
+  }
+
+  if (newUsername === currentProfile.Username) {
+    showStatus(statusEl, "Enter a different username", "error");
+    return;
+  }
+
+  // Check if username exists
+  const { data: existing } = await client
+    .from("profiles")
+    .select("Username")
+    .eq("Username", newUsername)
+    .maybeSingle();
+
+  if (existing) {
+    showStatus(statusEl, "That username is already taken", "error");
+    return;
+  }
+
+  // Update username
+  const { error } = await client
+    .from("profiles")
+    .update({ Username: newUsername })
+    .eq("id", currentUser.id);
+
+  if (error) {
+    showStatus(statusEl, "Error updating username: " + error.message, "error");
+    return;
+  }
+
+  currentProfile.Username = newUsername;
+  loadProfileInfo();
+  showStatus(statusEl, "Username updated successfully!", "success");
+  document.getElementById("new-username").value = "";
+}
+
+// Change password
+async function changePassword() {
+  const newPassword = document.getElementById("new-password").value;
+  const confirmPassword = document.getElementById("confirm-password").value;
+  const statusEl = document.getElementById("security-status");
+
+  if (!newPassword || !confirmPassword) {
+    showStatus(statusEl, "Please fill in all fields", "error");
+    return;
+  }
+
+  if (newPassword.length < 6) {
+    showStatus(statusEl, "Password must be at least 6 characters", "error");
+    return;
+  }
+
+  if (newPassword !== confirmPassword) {
+    showStatus(statusEl, "Passwords do not match", "error");
+    return;
+  }
+
+  const { error } = await client.auth.updateUser({
+    password: newPassword
+  });
+
+  if (error) {
+    showStatus(statusEl, "Error changing password: " + error.message, "error");
+    return;
+  }
+
+  showStatus(statusEl, "Password changed successfully!", "success");
+  document.getElementById("new-password").value = "";
+  document.getElementById("confirm-password").value = "";
+  document.getElementById("current-password").value = "";
+}
+
+// Load favorites
+function loadFavorites() {
+  const key = `favorites_${currentUser.id}`;
+  const favorites = JSON.parse(localStorage.getItem(key) || "[]");
+  const container = document.getElementById("favorites-container");
+
+  if (favorites.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>No favorites yet. Start adding your favorite schematics!</p></div>';
+    return;
+  }
+
+  // For now, display favorite item names
+  container.innerHTML = favorites.map(itemId => `
+    <div class="favorite-item">
+      <p>${itemId}</p>
+      <button onclick="removeFavorite('${itemId}')">Remove</button>
+    </div>
+  `).join("");
+}
+
+// Remove favorite
+function removeFavorite(itemId) {
+  const key = `favorites_${currentUser.id}`;
+  const favorites = JSON.parse(localStorage.getItem(key) || "[]");
+  const filtered = favorites.filter(id => id !== itemId);
+  localStorage.setItem(key, JSON.stringify(filtered));
+  loadFavorites();
+  showStatus(document.getElementById("favorites-status"), "Favorite removed", "success");
+}
+
+// Logout user
+async function logoutUser() {
+  await client.auth.signOut();
+  window.location.href = "index.html";
+}
+
+// Show status message
+function showStatus(element, message, type) {
+  element.textContent = message;
+  element.className = `status-message ${type}`;
+  setTimeout(() => {
+    element.className = "status-message";
+  }, 3000);
+}
+
+// Initialize on load
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initDashboard);
+} else {
+  initDashboard();
+}
+</script>
+
+</body>
+</html>
