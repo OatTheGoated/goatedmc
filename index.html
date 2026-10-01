@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prosper</title>
-    <link rel="stylesheet" href="/goatedmc/style.css?v=3">
+    <link rel="stylesheet" href="./style.css?v=3">
 </head>
 
 <body>
@@ -56,7 +56,7 @@
 
         <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
 
-        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+        <p id="status" class="pixel-small" style="margin-top:20px; color: #00ff88;"></p>
     </section>
 
 </div>
@@ -74,47 +74,93 @@ const client = createClient(
 
 // REGISTER
 async function registerUser() {
-  const email = document.getElementById("reg-email").value;
-  const password = document.getElementById("reg-password").value;
+  const email = document.getElementById("reg-email").value.trim();
+  const password = document.getElementById("reg-password").value.trim();
+  const status = document.getElementById("status");
 
-  const { error } = await client.auth.signUp({ email, password });
+  if (!email || !password) {
+    status.textContent = "Please enter both email and password.";
+    return;
+  }
+
+  status.textContent = "Registering...";
+
+  const { data, error } = await client.auth.signUp({ email, password });
 
   if (error) {
-    alert("Signup failed: " + error.message);
+    status.textContent = "Signup failed: " + error.message;
+    console.error("Signup error:", error);
   } else {
-    alert("Account created! Check your email to confirm.");
+    status.textContent = "Account created! Check your email to confirm.";
+    console.log("Signup success:", data);
   }
 }
 
 // LOGIN
 async function loginUser() {
-  const email = document.getElementById("login-email").value;
-  const password = document.getElementById("login-password").value;
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value.trim();
+  const status = document.getElementById("status");
+
+  if (!email || !password) {
+    status.textContent = "Please enter both email and password.";
+    return;
+  }
+
+  status.textContent = "Logging in...";
+  console.log("Attempting login for:", email);
 
   // Login
   const { data, error } = await client.auth.signInWithPassword({ email, password });
 
   if (error) {
-    alert("Login failed: " + error.message);
+    status.textContent = "Login failed: " + error.message;
+    console.error("Login error:", error);
     return;
   }
 
-  // Force Supabase to refresh session
-  const sessionRes = await client.auth.getSession();
-  const user = sessionRes.data.session?.user;
+  console.log("Login successful, data:", data);
+
+  // Get session
+  const { data: sessionData } = await client.auth.getSession();
+  const user = sessionData.session?.user;
 
   if (!user) {
-    alert("Login failed: no user returned.");
+    status.textContent = "Login failed: no user returned.";
+    console.error("No user in session");
     return;
   }
 
+  console.log("User from session:", user);
   const userId = user.id;
 
-  // Insert profile row (id auto-fills)
-  await client.from("profiles").insert({
-    Email: user.email,
-    Username: null
-  }).onConflict("id");
+  // Check if profile exists
+  const { data: existingProfile } = await client
+    .from("profiles")
+    .select("id")
+    .eq("id", userId)
+    .maybeSingle();
+
+  console.log("Existing profile:", existingProfile);
+
+  // Create or update profile
+  if (!existingProfile) {
+    const { error: insertError } = await client
+      .from("profiles")
+      .insert({
+        id: userId,
+        Email: user.email,
+        Username: null
+      });
+
+    if (insertError) {
+      console.error("Insert profile error:", insertError);
+      status.textContent = "Error creating profile: " + insertError.message;
+      return;
+    }
+
+    console.log("Profile created");
+  }
 
   // Check username
   const { data: profile } = await client
@@ -123,21 +169,35 @@ async function loginUser() {
     .eq("id", userId)
     .single();
 
+  console.log("User profile:", profile);
+
   if (!profile || !profile.Username) {
+    console.log("No username, redirecting to set-username");
     window.location.href = "set-username.html";
     return;
   }
 
-  alert("Logged in!");
-  updateStatus();
+  status.textContent = "Logged in!";
+  console.log("Login complete, updating status");
+  
+  setTimeout(() => {
+    updateStatus();
+  }, 500);
 }
 
 
 // LOGOUT
 async function logoutUser() {
+  const status = document.getElementById("status");
+  status.textContent = "Logging out...";
+
   await client.auth.signOut();
-  alert("Logged out!");
-  updateStatus();
+  
+  status.textContent = "Logged out!";
+  
+  setTimeout(() => {
+    updateStatus();
+  }, 500);
 }
 
 // STATUS
@@ -154,12 +214,12 @@ async function updateStatus() {
       .from("profiles")
       .select("Username")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
 
     if (profile && profile.Username) {
-      status.textContent = `Welcome back, ${profile.Username}`;
+      status.textContent = `Welcome back, ${profile.Username}!`;
     } else {
-      status.textContent = `Welcome back, ${user.email}`;
+      status.textContent = `Welcome back, ${user.email}!`;
     }
 
     authBox.style.display = "none";
