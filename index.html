@@ -6,11 +6,8 @@
     <title>Prosper</title>
     <link rel="stylesheet" href="./style.css?v=3">
 </head>
-
 <body>
 <div class="site">
-
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
             <h1 class="logo pixel">⛏️ Prosper</h1>
@@ -19,16 +16,15 @@
                 <li><a href="modpacks.html">Modpacks</a></li>
                 <li><a href="schematics.html">Schematics</a></li>
                 <li><a href="videos.html">Videos</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
                 <li><a href="#account">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- HERO SECTION -->
     <header class="hero">
         <h1 class="pixel">🔥 Prosper</h1>
         <p class="pixel-small">Premium Modpacks • Schematics • Minecraft Content</p>
-
         <div class="hero-buttons">
             <a href="modpacks.html" class="btn-red">Modpacks</a>
             <a href="schematics.html" class="btn-red">Schematics</a>
@@ -36,203 +32,87 @@
         </div>
     </header>
 
-    <!-- ACCOUNT SECTION -->
     <section id="account" class="hero" style="margin-top:40px;">
         <h1 class="pixel">Account</h1>
-
         <div class="auth-box">
-
             <h3 class="pixel-small">Register</h3>
-            <input id="reg-email" placeholder="Email">
+            <input id="reg-email" placeholder="Email" type="email">
             <input id="reg-password" placeholder="Password" type="password">
             <button class="btn-red" onclick="registerUser()">Register</button>
-
             <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
-            <input id="login-email" placeholder="Email">
+            <input id="login-email" placeholder="Email" type="email">
             <input id="login-password" placeholder="Password" type="password">
             <button class="btn-red" onclick="loginUser()">Login</button>
-
         </div>
-
         <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
-
-        <p id="status" class="pixel-small" style="margin-top:20px; color: #00ff88;"></p>
+        <a id="dashboard-link" href="dashboard.html" class="btn-red" style="margin-top:20px; display:none;">Open Dashboard</a>
+        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
     </section>
-
 </div>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
 const { createClient } = supabase;
-
 const client = createClient(
   "https://gthgxmyccwsygbopksgz.supabase.co",
   "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
+const status = document.getElementById("status");
 
-// REGISTER
 async function registerUser() {
   const email = document.getElementById("reg-email").value.trim();
-  const password = document.getElementById("reg-password").value.trim();
-  const status = document.getElementById("status");
-
-  if (!email || !password) {
-    status.textContent = "Please enter both email and password.";
-    return;
-  }
-
-  status.textContent = "Registering...";
-
-  const { data, error } = await client.auth.signUp({ email, password });
-
-  if (error) {
-    status.textContent = "Signup failed: " + error.message;
-    console.error("Signup error:", error);
-  } else {
-    status.textContent = "Account created! Check your email to confirm.";
-    console.log("Signup success:", data);
-  }
+  const password = document.getElementById("reg-password").value;
+  if (!email || !password) { status.textContent = "Enter an email and password."; return; }
+  const { error } = await client.auth.signUp({ email, password });
+  status.textContent = error ? "Signup failed: " + error.message : "Account created! Check your email to confirm.";
 }
 
-// LOGIN
 async function loginUser() {
   const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value.trim();
-  const status = document.getElementById("status");
-
-  if (!email || !password) {
-    status.textContent = "Please enter both email and password.";
-    return;
-  }
-
+  const password = document.getElementById("login-password").value;
+  if (!email || !password) { status.textContent = "Enter an email and password."; return; }
   status.textContent = "Logging in...";
-  console.log("Attempting login for:", email);
 
-  // Login
   const { data, error } = await client.auth.signInWithPassword({ email, password });
+  if (error) { status.textContent = "Login failed: " + error.message; return; }
 
-  if (error) {
-    status.textContent = "Login failed: " + error.message;
-    console.error("Login error:", error);
-    return;
+  const user = data.user;
+  const { data: profile, error: profileError } = await client
+    .from("profiles").select("Username").eq("id", user.id).maybeSingle();
+  if (profileError) { status.textContent = "Profile error: " + profileError.message; return; }
+  if (!profile) {
+    const { error: insertError } = await client.from("profiles").insert({ id: user.id, Email: user.email, Username: null });
+    if (insertError) { status.textContent = "Profile error: " + insertError.message; return; }
   }
-
-  console.log("Login successful, data:", data);
-
-  // Get session
-  const { data: sessionData } = await client.auth.getSession();
-  const user = sessionData.session?.user;
-
-  if (!user) {
-    status.textContent = "Login failed: no user returned.";
-    console.error("No user in session");
-    return;
-  }
-
-  console.log("User from session:", user);
-  const userId = user.id;
-
-  // Check if profile exists
-  const { data: existingProfile } = await client
-    .from("profiles")
-    .select("id")
-    .eq("id", userId)
-    .maybeSingle();
-
-  console.log("Existing profile:", existingProfile);
-
-  // Create or update profile
-  if (!existingProfile) {
-    const { error: insertError } = await client
-      .from("profiles")
-      .insert({
-        id: userId,
-        Email: user.email,
-        Username: null
-      });
-
-    if (insertError) {
-      console.error("Insert profile error:", insertError);
-      status.textContent = "Error creating profile: " + insertError.message;
-      return;
-    }
-
-    console.log("Profile created");
-  }
-
-  // Check username
-  const { data: profile } = await client
-    .from("profiles")
-    .select("Username")
-    .eq("id", userId)
-    .single();
-
-  console.log("User profile:", profile);
-
-  if (!profile || !profile.Username) {
-    console.log("No username, redirecting to set-username");
-    window.location.href = "set-username.html";
-    return;
-  }
-
-  status.textContent = "Logged in!";
-  console.log("Login complete, updating status");
-  
-  setTimeout(() => {
-    updateStatus();
-  }, 500);
+  if (!profile?.Username) { window.location.href = "set-username.html"; return; }
+  updateStatus();
 }
 
-
-// LOGOUT
 async function logoutUser() {
-  const status = document.getElementById("status");
-  status.textContent = "Logging out...";
-
   await client.auth.signOut();
-  
-  status.textContent = "Logged out!";
-  
-  setTimeout(() => {
-    updateStatus();
-  }, 500);
+  updateStatus();
 }
 
-// STATUS
 async function updateStatus() {
   const { data: { user } } = await client.auth.getUser();
-
-  const status = document.getElementById("status");
   const authBox = document.querySelector(".auth-box");
-  const logoutBtn = document.getElementById("logout-btn");
-
-  if (user) {
-    // Load username
-    const { data: profile } = await client
-      .from("profiles")
-      .select("Username")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (profile && profile.Username) {
-      status.textContent = `Welcome back, ${profile.Username}!`;
-    } else {
-      status.textContent = `Welcome back, ${user.email}!`;
-    }
-
-    authBox.style.display = "none";
-    logoutBtn.style.display = "inline-block";
-  } else {
+  const logoutButton = document.getElementById("logout-btn");
+  const dashboardLink = document.getElementById("dashboard-link");
+  if (!user) {
     status.textContent = "Not logged in.";
     authBox.style.display = "block";
-    logoutBtn.style.display = "none";
+    logoutButton.style.display = "none";
+    dashboardLink.style.display = "none";
+    return;
   }
+  const { data: profile } = await client.from("profiles").select("Username").eq("id", user.id).maybeSingle();
+  status.textContent = `Welcome back, ${profile?.Username || user.email}!`;
+  authBox.style.display = "none";
+  logoutButton.style.display = "inline-block";
+  dashboardLink.style.display = "inline-block";
 }
 
 updateStatus();
 </script>
-
 </body>
 </html>
