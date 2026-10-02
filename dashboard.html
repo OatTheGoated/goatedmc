@@ -4,93 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="./style.css?v=4">
-
-    <style>
-        /* SIDEBAR */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 300px;
-            height: 100%;
-            background: #111;
-            color: white;
-            padding: 20px;
-            transition: 0.3s ease;
-            z-index: 999;
-            overflow-y: auto;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-
-        .sidebar h2 {
-            margin-bottom: 10px;
-        }
-
-        .tab-button {
-            display: block;
-            padding: 10px;
-            background: #222;
-            margin-bottom: 5px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .tab-button.active {
-            background: #333;
-        }
-
-        .tab-content {
-            display: none;
-            margin-top: 15px;
-        }
-        .tab-content.active {
-            display: block;
-        }
-
-        /* PROFILE BOX */
-        .profile-box {
-            background: #222;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        .profile-box img {
-            width: 80px;
-            height: 80px;
-            border-radius: 5px;
-            image-rendering: pixelated;
-        }
-
-        .profile-box input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            background: #333;
-            border: none;
-            color: white;
-        }
-
-        .profile-box button {
-            margin-top: 10px;
-            width: 100%;
-            padding: 10px;
-            background: #ff6b6b;
-            border: none;
-            color: white;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        /* HAMBURGER */
-        .hamburger {
-            font-size: 30px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-    </style>
+    <link rel="stylesheet" href="./style.css?v=3">
 </head>
 
 <body>
@@ -99,136 +13,97 @@
     <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
-            <span class="hamburger" onclick="toggleSidebar()">☰</span>
             <h1 class="logo pixel">⛏️ Prosper</h1>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="modpacks.html">Modpacks</a></li>
                 <li><a href="schematics.html">Schematics</a></li>
                 <li><a href="videos.html">Videos</a></li>
-                <li><a href="#" onclick="logout()" style="color:#ff6b6b;">Logout</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- SIDEBAR -->
-    <div id="sidebar" class="sidebar">
-        <h2 class="pixel">Dashboard</h2>
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-container">
 
-        <div class="tab-button active" onclick="openTab('profileTab', this)">Profile</div>
-        <div class="tab-button" onclick="openTab('settingsTab', this)">Settings</div>
+        <h2 class="pixel">Welcome back, <span id="usernameDisplay">Loading...</span></h2>
+        <p>Your email: <span id="emailDisplay">Loading...</span></p>
+        <p>Your user ID: <span id="idDisplay">Loading...</span></p>
 
-        <!-- PROFILE TAB -->
-        <div id="profileTab" class="tab-content active">
-            <div class="profile-box">
-                <h3 class="pixel-small">Your Profile</h3>
+        <hr>
 
-                <img id="profilePic" src="" alt="Profile Picture">
+        <!-- PROFILE PICTURE BOX -->
+        <div class="profile-box">
+            <h3 class="pixel">Your Profile Picture</h3>
 
-                <p class="pixel-small">Username: <span id="usernameDisplay"></span></p>
-                <p class="pixel-small">Email: <span id="emailDisplay"></span></p>
+            <img id="profilePic" src="" alt="Profile Picture" class="pfp-img">
 
-                <hr style="margin: 10px 0; border-color:#444;">
-
-                <h4 class="pixel-small">Customise Profile</h4>
-                <input id="mcUsernameInput" placeholder="Minecraft Username">
-                <button onclick="saveProfilePic()">Save Profile Picture</button>
+            <div class="pfp-input">
+                <input type="text" id="mcUsername" placeholder="Minecraft Username">
+                <button onclick="saveProfilePic()">Set Profile Picture</button>
             </div>
         </div>
 
-        <!-- SETTINGS TAB -->
-        <div id="settingsTab" class="tab-content">
-            <h3 class="pixel-small">Settings</h3>
-            <p class="pixel-small">More settings coming soon.</p>
-        </div>
     </div>
-
-    <!-- MAIN DASHBOARD CONTENT -->
-    <section class="hero" style="margin-top:40px;">
-        <h1 class="pixel">Welcome back, <span id="usernameMain">...</span></h1>
-        <p class="pixel-small">This is your Prosper dashboard.</p>
-    </section>
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./auth.js?v=4"></script>
+<script src="./AuthSystem.js?v=3"></script>
 
 <script>
-/* SIDEBAR TOGGLE */
-function toggleSidebar() {
-    document.getElementById("sidebar").classList.toggle("open");
-}
-
-/* TAB SWITCHING */
-function openTab(tabId, button) {
-    document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-    document.getElementById(tabId).classList.add("active");
-
-    document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
-    button.classList.add("active");
-}
-
-/* LOAD DASHBOARD */
 async function loadDashboard() {
-    await AuthSystem.init();
-
-    const user = AuthSystem.getUser();
-    const profile = AuthSystem.getProfile();
-
+    const user = await AuthSystem.getUser();
     if (!user) {
-        window.location.href = "index.html#account";
+        window.location.href = "login.html";
         return;
     }
 
-    if (!profile || !profile.Username) {
-        window.location.href = "set-username.html";
-        return;
-    }
-
-    // Display info
-    document.getElementById("usernameMain").textContent = profile.Username;
-    document.getElementById("usernameDisplay").textContent = profile.Username;
     document.getElementById("emailDisplay").textContent = user.email;
+    document.getElementById("idDisplay").textContent = user.id;
 
-    // Load profile picture if exists
-    if (profile.profilePicUrl) {
-        document.getElementById("profilePic").src = profile.profilePicUrl;
+    // Load profile from Supabase
+    const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+    if (data) {
+        document.getElementById("usernameDisplay").textContent = data.username || "Unknown";
+
+        if (data.pfp_url) {
+            document.getElementById("profilePic").src = data.pfp_url;
+        }
     }
 }
 
-/* SAVE PROFILE PIC */
 async function saveProfilePic() {
-    const mcName = document.getElementById("mcUsernameInput").value.trim();
+    const mcName = document.getElementById("mcUsername").value.trim();
     if (!mcName) return alert("Enter a Minecraft username.");
 
-    // Fetch UUID
-    const res = await fetch(`https://api.mojang.com/users/profiles/minecraft/${mcName}`);
-    if (!res.ok) return alert("Minecraft username not found.");
-
-    const data = await res.json();
-    const uuid = data.id;
-
-    // Build head URL
-    const headUrl = `https://crafatar.com/renders/head/${uuid}?scale=8&overlay`;
+    // Build Crafatar URL (no Mojang API needed)
+    const pfpURL = `https://crafatar.com/avatars/${mcName}?size=128&overlay`;
 
     // Save to Supabase
-    const user = AuthSystem.getUser();
-    const { error } = await AuthSystem.supabase
+    const user = await AuthSystem.getUser();
+
+    const { error } = await supabase
         .from("profiles")
-        .update({ profilePicUrl: headUrl })
+        .update({ pfp_url: pfpURL })
         .eq("id", user.id);
 
     if (error) {
-        console.log(error);
-        return alert("Error saving profile picture.");
+        console.error(error);
+        alert("Failed to save profile picture.");
+        return;
     }
 
-    document.getElementById("profilePic").src = headUrl;
+    // Update dashboard
+    document.getElementById("profilePic").src = pfpURL;
     alert("Profile picture updated!");
 }
 
-/* LOGOUT */
 async function logout() {
     await AuthSystem.logout();
     window.location.href = "index.html";
@@ -239,4 +114,5 @@ document.addEventListener("DOMContentLoaded", loadDashboard);
 
 </body>
 </html>
+
 
