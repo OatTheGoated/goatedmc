@@ -37,45 +37,39 @@
 
 </div>
 
-<!-- SUPABASE + AUTH SYSTEM -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./auth.js?v=3"></script>
 
 <script>
 async function loadDashboard() {
-    // Wait for AuthSystem to initialize
-    await AuthSystem.init();
+  await AuthSystem.init();
 
-    // If not logged in → redirect
-    if (!AuthSystem.isLoggedIn()) {
-        window.location.href = "index.html#account";
-        return;
-    }
+  const user = AuthSystem.getUser();
+  const profile = AuthSystem.getProfile();
 
-    const user = AuthSystem.getUser();
-    const profile = AuthSystem.getProfile();
+  if (!user) {
+    window.location.href = "index.html#account";
+    return;
+  }
 
-    // If no profile or no username → redirect to username page
-    if (!profile || !profile.Username) {
-        window.location.href = "set-username.html";
-        return;
-    }
+  // If profile missing or username missing, send to username page
+  if (!profile || !profile.Username) {
+    window.location.href = "set-username.html";
+    return;
+  }
 
-    // Display user info
-    document.getElementById("usernameDisplay").textContent = profile.Username;
-    document.getElementById("emailDisplay").textContent = user.email;
-    document.getElementById("idDisplay").textContent = user.id;
+  document.getElementById("usernameDisplay").textContent = profile.Username;
+  document.getElementById("emailDisplay").textContent = user.email;
+  document.getElementById("idDisplay").textContent = user.id;
 }
 
 async function logout() {
-    await AuthSystem.logout();
-    window.location.href = "index.html";
+  await AuthSystem.logout();
+  window.location.href = "index.html";
 }
 
-// Load dashboard on page load
 document.addEventListener("DOMContentLoaded", loadDashboard);
 </script>
 
 </body>
 </html>
-
