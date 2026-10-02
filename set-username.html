@@ -48,11 +48,23 @@ const client = createClient(
   "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
-// Save username
 async function saveUsername() {
-  const { data: { user } } = await client.auth.getUser();
-  const username = document.getElementById("username").value.trim();
   const status = document.getElementById("status");
+  const username = document.getElementById("username").value.trim();
+
+  status.style.color = "#00ff88";
+  status.textContent = "Checking...";
+
+  // Make sure session is loaded
+  await client.auth.getSession();
+
+  const { data: { user }, error: userError } = await client.auth.getUser();
+
+  if (userError) {
+    status.textContent = "Auth error: " + userError.message;
+    status.style.color = "#ff6b6b";
+    return;
+  }
 
   if (!user) {
     status.textContent = "You must be logged in.";
@@ -72,10 +84,49 @@ async function saveUsername() {
     return;
   }
 
-  // Check if username is already taken
+  // 1. Ensure a profile row exists for this user
+  const { data: profile, error: profileError } = await client
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    status.textContent = "Error loading profile: " + profileError.message;
+    status.style.color = "#ff6b6b";
+    return;
+  }
+
+  if (!profile) {
+    // Create profile row if missing
+    const { error: insertError } = await client
+      .from("profiles")
+      .insert({
+        id: user.id,
+        Email: user.email,      // adjust if your column is different
+        Username: username      // or `username` if lowercase in DB
+      });
+
+    if (insertError) {
+      status.textContent = "Error creating profile: " + insertError.message;
+      status.style.color = "#ff6b6b";
+      return;
+    }
+
+    status.textContent = "Username saved! Redirecting to dashboard...";
+    status.style.color = "#00ff88";
+
+    setTimeout(() => {
+      window.location.href = "dashboard.html";
+    }, 1000);
+
+    return;
+  }
+
+  // 2. Check if username is already taken by someone else
   const { data: existing, error: lookupError } = await client
     .from("profiles")
-    .select("Username")
+    .select("id, Username")
     .eq("Username", username)
     .maybeSingle();
 
@@ -85,31 +136,31 @@ async function saveUsername() {
     return;
   }
 
-  if (existing) {
+  if (existing && existing.id !== user.id) {
     status.textContent = "That username is already taken.";
     status.style.color = "#ff6b6b";
     return;
   }
 
-  // Save username
-  const { error } = await client
+  // 3. Update this user's username
+  const { error: updateError } = await client
     .from("profiles")
-    .update({ Username: username })
+    .update({ Username: username })   // or `username` if lowercase
     .eq("id", user.id);
 
-  if (error) {
-    status.textContent = "Error saving username: " + error.message;
+  if (updateError) {
+    status.textContent = "Error saving username: " + updateError.message;
     status.style.color = "#ff6b6b";
-    console.error("Username update error:", error);
+    console.error("Username update error:", updateError);
     return;
   }
 
   status.textContent = "Username saved! Redirecting to dashboard...";
   status.style.color = "#00ff88";
-  
+
   setTimeout(() => {
     window.location.href = "dashboard.html";
-  }, 1500);
+  }, 1000);
 }
 </script>
 
