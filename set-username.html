@@ -37,7 +37,6 @@
 
 </div>
 
-<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
@@ -55,7 +54,6 @@ async function saveUsername() {
   status.style.color = "#00ff88";
   status.textContent = "Checking...";
 
-  // Restore session
   await client.auth.getSession();
 
   const { data: { user }, error: userError } = await client.auth.getUser();
@@ -72,41 +70,7 @@ async function saveUsername() {
     return;
   }
 
-  // 1. Check if profile exists
-  const { data: profile, error: profileError } = await client
-    .from("profiles")
-    .select("*")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  if (profileError) {
-    status.textContent = "Error loading profile: " + profileError.message;
-    status.style.color = "#ff6b6b";
-    return;
-  }
-
-  // 2. If no profile exists, create one
-  if (!profile) {
-    const { error: insertError } = await client
-      .from("profiles")
-      .insert({
-        id: user.id,
-        Email: user.email,
-        Username: username
-      });
-
-    if (insertError) {
-      status.textContent = "Error creating profile: " + insertError.message;
-      status.style.color = "#ff6b6b";
-      return;
-    }
-
-    status.textContent = "Username saved! Redirecting...";
-    setTimeout(() => window.location.href = "dashboard.html", 800);
-    return;
-  }
-
-  // 3. Check if username is taken by someone else
+  // Check if username is taken by someone else
   const { data: existing, error: lookupError } = await client
     .from("profiles")
     .select("id")
@@ -124,14 +88,20 @@ async function saveUsername() {
     return;
   }
 
-  // 4. Update username
-  const { error: updateError } = await client
+  // Upsert profile: create if missing, update if exists
+  const { error: upsertError } = await client
     .from("profiles")
-    .update({ Username: username })
-    .eq("id", user.id);
+    .upsert(
+      {
+        id: user.id,
+        Email: user.email,
+        Username: username
+      },
+      { onConflict: "id" }
+    );
 
-  if (updateError) {
-    status.textContent = "Error saving username: " + updateError.message;
+  if (upsertError) {
+    status.textContent = "Error saving username: " + upsertError.message;
     status.style.color = "#ff6b6b";
     return;
   }
@@ -139,10 +109,11 @@ async function saveUsername() {
   status.textContent = "Username saved! Redirecting...";
   status.style.color = "#00ff88";
 
-  setTimeout(() => window.location.href = "dashboard.html", 800);
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 800);
 }
 </script>
 
 </body>
 </html>
-
