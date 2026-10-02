@@ -72,7 +72,7 @@ async function saveUsername() {
     return;
   }
 
-  // 1. Ensure profile row exists
+  // 1. Check if profile exists
   const { data: profile, error: profileError } = await client
     .from("profiles")
     .select("*")
@@ -85,8 +85,8 @@ async function saveUsername() {
     return;
   }
 
+  // 2. If no profile exists, create one
   if (!profile) {
-    // Create missing profile row
     const { error: insertError } = await client
       .from("profiles")
       .insert({
@@ -106,12 +106,11 @@ async function saveUsername() {
     return;
   }
 
-  // 2. Check if username is taken by someone else
+  // 3. Check if username is taken by someone else
   const { data: existing, error: lookupError } = await client
     .from("profiles")
-    .select("id, Username")
-    .eq("Username", username)
-    .maybeSingle();
+    .select("id")
+    .eq("Username", username);
 
   if (lookupError) {
     status.textContent = "Error checking username: " + lookupError.message;
@@ -119,13 +118,13 @@ async function saveUsername() {
     return;
   }
 
-  if (existing && existing.id !== user.id) {
+  if (existing && existing.length > 0 && existing[0].id !== user.id) {
     status.textContent = "That username is already taken.";
     status.style.color = "#ff6b6b";
     return;
   }
 
-  // 3. Update username
+  // 4. Update username
   const { error: updateError } = await client
     .from("profiles")
     .update({ Username: username })
