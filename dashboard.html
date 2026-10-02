@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="./style.css?v=3">
+    <link rel="stylesheet" href="./style.css?v=20">
 </head>
 
 <body>
@@ -49,7 +49,8 @@
 
 </div>
 
-<script src="./AuthSystem.js?v=3"></script>
+<!-- IMPORTANT: bump version so GitHub loads the new file -->
+<script src="./AuthSystem.js?v=20"></script>
 
 <script>
 async function loadDashboard() {
@@ -70,8 +71,10 @@ async function loadDashboard() {
         .single();
 
     if (data) {
-        document.getElementById("usernameDisplay").textContent = data.username || "Unknown";
+        // FIXED: correct field name
+        document.getElementById("usernameDisplay").textContent = data.Username || "Unknown";
 
+        // FIXED: correct field name
         if (data.pfp_url) {
             document.getElementById("profilePic").src = data.pfp_url;
         }
@@ -85,7 +88,6 @@ async function saveProfilePic() {
     // Build Crafatar URL (no Mojang API needed)
     const pfpURL = `https://crafatar.com/avatars/${mcName}?size=128&overlay`;
 
-    // Save to Supabase
     const user = await AuthSystem.getUser();
 
     const { error } = await supabase
@@ -99,7 +101,6 @@ async function saveProfilePic() {
         return;
     }
 
-    // Update dashboard
     document.getElementById("profilePic").src = pfpURL;
     alert("Profile picture updated!");
 }
@@ -114,5 +115,4 @@ document.addEventListener("DOMContentLoaded", loadDashboard);
 
 </body>
 </html>
-
 
