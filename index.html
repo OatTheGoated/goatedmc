@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prosper</title>
-    <link rel="stylesheet" href="./style.css?v=3">
+    <link rel="stylesheet" href="./style.css?v=20">
 </head>
 <body>
 <div class="site">
@@ -55,7 +55,9 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./auth.js?v=3"></script>
+
+<!-- FIXED: load the correct file -->
+<script src="./AuthSystem.js?v=20"></script>
 
 <script>
 const status = document.getElementById("status");
@@ -152,4 +154,5 @@ updateStatus();
 
 </body>
 </html>
+
 
