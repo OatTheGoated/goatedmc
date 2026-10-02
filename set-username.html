@@ -55,36 +55,24 @@ async function saveUsername() {
   status.style.color = "#00ff88";
   status.textContent = "Checking...";
 
-  // Make sure session is loaded
+  // Restore session
   await client.auth.getSession();
 
   const { data: { user }, error: userError } = await client.auth.getUser();
 
-  if (userError) {
-    status.textContent = "Auth error: " + userError.message;
-    status.style.color = "#ff6b6b";
-    return;
-  }
-
-  if (!user) {
+  if (userError || !user) {
     status.textContent = "You must be logged in.";
     status.style.color = "#ff6b6b";
     return;
   }
 
-  if (!username) {
-    status.textContent = "Please enter a username.";
-    status.style.color = "#ff6b6b";
-    return;
-  }
-
-  if (username.length < 3) {
+  if (!username || username.length < 3) {
     status.textContent = "Username must be at least 3 characters.";
     status.style.color = "#ff6b6b";
     return;
   }
 
-  // 1. Ensure a profile row exists for this user
+  // 1. Ensure profile row exists
   const { data: profile, error: profileError } = await client
     .from("profiles")
     .select("*")
@@ -98,13 +86,13 @@ async function saveUsername() {
   }
 
   if (!profile) {
-    // Create profile row if missing
+    // Create missing profile row
     const { error: insertError } = await client
       .from("profiles")
       .insert({
         id: user.id,
-        Email: user.email,      // adjust if your column is different
-        Username: username      // or `username` if lowercase in DB
+        Email: user.email,
+        Username: username
       });
 
     if (insertError) {
@@ -113,17 +101,12 @@ async function saveUsername() {
       return;
     }
 
-    status.textContent = "Username saved! Redirecting to dashboard...";
-    status.style.color = "#00ff88";
-
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1000);
-
+    status.textContent = "Username saved! Redirecting...";
+    setTimeout(() => window.location.href = "dashboard.html", 800);
     return;
   }
 
-  // 2. Check if username is already taken by someone else
+  // 2. Check if username is taken by someone else
   const { data: existing, error: lookupError } = await client
     .from("profiles")
     .select("id, Username")
@@ -142,27 +125,25 @@ async function saveUsername() {
     return;
   }
 
-  // 3. Update this user's username
+  // 3. Update username
   const { error: updateError } = await client
     .from("profiles")
-    .update({ Username: username })   // or `username` if lowercase
+    .update({ Username: username })
     .eq("id", user.id);
 
   if (updateError) {
     status.textContent = "Error saving username: " + updateError.message;
     status.style.color = "#ff6b6b";
-    console.error("Username update error:", updateError);
     return;
   }
 
-  status.textContent = "Username saved! Redirecting to dashboard...";
+  status.textContent = "Username saved! Redirecting...";
   status.style.color = "#00ff88";
 
-  setTimeout(() => {
-    window.location.href = "dashboard.html";
-  }, 1000);
+  setTimeout(() => window.location.href = "dashboard.html", 800);
 }
 </script>
 
 </body>
 </html>
+
