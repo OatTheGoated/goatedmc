@@ -34,85 +34,122 @@
 
     <section id="account" class="hero" style="margin-top:40px;">
         <h1 class="pixel">Account</h1>
+
         <div class="auth-box">
             <h3 class="pixel-small">Register</h3>
-            <input id="reg-email" placeholder="Email" type="email">
-            <input id="reg-password" placeholder="Password" type="password">
+            <input id="regEmail" placeholder="Email" type="email">
+            <input id="regPassword" placeholder="Password" type="password">
             <button class="btn-red" onclick="registerUser()">Register</button>
+
             <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
-            <input id="login-email" placeholder="Email" type="email">
-            <input id="login-password" placeholder="Password" type="password">
+            <input id="loginEmail" placeholder="Email" type="email">
+            <input id="loginPassword" placeholder="Password" type="password">
             <button class="btn-red" onclick="loginUser()">Login</button>
         </div>
+
         <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
         <a id="dashboard-link" href="dashboard.html" class="btn-red" style="margin-top:20px; display:none;">Open Dashboard</a>
+
         <p id="status" class="pixel-small" style="margin-top:20px;"></p>
     </section>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./auth.js?v=3"></script>
+
 <script>
-const { createClient } = supabase;
-const client = createClient(
-  "https://gthgxmyccwsygbopksgz.supabase.co",
-  "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
-);
 const status = document.getElementById("status");
 
+// REGISTER
 async function registerUser() {
-  const email = document.getElementById("reg-email").value.trim();
-  const password = document.getElementById("reg-password").value;
-  if (!email || !password) { status.textContent = "Enter an email and password."; return; }
-  const { error } = await client.auth.signUp({ email, password });
-  status.textContent = error ? "Signup failed: " + error.message : "Account created! Check your email to confirm.";
+    const email = document.getElementById("regEmail").value.trim();
+    const password = document.getElementById("regPassword").value.trim();
+
+    if (!email || !password) {
+        status.textContent = "Enter an email and password.";
+        status.style.color = "#ff6b6b";
+        return;
+    }
+
+    const result = await AuthSystem.register(email, password);
+
+    if (!result.success) {
+        status.textContent = result.error;
+        status.style.color = "#ff6b6b";
+        return;
+    }
+
+    status.textContent = "Account created! Check your email to confirm.";
+    status.style.color = "#00ff88";
 }
 
+// LOGIN
 async function loginUser() {
-  const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value;
-  if (!email || !password) { status.textContent = "Enter an email and password."; return; }
-  status.textContent = "Logging in...";
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
 
-  const { data, error } = await client.auth.signInWithPassword({ email, password });
-  if (error) { status.textContent = "Login failed: " + error.message; return; }
+    if (!email || !password) {
+        status.textContent = "Enter an email and password.";
+        status.style.color = "#ff6b6b";
+        return;
+    }
 
-  const user = data.user;
-  const { data: profile, error: profileError } = await client
-    .from("profiles").select("Username").eq("id", user.id).maybeSingle();
-  if (profileError) { status.textContent = "Profile error: " + profileError.message; return; }
-  if (!profile) {
-    const { error: insertError } = await client.from("profiles").insert({ id: user.id, Email: user.email, Username: null });
-    if (insertError) { status.textContent = "Profile error: " + insertError.message; return; }
-  }
-  if (!profile?.Username) { window.location.href = "set-username.html"; return; }
-  updateStatus();
+    status.textContent = "Logging in...";
+    status.style.color = "#00ff88";
+
+    const result = await AuthSystem.login(email, password);
+
+    if (!result.success) {
+        status.textContent = result.error;
+        status.style.color = "#ff6b6b";
+        return;
+    }
+
+    if (result.needsUsername) {
+        window.location.href = "set-username.html";
+        return;
+    }
+
+    window.location.href = "dashboard.html";
 }
 
+// LOGOUT
 async function logoutUser() {
-  await client.auth.signOut();
-  updateStatus();
+    await AuthSystem.logout();
+    updateStatus();
 }
 
+// UPDATE STATUS
 async function updateStatus() {
-  const { data: { user } } = await client.auth.getUser();
-  const authBox = document.querySelector(".auth-box");
-  const logoutButton = document.getElementById("logout-btn");
-  const dashboardLink = document.getElementById("dashboard-link");
-  if (!user) {
-    status.textContent = "Not logged in.";
-    authBox.style.display = "block";
-    logoutButton.style.display = "none";
-    dashboardLink.style.display = "none";
-    return;
-  }
-  const { data: profile } = await client.from("profiles").select("Username").eq("id", user.id).maybeSingle();
-  status.textContent = `Welcome back, ${profile?.Username || user.email}!`;
-  authBox.style.display = "none";
-  logoutButton.style.display = "inline-block";
-  dashboardLink.style.display = "inline-block";
+    await AuthSystem.init();
+
+    const user = AuthSystem.getUser();
+    const profile = AuthSystem.getProfile();
+
+    const authBox = document.querySelector(".auth-box");
+    const logoutButton = document.getElementById("logout-btn");
+    const dashboardLink = document.getElementById("dashboard-link");
+
+    if (!user) {
+        status.textContent = "Not logged in.";
+        status.style.color = "#ff6b6b";
+        authBox.style.display = "block";
+        logoutButton.style.display = "none";
+        dashboardLink.style.display = "none";
+        return;
+    }
+
+    status.textContent = `Welcome back, ${profile?.Username || user.email}!`;
+    status.style.color = "#00ff88";
+
+    authBox.style.display = "none";
+    logoutButton.style.display = "inline-block";
+    dashboardLink.style.display = "inline-block";
 }
 
 updateStatus();
 </script>
+
 </body>
 </html>
+
