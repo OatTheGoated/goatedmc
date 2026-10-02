@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Username</title>
-    <link rel="stylesheet" href="./style.css?v=3">
+    <link rel="stylesheet" href="./style.css?v=20">
 </head>
 
 <body>
@@ -37,83 +37,79 @@
 
 </div>
 
+<!-- Load Supabase first -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<!-- Load your global AuthSystem -->
+<script src="./AuthSystem.js?v=20"></script>
+
 <script>
-const { createClient } = supabase;
-
-const client = createClient(
-  "https://gthgxmyccwsygbopksgz.supabase.co",
-  "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
-);
-
 async function saveUsername() {
-  const status = document.getElementById("status");
-  const username = document.getElementById("username").value.trim();
+    const status = document.getElementById("status");
+    const username = document.getElementById("username").value.trim();
 
-  status.style.color = "#00ff88";
-  status.textContent = "Checking...";
+    status.style.color = "#00ff88";
+    status.textContent = "Checking...";
 
-  await client.auth.getSession();
+    // Make sure AuthSystem is initialized
+    await AuthSystem.init();
 
-  const { data: { user }, error: userError } = await client.auth.getUser();
+    const user = AuthSystem.getUser();
 
-  if (userError || !user) {
-    status.textContent = "You must be logged in.";
-    status.style.color = "#ff6b6b";
-    return;
-  }
+    if (!user) {
+        status.textContent = "You must be logged in.";
+        status.style.color = "#ff6b6b";
+        return;
+    }
 
-  if (!username || username.length < 3) {
-    status.textContent = "Username must be at least 3 characters.";
-    status.style.color = "#ff6b6b";
-    return;
-  }
+    if (!username || username.length < 3) {
+        status.textContent = "Username must be at least 3 characters.";
+        status.style.color = "#ff6b6b";
+        return;
+    }
 
-  // Check if username is taken by someone else
-  const { data: existing, error: lookupError } = await client
-    .from("profiles")
-    .select("id")
-    .eq("Username", username);
+    // Check if username is taken
+    const { data: existing, error: lookupError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("Username", username);
 
-  if (lookupError) {
-    status.textContent = "Error checking username: " + lookupError.message;
-    status.style.color = "#ff6b6b";
-    return;
-  }
+    if (lookupError) {
+        status.textContent = "Error checking username: " + lookupError.message;
+        status.style.color = "#ff6b6b";
+        return;
+    }
 
-  if (existing && existing.length > 0 && existing[0].id !== user.id) {
-    status.textContent = "That username is already taken.";
-    status.style.color = "#ff6b6b";
-    return;
-  }
+    if (existing && existing.length > 0 && existing[0].id !== user.id) {
+        status.textContent = "That username is already taken.";
+        status.style.color = "#ff6b6b";
+        return;
+    }
 
-  // Upsert profile: create if missing, update if exists
-  const { error: upsertError } = await client
-    .from("profiles")
-    .upsert(
-      {
-        id: user.id,
-        Email: user.email,
-        Username: username
-      },
-      { onConflict: "id" }
-    );
+    // Update username
+    const { error: upsertError } = await supabase
+        .from("profiles")
+        .update({
+            Username: username,
+            Email: user.email
+        })
+        .eq("id", user.id);
 
-  if (upsertError) {
-    status.textContent = "Error saving username: " + upsertError.message;
-    status.style.color = "#ff6b6b";
-    return;
-  }
+    if (upsertError) {
+        status.textContent = "Error saving username: " + upsertError.message;
+        status.style.color = "#ff6b6b";
+        return;
+    }
 
-  status.textContent = "Username saved! Redirecting...";
-  status.style.color = "#00ff88";
+    status.textContent = "Username saved! Redirecting...";
+    status.style.color = "#00ff88";
 
-  setTimeout(() => {
-    window.location.href = "dashboard.html";
-  }, 800);
+    setTimeout(() => {
+        window.location.href = "dashboard.html";
+    }, 800);
 }
 </script>
 
 </body>
 </html>
+
