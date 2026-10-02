@@ -10,6 +10,9 @@ const supabaseClient = createClient(
   "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
+// Expose globally so other pages (like dashboard.html) can use `supabase`
+window.supabase = supabaseClient;
+
 // AuthSystem object - safe to reference anywhere
 const AuthSystem = {
   client: supabaseClient,
@@ -25,7 +28,7 @@ const AuthSystem = {
       if (user) {
         const { data: profile, error: profileError } = await this.client
           .from("profiles")
-          .select("*")
+          .select("id, Email, Username, pfp_url")
           .eq("id", user.id)
           .maybeSingle();
 
@@ -80,7 +83,6 @@ const AuthSystem = {
 
       if (!user) throw new Error("No user returned after login");
 
-      // DO NOT insert into profiles here anymore
       // Just check if a profile exists
       const { data: profile, error: profileError } = await this.client
         .from("profiles")
@@ -202,4 +204,3 @@ if (document.readyState === 'loading') {
 } else {
   AuthSystem.init();
 }
-
