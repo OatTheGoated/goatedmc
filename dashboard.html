@@ -49,10 +49,10 @@
 
 </div>
 
-<!-- ⭐ MUST BE FIRST: Load Supabase -->
+<!-- ⭐ MUST BE FIRST -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- ⭐ MUST BE SECOND: Load AuthSystem -->
+<!-- ⭐ MUST BE SECOND -->
 <script src="./AuthSystem.js?v=20"></script>
 
 <script>
@@ -66,7 +66,6 @@ async function loadDashboard() {
     document.getElementById("emailDisplay").textContent = user.email;
     document.getElementById("idDisplay").textContent = user.id;
 
-    // Load profile from Supabase
     const { data, error } = await supabase
         .from("profiles")
         .select("*")
@@ -115,3 +114,4 @@ document.addEventListener("DOMContentLoaded", loadDashboard);
 
 </body>
 </html>
+
