@@ -23,12 +23,17 @@ const AuthSystem = {
       this.currentUser = user;
 
       if (user) {
-        const { data: profile } = await this.client
+        const { data: profile, error: profileError } = await this.client
           .from("profiles")
           .select("*")
           .eq("id", user.id)
-          .single();
-        this.currentProfile = profile;
+          .maybeSingle();
+
+        if (profileError) {
+          console.error("Profile load error:", profileError.message);
+        }
+
+        this.currentProfile = profile || null;
       }
 
       console.log("AuthSystem initialized", { user: this.currentUser, profile: this.currentProfile });
@@ -75,24 +80,23 @@ const AuthSystem = {
 
       if (!user) throw new Error("No user returned after login");
 
-      // Create or update profile
-      await this.client.from("profiles").insert({
-        id: user.id,
-        Email: user.email,
-        Username: null
-      }).onConflict("id");
-
-      // Check if username is set
-      const { data: profile } = await this.client
+      // DO NOT insert into profiles here anymore
+      // Just check if a profile exists
+      const { data: profile, error: profileError } = await this.client
         .from("profiles")
         .select("Username")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
+
+      if (profileError) {
+        console.error("Profile check error:", profileError.message);
+      }
 
       this.currentUser = user;
-      this.currentProfile = profile;
+      this.currentProfile = profile || null;
 
-      if (!profile?.Username) {
+      // If no profile or no Username, send user to set-username
+      if (!profile || !profile.Username) {
         return { success: true, user, needsUsername: true };
       }
 
@@ -121,24 +125,28 @@ const AuthSystem = {
       if (username.length < 3) throw new Error("Username must be at least 3 characters");
 
       // Check if username exists
-      const { data: existing, count } = await this.client
+      const { data: existing, error: lookupError } = await this.client
         .from("profiles")
-        .select("id", { count: "exact" })
+        .select("id")
         .eq("Username", username);
+
+      if (lookupError) {
+        throw new Error("Error checking username: " + lookupError.message);
+      }
 
       if (existing && existing.length > 0) {
         throw new Error("Username already taken");
       }
 
       // Update username
-      const { error } = await this.client
+      const { error: updateError } = await this.client
         .from("profiles")
         .update({ Username: username })
         .eq("id", this.currentUser.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
-      this.currentProfile = { ...this.currentProfile, Username: username };
+      this.currentProfile = { ...(this.currentProfile || {}), Username: username };
       return { success: true };
     } catch (error) {
       return { success: false, error: error.message };
@@ -149,7 +157,6 @@ const AuthSystem = {
   isFavorited(itemId) {
     if (!this.isLoggedIn()) return false;
     
-    // Store favorites in localStorage for now
     const favorites = JSON.parse(localStorage.getItem(`favorites_${this.currentUser.id}`) || "[]");
     return favorites.includes(itemId);
   },
@@ -181,7 +188,6 @@ const AuthSystem = {
   // Toggle auth modal
   toggleAuthModal(action) {
     console.log("Auth action:", action);
-    // This can trigger a modal or redirect as needed
     if (action === "login") {
       window.location.href = "index.html#account";
     }
@@ -196,3 +202,4 @@ if (document.readyState === 'loading') {
 } else {
   AuthSystem.init();
 }
+
