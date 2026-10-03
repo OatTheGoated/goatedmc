@@ -53,10 +53,10 @@
       return;
     }
 
-    // Upload schematic file
+    // Upload schematic file (with upsert)
     const { data: schemUpload, error: schemErr } = await supabase.storage
       .from("schematics")
-      .upload(schemFile.name, schemFile);
+      .upload(schemFile.name, schemFile, { upsert: true });
 
     if (schemErr) {
       alert("Error uploading schematic");
@@ -64,10 +64,10 @@
       return;
     }
 
-    // Upload image file (FIXED BUCKET NAME)
+    // Upload image file (with upsert)
     const { data: imageUpload, error: imgErr } = await supabase.storage
       .from("images")
-      .upload(imageFile.name, imageFile);
+      .upload(imageFile.name, imageFile, { upsert: true });
 
     if (imgErr) {
       alert("Error uploading image");
@@ -75,7 +75,7 @@
       return;
     }
 
-    // Insert metadata (FIXED FIELDS)
+    // Insert metadata (correct fields)
     const { error: dbErr } = await supabase.from("schematics").insert({
       name,
       description,
