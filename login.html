@@ -29,7 +29,7 @@
         <div class="auth-box">
             <input id="loginEmail" placeholder="Email" type="email">
             <input id="loginPassword" placeholder="Password" type="password">
-            <button class="btn-red" onclick="loginUser()">Login</button>
+            <button class="btn-red" id="loginBtn">Login</button>
         </div>
 
         <p id="status" class="pixel-small" style="margin-top:20px;"></p>
@@ -37,45 +37,53 @@
 
 </div>
 
-<!-- ⭐ Supabase CDN (must be FIRST) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-<!-- ⭐ Auth System -->
-<script src="./AuthSystem.js?v=21"></script>
+    const supabase = createClient(
+        "https://gthgxmyccwsygbopksgz.supabase.co",
+        "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+    );
 
-<script>
-const status = document.getElementById("status");
+    const status = document.getElementById("status");
+    const loginBtn = document.getElementById("loginBtn");
 
-async function loginUser() {
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value.trim();
+    loginBtn.onclick = async () => {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
 
-    if (!email || !password) {
-        status.textContent = "Enter an email and password.";
-        status.style.color = "#ff6b6b";
-        return;
-    }
+        if (!email || !password) {
+            status.textContent = "Enter an email and password.";
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-    status.textContent = "Logging in...";
-    status.style.color = "#00ff88";
+        status.textContent = "Logging in...";
+        status.style.color = "#00ff88";
 
-    const result = await AuthSystem.login(email, password);
+        // ⭐ REAL LOGIN (no AuthSystem.js)
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
 
-    if (!result.success) {
-        status.textContent = result.error;
-        status.style.color = "#ff6b6b";
-        return;
-    }
+        if (error) {
+            status.textContent = error.message;
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-    if (result.needsUsername) {
-        window.location.href = "set-username.html";
-        return;
-    }
+        // ⭐ Ensure admin role exists
+        await supabase.auth.updateUser({
+            data: { role: "admin" }
+        });
 
-    window.location.href = "dashboard.html";
-}
+        // ⭐ Redirect to admin dashboard
+        window.location.href = "/prosper/admin/upload.html";
+    };
 </script>
 
 </body>
 </html>
+
 
