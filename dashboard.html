@@ -1,8 +1,8 @@
 <script>
-// Use the Supabase client from AuthSystem.js
+// ⭐ Use the Supabase client created in AuthSystem.js
 const supabase = window.supabase;
 
-// Load dashboard data
+// ⭐ Load dashboard data
 async function loadDashboard() {
     const user = await AuthSystem.getUser();
 
@@ -35,7 +35,7 @@ async function loadDashboard() {
     }
 }
 
-// ⭐ FIXED: make saveProfilePic GLOBAL
+// ⭐ GLOBAL: saveProfilePic (fixes your error)
 window.saveProfilePic = async function () {
     const mcName = document.getElementById("mcUsername").value.trim();
     if (!mcName) return alert("Enter a Minecraft username.");
@@ -63,7 +63,7 @@ window.saveProfilePic = async function () {
     alert("Profile picture updated!");
 };
 
-// ⭐ FIXED: make logout GLOBAL too
+// ⭐ GLOBAL: logout
 window.logout = async function () {
     await AuthSystem.logout();
     window.location.href = "/prosper/index.html";
@@ -71,4 +71,3 @@ window.logout = async function () {
 
 document.addEventListener("DOMContentLoaded", loadDashboard);
 </script>
-
