@@ -40,9 +40,19 @@
             <img id="profilePic" src="" alt="Profile Picture" style="width:128px; border-radius:8px; margin-bottom:10px;">
 
             <!-- USERNAME OR UUID INPUT -->
-            <input id="mcUUID" placeholder="Minecraft Username OR UUID">
+            <label class="pixel-small" style="margin-bottom:6px; display:block;">
+                Enter your Minecraft Username or UUID:
+            </label>
 
-            <button class="btn-red" onclick="saveProfilePic()">Save Profile Picture</button>
+            <input id="mcUUID" placeholder="e.g. OatTheGoated OR 2982b204842f4220a668f73fa9822c6d">
+
+            <p style="font-size:13px; opacity:0.8; margin-top:5px;">
+                Username is recommended — UUID will auto‑fetch.
+            </p>
+
+            <button class="btn-red" onclick="saveProfilePic()" style="margin-top:10px;">
+                Save Profile Picture
+            </button>
 
             <button class="btn-red" style="margin-top:20px;" onclick="logout()">Logout</button>
         </div>
@@ -202,3 +212,4 @@ window.logout = async function () {
 
 </body>
 </html>
+
