@@ -1,7 +1,56 @@
-<!-- Supabase CDN (must be FIRST) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard – Prosper</title>
+    <link rel="stylesheet" href="./style.css?v=21">
+</head>
+
+<body>
+<div class="site">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo pixel">⛏️ Prosper</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="modpacks.html">Modpacks</a></li>
+                <li><a href="schematics.html">Schematics</a></li>
+                <li><a href="videos.html">Videos</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- DASHBOARD CONTENT -->
+    <section class="hero" style="margin-top:40px;">
+        <h1 class="pixel">Your Dashboard</h1>
+
+        <div class="auth-box">
+
+            <h3 class="pixel-small">Account Info</h3>
+            <p>Email: <span id="emailDisplay"></span></p>
+            <p>User ID: <span id="idDisplay"></span></p>
+            <p>Username: <span id="usernameDisplay"></span></p>
+
+            <h3 class="pixel-small" style="margin-top:20px;">Profile Picture</h3>
+            <img id="profilePic" src="" alt="Profile Picture" style="width:128px; border-radius:8px; margin-bottom:10px;">
+
+            <input id="mcUsername" placeholder="Minecraft Username">
+            <button class="btn-red" onclick="saveProfilePic()">Save Profile Picture</button>
+
+            <button class="btn-red" style="margin-top:20px;" onclick="logout()">Logout</button>
+        </div>
+
+    </section>
+
+</div>
+
+<!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Auth System (creates supabaseClient) -->
+<!-- Auth System -->
 <script src="./AuthSystem.js"></script>
 
 <script>
@@ -87,3 +136,5 @@ window.logout = async function () {
 };
 </script>
 
+</body>
+</html>
