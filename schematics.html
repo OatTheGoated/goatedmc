@@ -94,19 +94,21 @@
             const card = document.createElement("div");
             card.className = "schem-card";
 
+            // FIXED BUCKET + FIXED FIELD NAME
             const imageUrl = supabase.storage
-                .from("schematic-images")
-                .getPublicUrl(s.image_url).data.publicUrl;
+                .from("images")
+                .getPublicUrl(s.image).data.publicUrl;
 
+            // FIXED FIELD NAME
             const fileUrl = supabase.storage
                 .from("schematics")
-                .getPublicUrl(s.filename).data.publicUrl;
+                .getPublicUrl(s.file).data.publicUrl;
 
             card.innerHTML = `
                 <img src="${imageUrl}" alt="${s.name}">
                 <h3>${s.name}</h3>
                 <p>${s.description}</p>
-                <p><strong>Tags:</strong> ${s.tags}</p>
+                <p><strong>Tags:</strong> ${Array.isArray(s.tags) ? s.tags.join(", ") : s.tags}</p>
 
                 <button onclick="window.location='${fileUrl}'">
                     Download Schematic
@@ -148,4 +150,5 @@
 
 </body>
 </html>
+
 
