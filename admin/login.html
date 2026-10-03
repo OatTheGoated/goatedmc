@@ -33,7 +33,6 @@
       return;
     }
 
-    // ⭐ REAL Supabase login
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -44,16 +43,17 @@
       return;
     }
 
-    // ⭐ Set admin role so upload page works
+    // ⭐ REQUIRED: Set admin role so upload page works
     await supabase.auth.updateUser({
       data: { role: "admin" }
     });
 
-    // ⭐ Redirect to admin upload page
+    // Redirect to upload page
     window.location.href = "/prosper/admin/upload.html";
   };
 </script>
 
 </body>
 </html>
+
 
