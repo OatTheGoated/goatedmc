@@ -78,9 +78,9 @@
             return;
         }
 
-        const name = document.getElementById("name").value;
-        const tags = document.getElementById("tags").value;
-        const description = document.getElementById("description").value;
+        const name = document.getElementById("name").value.trim();
+        const tags = document.getElementById("tags").value.trim();
+        const description = document.getElementById("description").value.trim();
 
         const schemFile = document.getElementById("schemFile").files[0];
         const imageFile = document.getElementById("imageFile").files[0];
@@ -90,7 +90,7 @@
             return;
         }
 
-        // ⭐ Upload schematic file into public folder
+        // ⭐ Upload schematic file
         const { error: schemErr } = await supabase.storage
             .from("schematics")
             .upload(`public/${schemFile.name}`, schemFile, { upsert: true });
@@ -101,7 +101,7 @@
             return;
         }
 
-        // ⭐ Upload image file into public folder
+        // ⭐ Upload image file
         const { error: imgErr } = await supabase.storage
             .from("images")
             .upload(`public/${imageFile.name}`, imageFile, { upsert: true });
