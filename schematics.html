@@ -97,13 +97,15 @@
             const card = document.createElement("div");
             card.className = "schem-card";
 
+            // FIXED: images stored inside "public/" folder
             const imageUrl = supabase.storage
                 .from("images")
-                .getPublicUrl(s.image).data.publicUrl;
+                .getPublicUrl(`public/${s.image}`).data.publicUrl;
 
+            // FIXED: schematics stored inside "public/" folder
             const fileUrl = supabase.storage
                 .from("schematics")
-                .getPublicUrl(s.file).data.publicUrl;
+                .getPublicUrl(`public/${s.file}`).data.publicUrl;
 
             card.innerHTML = `
                 <img src="${imageUrl}" alt="${s.name}">
@@ -151,5 +153,4 @@
 
 </body>
 </html>
-
 
