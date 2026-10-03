@@ -3,13 +3,15 @@
 // Unified authentication for all pages
 // ============================================
 
-const { createClient } = supabase;
+// Supabase global from CDN:
+// <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-const supabaseClient = createClient(
+const supabaseClient = supabase.createClient(
   "https://gthgxmyccwsygbopksgz.supabase.co",
   "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
+// Expose globally so other pages can use it
 window.supabase = supabaseClient;
 
 const AuthSystem = {
@@ -20,14 +22,18 @@ const AuthSystem = {
   async init() {
     try {
       const { data: { user } } = await this.client.auth.getUser();
-      this.currentUser = user;
+      this.currentUser = user || null;
 
       if (user) {
-        const { data: profile } = await this.client
+        const { data: profile, error: profileError } = await this.client
           .from("profiles")
           .select("id, Email, Username, pfp_url")
           .eq("id", user.id)
           .maybeSingle();
+
+        if (profileError) {
+          console.error("Profile load error:", profileError.message);
+        }
 
         this.currentProfile = profile || null;
       }
@@ -45,11 +51,16 @@ const AuthSystem = {
     return !!this.currentUser;
   },
 
-  // ⭐ FIXED: always fetch fresh user
+  // ⭐ Always get fresh user from Supabase
   async getUser() {
-    const { data: { user } } = await this.client.auth.getUser();
-    this.currentUser = user || null;
-    return this.currentUser;
+    try {
+      const { data: { user } } = await this.client.auth.getUser();
+      this.currentUser = user || null;
+      return this.currentUser;
+    } catch (error) {
+      console.error("Error getting user:", error);
+      return null;
+    }
   },
 
   getProfile() {
@@ -76,11 +87,15 @@ const AuthSystem = {
 
       if (!user) throw new Error("No user returned after login");
 
-      const { data: profile } = await this.client
+      const { data: profile, error: profileError } = await this.client
         .from("profiles")
         .select("Username")
         .eq("id", user.id)
         .maybeSingle();
+
+      if (profileError) {
+        console.error("Profile check error:", profileError.message);
+      }
 
       this.currentUser = user;
       this.currentProfile = profile || null;
@@ -111,21 +126,25 @@ const AuthSystem = {
       if (!this.currentUser) throw new Error("Not logged in");
       if (username.length < 3) throw new Error("Username must be at least 3 characters");
 
-      const { data: existing } = await this.client
+      const { data: existing, error: lookupError } = await this.client
         .from("profiles")
         .select("id")
         .eq("Username", username);
+
+      if (lookupError) {
+        throw new Error("Error checking username: " + lookupError.message);
+      }
 
       if (existing && existing.length > 0) {
         throw new Error("Username already taken");
       }
 
-      const { error } = await this.client
+      const { error: updateError } = await this.client
         .from("profiles")
         .update({ Username: username })
         .eq("id", this.currentUser.id);
 
-      if (error) throw error;
+      if (updateError) throw updateError;
 
       this.currentProfile = { ...(this.currentProfile || {}), Username: username };
       return { success: true };
@@ -161,6 +180,7 @@ const AuthSystem = {
   },
 
   toggleAuthModal(action) {
+    console.log("Auth action:", action);
     if (action === "login") {
       window.location.href = "index.html#account";
     }
@@ -168,7 +188,9 @@ const AuthSystem = {
 };
 
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => AuthSystem.init());
+  document.addEventListener("DOMContentLoaded", () => {
+    AuthSystem.init();
+  });
 } else {
   AuthSystem.init();
 }
