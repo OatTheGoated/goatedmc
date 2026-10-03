@@ -9,7 +9,6 @@
 <body>
 <div class="site">
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
             <h1 class="logo pixel">⛏️ Prosper</h1>
@@ -23,32 +22,23 @@
         </div>
     </nav>
 
-    <!-- DASHBOARD CONTENT -->
     <section class="hero" style="margin-top:40px;">
         <h1 class="pixel">Your Dashboard</h1>
 
         <div class="auth-box">
-
             <h3 class="pixel-small">Account Info</h3>
             <p>Email: <span id="emailDisplay"></span></p>
             <p>User ID: <span id="idDisplay"></span></p>
             <p>Username: <span id="usernameDisplay"></span></p>
 
             <h3 class="pixel-small" style="margin-top:20px;">Profile Picture</h3>
-
-            <!-- LIVE PREVIEW -->
             <img id="profilePic" src="" alt="Profile Picture" style="width:128px; border-radius:8px; margin-bottom:10px;">
 
-            <!-- UUID INPUT ONLY -->
             <label class="pixel-small" style="margin-bottom:6px; display:block;">
                 Enter your Minecraft UUID (32 characters, no dashes):
             </label>
 
             <input id="mcUUID" placeholder="2982b204842f4220a668f73fa9822c6d">
-
-            <p style="font-size:13px; opacity:0.8; margin-top:5px;">
-                You can find your UUID inside your Minecraft launcher (launcher_profiles.json).
-            </p>
 
             <button class="btn-red" onclick="saveProfilePic()" style="margin-top:10px;">
                 Save Profile Picture
@@ -56,118 +46,96 @@
 
             <button class="btn-red" style="margin-top:20px;" onclick="logout()">Logout</button>
         </div>
-
     </section>
 
 </div>
 
-<!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-<!-- Auth System -->
-<script src="./AuthSystem.js"></script>
+    const supabase = createClient(
+        "https://gthgxmyccwsygbopksgz.supabase.co",
+        "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+    );
 
-<script>
-// ⭐ Use the client created in AuthSystem.js
-let client;
+    async function loadDashboard() {
+        const { data: { user } } = await supabase.auth.getUser();
 
-window.addEventListener("DOMContentLoaded", async () => {
-    client = window.supabaseClient;
+        if (!user) {
+            window.location.href = "/prosper/login.html";
+            return;
+        }
 
-    if (!client) {
-        console.error("supabaseClient not found. Check AuthSystem.js.");
-        return;
-    }
+        document.getElementById("emailDisplay").textContent = user.email;
+        document.getElementById("idDisplay").textContent = user.id;
 
-    await loadDashboard();
-});
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle();
 
-// ⭐ Load dashboard data
-async function loadDashboard() {
-    await AuthSystem.init();
+        if (error) {
+            console.error(error);
+            document.getElementById("usernameDisplay").textContent = "Unknown";
+            return;
+        }
 
-    const user = await AuthSystem.getUser();
-
-    if (!user) {
-        window.location.href = "/prosper/login.html";
-        return;
-    }
-
-    document.getElementById("emailDisplay").textContent = user.email;
-    document.getElementById("idDisplay").textContent = user.id;
-
-    const { data, error } = await client
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-    if (error) {
-        console.error(error);
-        document.getElementById("usernameDisplay").textContent = "Unknown";
-        return;
-    }
-
-    if (data) {
-        document.getElementById("usernameDisplay").textContent = data.Username || "Unknown";
-
-        if (data.pfp_url) {
-            document.getElementById("profilePic").src = data.pfp_url;
+        if (data) {
+            document.getElementById("usernameDisplay").textContent = data.Username || "Unknown";
+            if (data.pfp_url) {
+                document.getElementById("profilePic").src = data.pfp_url;
+            }
         }
     }
-}
 
-// ⭐ UUID-only live preview
-document.getElementById("mcUUID").addEventListener("input", () => {
-    let value = document.getElementById("mcUUID").value.trim();
-    value = value.replace(/-/g, "");
+    loadDashboard();
 
-    if (value.length === 32) {
-        const previewURL = `https://crafatar.com/avatars/${value}?size=128&overlay`;
-        document.getElementById("profilePic").src = previewURL;
-    }
-});
+    document.getElementById("mcUUID").addEventListener("input", () => {
+        let uuid = document.getElementById("mcUUID").value.trim().replace(/-/g, "");
+        if (uuid.length === 32) {
+            document.getElementById("profilePic").src =
+                `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
+        }
+    });
 
-// ⭐ Save PFP (UUID only)
-window.saveProfilePic = async function () {
-    let uuid = document.getElementById("mcUUID").value.trim().replace(/-/g, "");
+    window.saveProfilePic = async function () {
+        let uuid = document.getElementById("mcUUID").value.trim().replace(/-/g, "");
+        if (uuid.length !== 32) {
+            alert("UUID must be exactly 32 characters.");
+            return;
+        }
 
-    if (uuid.length !== 32) {
-        return alert("UUID must be exactly 32 characters (no dashes).");
-    }
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            alert("You must be logged in.");
+            return;
+        }
 
-    const pfpURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
+        const pfpURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
 
-    await AuthSystem.init();
-    const user = await AuthSystem.getUser();
+        const { error } = await supabase
+            .from("profiles")
+            .update({ pfp_url: pfpURL })
+            .eq("id", user.id);
 
-    if (!user) {
-        alert("You must be logged in.");
-        return;
-    }
+        if (error) {
+            console.error(error);
+            alert("Failed to save profile picture.");
+            return;
+        }
 
-    const { error } = await client
-        .from("profiles")
-        .update({ pfp_url: pfpURL })
-        .eq("id", user.id);
+        document.getElementById("profilePic").src = pfpURL;
+        alert("Profile picture updated!");
+    };
 
-    if (error) {
-        console.error(error);
-        alert("Failed to save profile picture.");
-        return;
-    }
-
-    document.getElementById("profilePic").src = pfpURL;
-    alert("Profile picture updated!");
-};
-
-// ⭐ Logout
-window.logout = async function () {
-    await AuthSystem.logout();
-    window.location.href = "/prosper/index.html";
-};
+    window.logout = async function () {
+        await supabase.auth.signOut();
+        window.location.href = "/prosper/index.html";
+    };
 </script>
 
 </body>
 </html>
+
 
