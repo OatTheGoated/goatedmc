@@ -39,15 +39,15 @@
             <!-- LIVE PREVIEW -->
             <img id="profilePic" src="" alt="Profile Picture" style="width:128px; border-radius:8px; margin-bottom:10px;">
 
-            <!-- USERNAME OR UUID INPUT -->
+            <!-- UUID INPUT ONLY -->
             <label class="pixel-small" style="margin-bottom:6px; display:block;">
-                Enter your Minecraft Username or UUID:
+                Enter your Minecraft UUID (32 characters, no dashes):
             </label>
 
-            <input id="mcUUID" placeholder="e.g. OatTheGoated OR 2982b204842f4220a668f73fa9822c6d">
+            <input id="mcUUID" placeholder="2982b204842f4220a668f73fa9822c6d">
 
             <p style="font-size:13px; opacity:0.8; margin-top:5px;">
-                Username is recommended — UUID will auto‑fetch.
+                You can find your UUID inside your Minecraft launcher (launcher_profiles.json).
             </p>
 
             <button class="btn-red" onclick="saveProfilePic()" style="margin-top:10px;">
@@ -117,65 +117,23 @@ async function loadDashboard() {
     }
 }
 
-// ⭐ Detect username OR UUID and show preview
-document.getElementById("mcUUID").addEventListener("input", async () => {
+// ⭐ UUID-only live preview
+document.getElementById("mcUUID").addEventListener("input", () => {
     let value = document.getElementById("mcUUID").value.trim();
+    value = value.replace(/-/g, "");
 
-    // Case 1: UUID typed
-    if (value.replace(/-/g, "").length === 32) {
-        const uuid = value.replace(/-/g, "");
-        const previewURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
+    if (value.length === 32) {
+        const previewURL = `https://crafatar.com/avatars/${value}?size=128&overlay`;
         document.getElementById("profilePic").src = previewURL;
-        return;
-    }
-
-    // Case 2: Username typed
-    if (/^[A-Za-z0-9_]{3,16}$/.test(value)) {
-        try {
-            const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${value}`);
-            if (!res.ok) return;
-
-            const data = await res.json();
-            const uuid = data.uuid.replace(/-/g, "");
-
-            const previewURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
-            document.getElementById("profilePic").src = previewURL;
-        } catch (err) {
-            console.error("Username lookup failed:", err);
-        }
     }
 });
 
-// ⭐ Save PFP (username OR UUID)
+// ⭐ Save PFP (UUID only)
 window.saveProfilePic = async function () {
-    let input = document.getElementById("mcUUID").value.trim();
-    let uuid = "";
-
-    // Case 1: UUID entered
-    if (input.replace(/-/g, "").length === 32) {
-        uuid = input.replace(/-/g, "");
-    }
-
-    // Case 2: Username entered → fetch UUID
-    else if (/^[A-Za-z0-9_]{3,16}$/.test(input)) {
-        try {
-            const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${input}`);
-            if (!res.ok) return alert("Invalid username.");
-
-            const data = await res.json();
-            uuid = data.uuid.replace(/-/g, "");
-        } catch (err) {
-            console.error(err);
-            return alert("Failed to fetch UUID from username.");
-        }
-    }
-
-    else {
-        return alert("Enter a valid UUID or Minecraft username.");
-    }
+    let uuid = document.getElementById("mcUUID").value.trim().replace(/-/g, "");
 
     if (uuid.length !== 32) {
-        return alert("UUID must be exactly 32 characters.");
+        return alert("UUID must be exactly 32 characters (no dashes).");
     }
 
     const pfpURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
