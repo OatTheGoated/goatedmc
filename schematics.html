@@ -3,11 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>ProsperMC Schematics</title>
+
     <style>
         body {
             background: #111;
             color: #fff;
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            font-size: 32px;
         }
 
         .schem-grid {
@@ -31,6 +40,12 @@
 
         .schem-card h3 {
             margin-top: 10px;
+            font-size: 20px;
+        }
+
+        .schem-card p {
+            font-size: 14px;
+            opacity: 0.85;
         }
 
         .schem-card button {
@@ -42,17 +57,17 @@
             border-radius: 6px;
             color: white;
             cursor: pointer;
+            font-size: 15px;
         }
 
         .like-btn {
             background: #ff4444 !important;
-            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-<h1 style="text-align:center;">ProsperMC Schematics</h1>
+<h1>ProsperMC Schematics</h1>
 
 <div id="schemContainer" class="schem-grid"></div>
 
