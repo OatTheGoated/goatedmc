@@ -1,120 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Upload Schematic</title>
-  <style>
-    body { background:#111; color:#fff; font-family:Arial; padding:20px; }
-    input, textarea, button { display:block; margin:10px 0; padding:10px; width:300px; border-radius:6px; border:none; }
-    button { background:#4CAF50; color:white; cursor:pointer; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Admin Upload – Prosper</title>
+    <link rel="stylesheet" href="../style.css?v=22">
 </head>
+
 <body>
+<div class="site">
 
-<h2>Upload Schematic</h2>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo pixel">⛏️ Prosper Admin</h1>
+            <ul class="nav-links">
+                <li><a href="/prosper/index.html">Home</a></li>
+                <li><a href="/prosper/modpacks.html">Modpacks</a></li>
+                <li><a href="/prosper/schematics.html">Schematics</a></li>
+                <li><a href="/prosper/videos.html">Videos</a></li>
+                <li><a href="/prosper/admin/upload.html" class="active">Upload</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<input id="name" placeholder="Name">
-<input id="tags" placeholder="Tags (comma separated)">
-<textarea id="description" placeholder="Description"></textarea>
+    <section class="hero" style="margin-top:40px;">
+        <h1 class="pixel">Upload Schematic</h1>
 
-<h3>Schematic File (.schem / .litematic)</h3>
-<input id="schemFile" type="file">
+        <div class="auth-box">
+            <input id="name" placeholder="Name">
+            <input id="tags" placeholder="Tags (comma separated)">
+            <textarea id="description" placeholder="Description"></textarea>
 
-<h3>Preview Image (.webp)</h3>
-<input id="imageFile" type="file">
+            <h3 class="pixel-small">Schematic File (.schem / .litematic)</h3>
+            <input id="schemFile" type="file">
 
-<button id="uploadBtn">Upload</button>
+            <h3 class="pixel-small">Preview Image (.webp)</h3>
+            <input id="imageFile" type="file">
+
+            <button class="btn-red" id="uploadBtn">Upload</button>
+        </div>
+    </section>
+
+</div>
 
 <script type="module">
-  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-  const supabase = createClient(
-    "https://gthgxmyccwsygbopksgz.supabase.co",
-    "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
-  );
+    const supabase = createClient(
+        "https://gthgxmyccwsygbopksgz.supabase.co",
+        "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+    );
 
-  // ⭐ Check admin safely (NO return at top level)
-  async function checkAdmin() {
-    const { data: { user } } = await supabase.auth.getUser();
+    // ⭐ ADMIN CHECK (NO top-level return)
+    async function checkAdmin() {
+        const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user || user.user_metadata.role !== "admin") {
-      alert("Access denied");
-      window.location.href = "/prosper/admin/login.html";
-      return null;
+        if (!user || user.user_metadata.role !== "admin") {
+            alert("Access denied");
+            window.location.href = "/prosper/login.html";
+            return null;
+        }
+
+        return user;
     }
 
-    return user;
-  }
-
-  // ⭐ Run admin check — but DO NOT return at top level
-  const initialUser = await checkAdmin();
-  if (!initialUser) {
-    // checkAdmin already redirected — just stop running upload logic
-  }
-
-  // ⭐ Upload button handler
-  document.getElementById("uploadBtn").onclick = async () => {
-
-    // Re-fetch user to ensure session is active
-    const { data: { user } } = await supabase.auth.getUser();
-
-    if (!user) {
-      alert("Session expired. Please log in again.");
-      window.location.href = "/prosper/admin/login.html";
-      return;
+    // Run admin check safely
+    const initialUser = await checkAdmin();
+    if (!initialUser) {
+        // Already redirected — do not return (avoids script crash)
     }
 
-    const name = document.getElementById("name").value;
-    const tags = document.getElementById("tags").value;
-    const description = document.getElementById("description").value;
+    // ⭐ UPLOAD BUTTON HANDLER
+    document.getElementById("uploadBtn").onclick = async () => {
 
-    const schemFile = document.getElementById("schemFile").files[0];
-    const imageFile = document.getElementById("imageFile").files[0];
+        // Re-fetch user to ensure session is valid
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            alert("Session expired. Please log in again.");
+            window.location.href = "/prosper/login.html";
+            return;
+        }
 
-    if (!schemFile || !imageFile) {
-      alert("Missing files");
-      return;
-    }
+        const name = document.getElementById("name").value;
+        const tags = document.getElementById("tags").value;
+        const description = document.getElementById("description").value;
 
-    // ⭐ Upload schematic file
-    const { error: schemErr } = await supabase.storage
-      .from("schematics")
-      .upload(schemFile.name, schemFile, { upsert: true });
+        const schemFile = document.getElementById("schemFile").files[0];
+        const imageFile = document.getElementById("imageFile").files[0];
 
-    if (schemErr) {
-      alert("Error uploading schematic");
-      console.error(schemErr);
-      return;
-    }
+        if (!schemFile || !imageFile) {
+            alert("Missing files");
+            return;
+        }
 
-    // ⭐ Upload image file
-    const { error: imgErr } = await supabase.storage
-      .from("images")
-      .upload(imageFile.name, imageFile, { upsert: true });
+        // ⭐ Upload schematic file
+        const { error: schemErr } = await supabase.storage
+            .from("schematics")
+            .upload(schemFile.name, schemFile, { upsert: true });
 
-    if (imgErr) {
-      alert("Error uploading image");
-      console.error(imgErr);
-      return;
-    }
+        if (schemErr) {
+            alert("Error uploading schematic");
+            console.error(schemErr);
+            return;
+        }
 
-    // ⭐ Insert metadata into database
-    const { error: dbErr } = await supabase.from("schematics").insert({
-      name,
-      description,
-      tags: tags.split(",").map(t => t.trim()),
-      file: schemFile.name,
-      image: imageFile.name,
-      uploaded_by: user.email
-    });
+        // ⭐ Upload image file
+        const { error: imgErr } = await supabase.storage
+            .from("images")
+            .upload(imageFile.name, imageFile, { upsert: true });
 
-    if (dbErr) {
-      alert("Error saving metadata");
-      console.error(dbErr);
-      return;
-    }
+        if (imgErr) {
+            alert("Error uploading image");
+            console.error(imgErr);
+            return;
+        }
 
-    alert("Upload complete!");
-  };
+        // ⭐ Insert metadata into database
+        const { error: dbErr } = await supabase.from("schematics").insert({
+            name,
+            description,
+            tags: tags.split(",").map(t => t.trim()),
+            file: schemFile.name,
+            image: imageFile.name,
+            uploaded_by: user.email
+        });
+
+        if (dbErr) {
+            alert("Error saving metadata");
+            console.error(dbErr);
+            return;
+        }
+
+        alert("Upload complete!");
+    };
 </script>
 
 </body>
