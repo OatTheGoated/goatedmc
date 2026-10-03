@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Choose Username</title>
-    <link rel="stylesheet" href="./style.css?v=20">
+    <link rel="stylesheet" href="./style.css?v=22">
 </head>
 
 <body>
 <div class="site">
 
-    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="container">
             <h1 class="logo pixel">⛏️ Prosper</h1>
@@ -23,7 +22,6 @@
         </div>
     </nav>
 
-    <!-- USERNAME SETUP -->
     <section class="hero" style="margin-top:40px;">
         <h1 class="pixel">Choose a Username</h1>
         <p class="pixel-small">This will be your public name on Prosper.</p>
@@ -37,80 +35,75 @@
 
 </div>
 
-<!-- ⭐ Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-<!-- ⭐ Auth System -->
-<script src="./AuthSystem.js?v=20"></script>
+    const supabase = createClient(
+        "https://gthgxmyccwsygbopksgz.supabase.co",
+        "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+    );
 
-<script>
-async function saveUsername() {
-    const status = document.getElementById("status");
-    const username = document.getElementById("username").value.trim();
+    window.saveUsername = async function () {
+        const status = document.getElementById("status");
+        const username = document.getElementById("username").value.trim();
 
-    status.style.color = "#00ff88";
-    status.textContent = "Checking...";
+        status.style.color = "#00ff88";
+        status.textContent = "Checking...";
 
-    // Ensure AuthSystem is initialized
-    await AuthSystem.init();
+        const { data: { user } } = await supabase.auth.getUser();
 
-    const user = await AuthSystem.getUser(); // MUST await
+        if (!user) {
+            status.textContent = "You must be logged in.";
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-    if (!user) {
-        status.textContent = "You must be logged in.";
-        status.style.color = "#ff6b6b";
-        return;
-    }
+        if (!username || username.length < 3) {
+            status.textContent = "Username must be at least 3 characters.";
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-    if (!username || username.length < 3) {
-        status.textContent = "Username must be at least 3 characters.";
-        status.style.color = "#ff6b6b";
-        return;
-    }
+        // Check if username is taken
+        const { data: existing, error: lookupError } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("Username", username);
 
-    // Use the unified client
-    const client = window.supabaseClient;
+        if (lookupError) {
+            status.textContent = "Error checking username: " + lookupError.message;
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-    // Check if username is taken
-    const { data: existing, error: lookupError } = await client
-        .from("profiles")
-        .select("id")
-        .eq("Username", username);
+        if (existing && existing.length > 0 && existing[0].id !== user.id) {
+            status.textContent = "That username is already taken.";
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-    if (lookupError) {
-        status.textContent = "Error checking username: " + lookupError.message;
-        status.style.color = "#ff6b6b";
-        return;
-    }
+        // Update username
+        const { error: upsertError } = await supabase
+            .from("profiles")
+            .update({
+                Username: username,
+                Email: user.email
+            })
+            .eq("id", user.id);
 
-    if (existing && existing.length > 0 && existing[0].id !== user.id) {
-        status.textContent = "That username is already taken.";
-        status.style.color = "#ff6b6b";
-        return;
-    }
+        if (upsertError) {
+            status.textContent = "Error saving username: " + upsertError.message;
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-    // Update username
-    const { error: upsertError } = await client
-        .from("profiles")
-        .update({
-            Username: username,
-            Email: user.email
-        })
-        .eq("id", user.id);
+        status.textContent = "Username saved! Redirecting...";
+        status.style.color = "#00ff88";
 
-    if (upsertError) {
-        status.textContent = "Error saving username: " + upsertError.message;
-        status.style.color = "#ff6b6b";
-        return;
-    }
-
-    status.textContent = "Username saved! Redirecting...";
-    status.style.color = "#00ff88";
-
-    setTimeout(() => {
-        window.location.href = "dashboard.html";
-    }, 800);
-}
+        setTimeout(() => {
+            window.location.href = "dashboard.html";
+        }, 800);
+    };
 </script>
 
 </body>
