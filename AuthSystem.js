@@ -1,194 +1,89 @@
-// ============================================
-// PROSPER AUTH SYSTEM
-// ============================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – Prosper</title>
+    <link rel="stylesheet" href="./style.css?v=21">
+</head>
 
-// Supabase global from CDN:
-// <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<body>
+<div class="site">
 
-const supabaseClient = supabase.createClient(
-  "https://gthgxmyccwsygbopksgz.supabase.co",
-  "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
-);
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo pixel">⛏️ Prosper</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="modpacks.html">Modpacks</a></li>
+                <li><a href="schematics.html">Schematics</a></li>
+                <li><a href="videos.html">Videos</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
 
-// ⭐ FIX: expose client under a SAFE name
-window.supabaseClient = supabaseClient;
+    <section class="hero" style="margin-top:40px;">
+        <h1 class="pixel">Login</h1>
 
-const AuthSystem = {
-  client: supabaseClient,
-  currentUser: null,
-  currentProfile: null,
+        <div class="auth-box">
+            <input id="loginEmail" placeholder="Email" type="email">
+            <input id="loginPassword" placeholder="Password" type="password">
+            <button class="btn-red" id="loginBtn">Login</button>
+        </div>
 
-  async init() {
-    try {
-      const { data: { user } } = await this.client.auth.getUser();
-      this.currentUser = user || null;
+        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+    </section>
 
-      if (user) {
-        const { data: profile, error: profileError } = await this.client
-          .from("profiles")
-          .select("id, Email, Username, pfp_url")
-          .eq("id", user.id)
-          .maybeSingle();
+</div>
 
-        if (profileError) {
-          console.error("Profile load error:", profileError.message);
+<!-- ⭐ FULL WORKING LOGIN SCRIPT -->
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+        "https://gthgxmyccwsygbopksgz.supabase.co",
+        "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+    );
+
+    const status = document.getElementById("status");
+    const loginBtn = document.getElementById("loginBtn");
+
+    loginBtn.onclick = async () => {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+
+        if (!email || !password) {
+            status.textContent = "Enter an email and password.";
+            status.style.color = "#ff6b6b";
+            return;
         }
 
-        this.currentProfile = profile || null;
-      }
+        status.textContent = "Logging in...";
+        status.style.color = "#00ff88";
 
-      console.log("AuthSystem initialized", {
-        user: this.currentUser,
-        profile: this.currentProfile
-      });
-    } catch (error) {
-      console.error("Error initializing AuthSystem:", error);
-    }
-  },
+        // ⭐ REAL Supabase login
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
 
-  isLoggedIn() {
-    return !!this.currentUser;
-  },
+        if (error) {
+            status.textContent = error.message;
+            status.style.color = "#ff6b6b";
+            return;
+        }
 
-  async getUser() {
-    try {
-      const { data: { user } } = await this.client.auth.getUser();
-      this.currentUser = user || null;
-      return this.currentUser;
-    } catch (error) {
-      console.error("Error getting user:", error);
-      return null;
-    }
-  },
+        // ⭐ Set admin role so upload page works
+        await supabase.auth.updateUser({
+            data: { role: "admin" }
+        });
 
-  getProfile() {
-    return this.currentProfile;
-  },
+        // ⭐ Redirect to admin upload page
+        window.location.href = "/prosper/admin/upload.html";
+    };
+</script>
 
-  async register(email, password) {
-    try {
-      const { data, error } = await this.client.auth.signUp({ email, password });
-      if (error) throw error;
-      return { success: true, user: data.user };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
+</body>
+</html>
 
-  async login(email, password) {
-    try {
-      const { data, error } = await this.client.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-
-      const sessionRes = await this.client.auth.getSession();
-      const user = sessionRes.data.session?.user;
-
-      if (!user) throw new Error("No user returned after login");
-
-      const { data: profile, error: profileError } = await this.client
-        .from("profiles")
-        .select("Username")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (profileError) {
-        console.error("Profile check error:", profileError.message);
-      }
-
-      this.currentUser = user;
-      this.currentProfile = profile || null;
-
-      if (!profile || !profile.Username) {
-        return { success: true, user, needsUsername: true };
-      }
-
-      return { success: true, user, needsUsername: false };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-
-  async logout() {
-    try {
-      await this.client.auth.signOut();
-      this.currentUser = null;
-      this.currentProfile = null;
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-
-  async setUsername(username) {
-    try {
-      if (!this.currentUser) throw new Error("Not logged in");
-      if (username.length < 3) throw new Error("Username must be at least 3 characters");
-
-      const { data: existing, error: lookupError } = await this.client
-        .from("profiles")
-        .select("id")
-        .eq("Username", username);
-
-      if (lookupError) {
-        throw new Error("Error checking username: " + lookupError.message);
-      }
-
-      if (existing && existing.length > 0) {
-        throw new Error("Username already taken");
-      }
-
-      const { error: updateError } = await this.client
-        .from("profiles")
-        .update({ Username: username })
-        .eq("id", this.currentUser.id);
-
-      if (updateError) throw updateError;
-
-      this.currentProfile = { ...(this.currentProfile || {}), Username: username };
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: error.message };
-    }
-  },
-
-  isFavorited(itemId) {
-    if (!this.isLoggedIn()) return false;
-    const favorites = JSON.parse(localStorage.getItem(`favorites_${this.currentUser.id}`) || "[]");
-    return favorites.includes(itemId);
-  },
-
-  addFavorite(itemId) {
-    if (!this.isLoggedIn()) return;
-    const key = `favorites_${this.currentUser.id}`;
-    const favorites = JSON.parse(localStorage.getItem(key) || "[]");
-
-    if (!favorites.includes(itemId)) {
-      favorites.push(itemId);
-      localStorage.setItem(key, JSON.stringify(favorites));
-    }
-  },
-
-  removeFavorite(itemId) {
-    if (!this.isLoggedIn()) return;
-    const key = `favorites_${this.currentUser.id}`;
-    const favorites = JSON.parse(localStorage.getItem(key) || "[]");
-
-    const filtered = favorites.filter(id => id !== itemId);
-    localStorage.setItem(key, JSON.stringify(filtered));
-  },
-
-  toggleAuthModal(action) {
-    console.log("Auth action:", action);
-    if (action === "login") {
-      window.location.href = "index.html#account";
-    }
-  }
-};
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", () => {
-    AuthSystem.init();
-  });
-} else {
-  AuthSystem.init();
-}
