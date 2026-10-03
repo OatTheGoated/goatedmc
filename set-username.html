@@ -37,7 +37,10 @@
 
 </div>
 
-<!-- Load your global AuthSystem -->
+<!-- ⭐ Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ⭐ Auth System -->
 <script src="./AuthSystem.js?v=20"></script>
 
 <script>
@@ -48,10 +51,10 @@ async function saveUsername() {
     status.style.color = "#00ff88";
     status.textContent = "Checking...";
 
-    // Make sure AuthSystem is initialized
+    // Ensure AuthSystem is initialized
     await AuthSystem.init();
 
-    const user = AuthSystem.getUser();
+    const user = await AuthSystem.getUser(); // MUST await
 
     if (!user) {
         status.textContent = "You must be logged in.";
@@ -65,8 +68,11 @@ async function saveUsername() {
         return;
     }
 
+    // Use the unified client
+    const client = window.supabaseClient;
+
     // Check if username is taken
-    const { data: existing, error: lookupError } = await supabase
+    const { data: existing, error: lookupError } = await client
         .from("profiles")
         .select("id")
         .eq("Username", username);
@@ -84,7 +90,7 @@ async function saveUsername() {
     }
 
     // Update username
-    const { error: upsertError } = await supabase
+    const { error: upsertError } = await client
         .from("profiles")
         .update({
             Username: username,
@@ -109,4 +115,5 @@ async function saveUsername() {
 
 </body>
 </html>
+
 
