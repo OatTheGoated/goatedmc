@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – Prosper</title>
+    <link rel="stylesheet" href="./style.css?v=21">
+</head>
+
+<body>
+<div class="site">
+
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo pixel">⛏️ Prosper</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="modpacks.html">Modpacks</a></li>
+                <li><a href="schematics.html">Schematics</a></li>
+                <li><a href="videos.html">Videos</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" style="margin-top:40px;">
+        <h1 class="pixel">Login</h1>
+
+        <div class="auth-box">
+            <input id="loginEmail" placeholder="Email" type="email">
+            <input id="loginPassword" placeholder="Password" type="password">
+            <button class="btn-red" onclick="loginUser()">Login</button>
+        </div>
+
+        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
+    </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./AuthSystem.js?v=21"></script>
+
+<script>
+const status = document.getElementById("status");
+
+async function loginUser() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+
+    if (!email || !password) {
+        status.textContent = "Enter an email and password.";
+        status.style.color = "#ff6b6b";
+        return;
+    }
+
+    status.textContent = "Logging in...";
+    status.style.color = "#00ff88";
+
+    const result = await AuthSystem.login(email, password);
+
+    if (!result.success) {
+        status.textContent = result.error;
+        status.style.color = "#ff6b6b";
+        return;
+    }
+
+    if (result.needsUsername) {
+        window.location.href = "set-username.html";
+        return;
+    }
+
+    window.location.href = "dashboard.html";
+}
+</script>
+
+</body>
+</html>
