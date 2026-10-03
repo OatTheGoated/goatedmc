@@ -49,17 +49,23 @@
 
 </div>
 
-<!-- ⭐ MUST BE FIRST -->
+<!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- ⭐ MUST BE SECOND -->
+<!-- Auth System -->
 <script src="./AuthSystem.js?v=20"></script>
 
 <script>
+const supabase = Supabase.createClient(
+    "https://gthgxmyccwsygbopksgz.supabase.co",
+    "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+);
+
 async function loadDashboard() {
     const user = await AuthSystem.getUser();
+
     if (!user) {
-        window.location.href = "login.html";
+        window.location.href = "/prosper/login.html";
         return;
     }
 
@@ -72,12 +78,16 @@ async function loadDashboard() {
         .eq("id", user.id)
         .single();
 
-    if (data) {
-        document.getElementById("usernameDisplay").textContent = data.Username || "Unknown";
+    if (error) {
+        console.error(error);
+        document.getElementById("usernameDisplay").textContent = "Unknown";
+        return;
+    }
 
-        if (data.pfp_url) {
-            document.getElementById("profilePic").src = data.pfp_url;
-        }
+    document.getElementById("usernameDisplay").textContent = data.Username || "Unknown";
+
+    if (data.pfp_url) {
+        document.getElementById("profilePic").src = data.pfp_url;
     }
 }
 
@@ -106,7 +116,7 @@ async function saveProfilePic() {
 
 async function logout() {
     await AuthSystem.logout();
-    window.location.href = "index.html";
+    window.location.href = "/prosper/index.html";
 }
 
 document.addEventListener("DOMContentLoaded", loadDashboard);
