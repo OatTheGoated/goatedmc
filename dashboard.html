@@ -39,15 +39,10 @@
             <!-- LIVE PREVIEW -->
             <img id="profilePic" src="" alt="Profile Picture" style="width:128px; border-radius:8px; margin-bottom:10px;">
 
-            <!-- UUID INPUT -->
-            <input id="mcUUID" placeholder="Minecraft UUID (with or without dashes)">
-            <button class="btn-red" onclick="saveProfilePic()">Save Profile Picture</button>
+            <!-- USERNAME OR UUID INPUT -->
+            <input id="mcUUID" placeholder="Minecraft Username OR UUID">
 
-            <!-- UUID HELP -->
-            <p style="margin-top:10px; font-size:14px; opacity:0.8;">
-                Need your UUID?  
-                <a href="https://mcuuid.net/" target="_blank" style="color:#00ff88;">Click here</a>
-            </p>
+            <button class="btn-red" onclick="saveProfilePic()">Save Profile Picture</button>
 
             <button class="btn-red" style="margin-top:20px;" onclick="logout()">Logout</button>
         </div>
@@ -112,26 +107,65 @@ async function loadDashboard() {
     }
 }
 
-// ⭐ AUTO-FORMAT UUID (remove dashes)
-document.getElementById("mcUUID").addEventListener("input", () => {
-    let value = document.getElementById("mcUUID").value;
-    value = value.replace(/-/g, ""); // remove dashes
-    document.getElementById("mcUUID").value = value;
+// ⭐ Detect username OR UUID and show preview
+document.getElementById("mcUUID").addEventListener("input", async () => {
+    let value = document.getElementById("mcUUID").value.trim();
 
-    // Live preview if valid length
-    if (value.length === 32) {
-        const previewURL = `https://crafatar.com/avatars/${value}?size=128&overlay`;
+    // Case 1: UUID typed
+    if (value.replace(/-/g, "").length === 32) {
+        const uuid = value.replace(/-/g, "");
+        const previewURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
         document.getElementById("profilePic").src = previewURL;
+        return;
+    }
+
+    // Case 2: Username typed
+    if (/^[A-Za-z0-9_]{3,16}$/.test(value)) {
+        try {
+            const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${value}`);
+            if (!res.ok) return;
+
+            const data = await res.json();
+            const uuid = data.uuid.replace(/-/g, "");
+
+            const previewURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
+            document.getElementById("profilePic").src = previewURL;
+        } catch (err) {
+            console.error("Username lookup failed:", err);
+        }
     }
 });
 
-// ⭐ GLOBAL: saveProfilePic (UUID version)
+// ⭐ Save PFP (username OR UUID)
 window.saveProfilePic = async function () {
-    let uuid = document.getElementById("mcUUID").value.trim();
-    uuid = uuid.replace(/-/g, ""); // remove dashes
+    let input = document.getElementById("mcUUID").value.trim();
+    let uuid = "";
+
+    // Case 1: UUID entered
+    if (input.replace(/-/g, "").length === 32) {
+        uuid = input.replace(/-/g, "");
+    }
+
+    // Case 2: Username entered → fetch UUID
+    else if (/^[A-Za-z0-9_]{3,16}$/.test(input)) {
+        try {
+            const res = await fetch(`https://api.ashcon.app/mojang/v2/user/${input}`);
+            if (!res.ok) return alert("Invalid username.");
+
+            const data = await res.json();
+            uuid = data.uuid.replace(/-/g, "");
+        } catch (err) {
+            console.error(err);
+            return alert("Failed to fetch UUID from username.");
+        }
+    }
+
+    else {
+        return alert("Enter a valid UUID or Minecraft username.");
+    }
 
     if (uuid.length !== 32) {
-        return alert("UUID must be exactly 32 characters (no dashes).");
+        return alert("UUID must be exactly 32 characters.");
     }
 
     const pfpURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
@@ -159,7 +193,7 @@ window.saveProfilePic = async function () {
     alert("Profile picture updated!");
 };
 
-// ⭐ GLOBAL: logout
+// ⭐ Logout
 window.logout = async function () {
     await AuthSystem.logout();
     window.location.href = "/prosper/index.html";
@@ -168,4 +202,3 @@ window.logout = async function () {
 
 </body>
 </html>
-
