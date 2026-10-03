@@ -129,13 +129,18 @@
         alert("Profile picture updated!");
     };
 
+    // ⭐ FULL SESSION RESET LOGOUT (fixes upload RLS errors)
     window.logout = async function () {
         await supabase.auth.signOut();
+
+        // Clear corrupted sessions from old clients
+        localStorage.clear();
+        sessionStorage.clear();
+
         window.location.href = "/prosper/index.html";
     };
 </script>
 
 </body>
 </html>
-
 
