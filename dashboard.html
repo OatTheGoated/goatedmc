@@ -70,6 +70,9 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 // ⭐ Load dashboard data
 async function loadDashboard() {
+    // ⭐ REQUIRED: initialize AuthSystem before using getUser()
+    await AuthSystem.init();
+
     const user = await AuthSystem.getUser();
 
     if (!user) {
@@ -108,7 +111,9 @@ window.saveProfilePic = async function () {
 
     const pfpURL = `https://crafatar.com/avatars/${mcName}?size=128&overlay`;
 
+    await AuthSystem.init();
     const user = await AuthSystem.getUser();
+
     if (!user) {
         alert("You must be logged in.");
         return;
@@ -138,3 +143,4 @@ window.logout = async function () {
 
 </body>
 </html>
+
