@@ -17,7 +17,7 @@
                 <li><a href="schematics.html">Schematics</a></li>
                 <li><a href="videos.html">Videos</a></li>
                 <li><a href="dashboard.html">Dashboard</a></li>
-                <li><a href="#account">Login</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
         </div>
     </nav>
@@ -31,127 +31,7 @@
             <a href="videos.html" class="btn-red">Videos</a>
         </div>
     </header>
-
-    <section id="account" class="hero" style="margin-top:40px;">
-        <h1 class="pixel">Account</h1>
-
-        <div class="auth-box">
-            <h3 class="pixel-small">Register</h3>
-            <input id="regEmail" placeholder="Email" type="email">
-            <input id="regPassword" placeholder="Password" type="password">
-            <button class="btn-red" onclick="registerUser()">Register</button>
-
-            <h3 class="pixel-small" style="margin-top:20px;">Login</h3>
-            <input id="loginEmail" placeholder="Email" type="email">
-            <input id="loginPassword" placeholder="Password" type="password">
-            <button class="btn-red" onclick="loginUser()">Login</button>
-        </div>
-
-        <button id="logout-btn" class="btn-red" style="margin-top:20px; display:none;" onclick="logoutUser()">Logout</button>
-        <a id="dashboard-link" href="dashboard.html" class="btn-red" style="margin-top:20px; display:none;">Open Dashboard</a>
-
-        <p id="status" class="pixel-small" style="margin-top:20px;"></p>
-    </section>
 </div>
-
-<!-- Load Supabase first -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- FIXED: load the correct AuthSystem file -->
-<script src="./AuthSystem.js?v=20"></script>
-
-<script>
-const status = document.getElementById("status");
-
-// REGISTER
-async function registerUser() {
-    const email = document.getElementById("regEmail").value.trim();
-    const password = document.getElementById("regPassword").value.trim();
-
-    if (!email || !password) {
-        status.textContent = "Enter an email and password.";
-        status.style.color = "#ff6b6b";
-        return;
-    }
-
-    const result = await AuthSystem.register(email, password);
-
-    if (!result.success) {
-        status.textContent = result.error;
-        status.style.color = "#ff6b6b";
-        return;
-    }
-
-    status.textContent = "Account created! Check your email to confirm.";
-    status.style.color = "#00ff88";
-}
-
-// LOGIN
-async function loginUser() {
-    const email = document.getElementById("loginEmail").value.trim();
-    const password = document.getElementById("loginPassword").value.trim();
-
-    if (!email || !password) {
-        status.textContent = "Enter an email and password.";
-        status.style.color = "#ff6b6b";
-        return;
-    }
-
-    status.textContent = "Logging in...";
-    status.style.color = "#00ff88";
-
-    const result = await AuthSystem.login(email, password);
-
-    if (!result.success) {
-        status.textContent = result.error;
-        status.style.color = "#ff6b6b";
-        return;
-    }
-
-    if (result.needsUsername) {
-        window.location.href = "set-username.html";
-        return;
-    }
-
-    window.location.href = "dashboard.html";
-}
-
-// LOGOUT
-async function logoutUser() {
-    await AuthSystem.logout();
-    updateStatus();
-}
-
-// UPDATE STATUS
-async function updateStatus() {
-    await AuthSystem.init();
-
-    const user = AuthSystem.getUser();
-    const profile = AuthSystem.getProfile();
-
-    const authBox = document.querySelector(".auth-box");
-    const logoutButton = document.getElementById("logout-btn");
-    const dashboardLink = document.getElementById("dashboard-link");
-
-    if (!user) {
-        status.textContent = "Not logged in.";
-        status.style.color = "#ff6b6b";
-        authBox.style.display = "block";
-        logoutButton.style.display = "none";
-        dashboardLink.style.display = "none";
-        return;
-    }
-
-    status.textContent = `Welcome back, ${profile?.Username || user.email}!`;
-    status.style.color = "#00ff88";
-
-    authBox.style.display = "none";
-    logoutButton.style.display = "inline-block";
-    dashboardLink.style.display = "inline-block";
-}
-
-updateStatus();
-</script>
 
 </body>
 </html>
