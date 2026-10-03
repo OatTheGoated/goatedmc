@@ -1,22 +1,22 @@
-<!-- Supabase -->
+<!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Auth System -->
+<!-- Auth System (creates supabaseClient) -->
 <script src="./AuthSystem.js"></script>
 
 <script>
-// ⭐ Wait for AuthSystem.js to load Supabase
-let supabase;
+// ⭐ Use the client created in AuthSystem.js
+let client;
 
-document.addEventListener("DOMContentLoaded", () => {
-    supabase = window.supabase;
+window.addEventListener("DOMContentLoaded", async () => {
+    client = window.supabaseClient;
 
-    if (!supabase) {
-        console.error("Supabase failed to load from AuthSystem.js");
+    if (!client) {
+        console.error("supabaseClient not found. Check AuthSystem.js.");
         return;
     }
 
-    loadDashboard();
+    await loadDashboard();
 });
 
 // ⭐ Load dashboard data
@@ -31,7 +31,7 @@ async function loadDashboard() {
     document.getElementById("emailDisplay").textContent = user.email;
     document.getElementById("idDisplay").textContent = user.id;
 
-    const { data, error } = await supabase
+    const { data, error } = await client
         .from("profiles")
         .select("*")
         .eq("id", user.id)
@@ -57,6 +57,7 @@ window.saveProfilePic = async function () {
     const mcName = document.getElementById("mcUsername").value.trim();
     if (!mcName) return alert("Enter a Minecraft username.");
 
+    // Pull skin from Crafatar
     const pfpURL = `https://crafatar.com/avatars/${mcName}?size=128&overlay`;
 
     const user = await AuthSystem.getUser();
@@ -65,7 +66,7 @@ window.saveProfilePic = async function () {
         return;
     }
 
-    const { error } = await supabase
+    const { error } = await client
         .from("profiles")
         .update({ pfp_url: pfpURL })
         .eq("id", user.id);
@@ -86,4 +87,5 @@ window.logout = async function () {
     window.location.href = "/prosper/index.html";
 };
 </script>
+
 
