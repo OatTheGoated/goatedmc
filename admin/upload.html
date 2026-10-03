@@ -60,31 +60,34 @@
 
     if (schemErr) {
       alert("Error uploading schematic");
+      console.error(schemErr);
       return;
     }
 
-    // Upload image file
+    // Upload image file (FIXED BUCKET NAME)
     const { data: imageUpload, error: imgErr } = await supabase.storage
-      .from("schematic-images")
+      .from("images")
       .upload(imageFile.name, imageFile);
 
     if (imgErr) {
       alert("Error uploading image");
+      console.error(imgErr);
       return;
     }
 
-    // Insert metadata
+    // Insert metadata (FIXED FIELDS)
     const { error: dbErr } = await supabase.from("schematics").insert({
-      filename: schemFile.name,
-      image_url: imageFile.name,
       name,
       description,
-      tags,
+      tags: tags.split(",").map(t => t.trim()),
+      file: schemFile.name,
+      image: imageFile.name,
       uploaded_by: user.email
     });
 
     if (dbErr) {
       alert("Error saving metadata");
+      console.error(dbErr);
       return;
     }
 
