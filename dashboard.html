@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard – Prosper</title>
-    <link rel="stylesheet" href="./style.css?v=21">
+    <link rel="stylesheet" href="./style.css?v=22">
 </head>
 
 <body>
@@ -35,10 +35,19 @@
             <p>Username: <span id="usernameDisplay"></span></p>
 
             <h3 class="pixel-small" style="margin-top:20px;">Profile Picture</h3>
+
+            <!-- LIVE PREVIEW -->
             <img id="profilePic" src="" alt="Profile Picture" style="width:128px; border-radius:8px; margin-bottom:10px;">
 
-            <input id="mcUUID" placeholder="Minecraft UUID (32 chars)">
+            <!-- UUID INPUT -->
+            <input id="mcUUID" placeholder="Minecraft UUID (with or without dashes)">
             <button class="btn-red" onclick="saveProfilePic()">Save Profile Picture</button>
+
+            <!-- UUID HELP -->
+            <p style="margin-top:10px; font-size:14px; opacity:0.8;">
+                Need your UUID?  
+                <a href="https://mcuuid.net/" target="_blank" style="color:#00ff88;">Click here</a>
+            </p>
 
             <button class="btn-red" style="margin-top:20px;" onclick="logout()">Logout</button>
         </div>
@@ -103,15 +112,28 @@ async function loadDashboard() {
     }
 }
 
+// ⭐ AUTO-FORMAT UUID (remove dashes)
+document.getElementById("mcUUID").addEventListener("input", () => {
+    let value = document.getElementById("mcUUID").value;
+    value = value.replace(/-/g, ""); // remove dashes
+    document.getElementById("mcUUID").value = value;
+
+    // Live preview if valid length
+    if (value.length === 32) {
+        const previewURL = `https://crafatar.com/avatars/${value}?size=128&overlay`;
+        document.getElementById("profilePic").src = previewURL;
+    }
+});
+
 // ⭐ GLOBAL: saveProfilePic (UUID version)
 window.saveProfilePic = async function () {
-    const uuid = document.getElementById("mcUUID").value.trim();
+    let uuid = document.getElementById("mcUUID").value.trim();
+    uuid = uuid.replace(/-/g, ""); // remove dashes
 
-    if (!uuid || uuid.length < 32) {
-        return alert("Enter a valid Minecraft UUID (32 characters, no dashes).");
+    if (uuid.length !== 32) {
+        return alert("UUID must be exactly 32 characters (no dashes).");
     }
 
-    // ⭐ UUID → Crafatar (always works)
     const pfpURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
 
     await AuthSystem.init();
