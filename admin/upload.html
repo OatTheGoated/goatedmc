@@ -1,29 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Upload Schematic</title>
-  <style>
-    body { background:#111; color:#fff; font-family:Arial; padding:20px; }
-    input, textarea, button { display:block; margin:10px 0; padding:10px; width:300px; border-radius:6px; border:none; }
-    button { background:#4CAF50; color:white; cursor:pointer; }
-  </style>
-</head>
-<body>
-
-<h2>Upload Schematic</h2>
-
-<input id="name" placeholder="Name">
-<input id="tags" placeholder="Tags (comma separated)">
-<textarea id="description" placeholder="Description"></textarea>
-
-<h3>Schematic File (.schem / .litematic)</h3>
-<input id="schemFile" type="file">
-
-<h3>Preview Image (.webp)</h3>
-<input id="imageFile" type="file">
-
-<button id="uploadBtn">Upload</button>
-
 <script type="module">
   import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -32,7 +6,7 @@
     "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
   );
 
-  // Protect the page
+  // Check if admin is logged in
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user || user.user_metadata.role !== "admin") {
@@ -53,8 +27,8 @@
       return;
     }
 
-    // Upload schematic file (with upsert)
-    const { data: schemUpload, error: schemErr } = await supabase.storage
+    // Upload schematic file
+    const { error: schemErr } = await supabase.storage
       .from("schematics")
       .upload(schemFile.name, schemFile, { upsert: true });
 
@@ -64,8 +38,8 @@
       return;
     }
 
-    // Upload image file (with upsert)
-    const { data: imageUpload, error: imgErr } = await supabase.storage
+    // Upload image file
+    const { error: imgErr } = await supabase.storage
       .from("images")
       .upload(imageFile.name, imageFile, { upsert: true });
 
@@ -75,7 +49,7 @@
       return;
     }
 
-    // Insert metadata (correct fields)
+    // Insert metadata
     const { error: dbErr } = await supabase.from("schematics").insert({
       name,
       description,
@@ -94,7 +68,4 @@
     alert("Upload complete!");
   };
 </script>
-
-</body>
-</html>
 
