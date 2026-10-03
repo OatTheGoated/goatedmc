@@ -1,14 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="./style.css?v=20">
+</head>
+
+<body>
+<div class="site">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo pixel">⛏️ Prosper</h1>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="modpacks.html">Modpacks</a></li>
+                <li><a href="schematics.html">Schematics</a></li>
+                <li><a href="videos.html">Videos</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- DASHBOARD CONTENT -->
+    <div class="dashboard-container">
+
+        <h2 class="pixel">Welcome back, <span id="usernameDisplay">Loading...</span></h2>
+        <p>Your email: <span id="emailDisplay">Loading...</span></p>
+        <p>Your user ID: <span id="idDisplay">Loading...</span></p>
+
+        <hr>
+
+        <!-- PROFILE PICTURE BOX -->
+        <div class="profile-box">
+            <h3 class="pixel">Your Profile Picture</h3>
+
+            <img id="profilePic" src="" alt="Profile Picture" class="pfp-img">
+
+            <div class="pfp-input">
+                <input type="text" id="mcUsername" placeholder="Minecraft Username">
+                <button onclick="saveProfilePic()">Set Profile Picture</button>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
 <!-- Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Auth System (NO ?v=20) -->
+<!-- Auth System -->
 <script src="./AuthSystem.js"></script>
 
 <script>
-// Use the Supabase client created in AuthSystem.js
+// ⭐ Use the Supabase client created in AuthSystem.js
 const supabase = window.supabase;
 
-// Load dashboard data
+// ⭐ Load dashboard data
 async function loadDashboard() {
     const user = await AuthSystem.getUser();
 
@@ -41,7 +92,7 @@ async function loadDashboard() {
     }
 }
 
-// GLOBAL: saveProfilePic
+// ⭐ GLOBAL: saveProfilePic
 window.saveProfilePic = async function () {
     const mcName = document.getElementById("mcUsername").value.trim();
     if (!mcName) return alert("Enter a Minecraft username.");
@@ -69,7 +120,7 @@ window.saveProfilePic = async function () {
     alert("Profile picture updated!");
 };
 
-// GLOBAL: logout
+// ⭐ GLOBAL: logout
 window.logout = async function () {
     await AuthSystem.logout();
     window.location.href = "/prosper/index.html";
@@ -77,3 +128,6 @@ window.logout = async function () {
 
 document.addEventListener("DOMContentLoaded", loadDashboard);
 </script>
+
+</body>
+</html>
