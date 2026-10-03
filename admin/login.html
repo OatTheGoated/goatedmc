@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Login</title>
+  <title>Login</title>
   <style>
     body { background:#111; color:#fff; font-family:Arial; text-align:center; padding-top:50px; }
     input, button { padding:10px; margin:10px; width:250px; border-radius:6px; border:none; }
@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<h2>Admin Login</h2>
+<h2>Login</h2>
 
 <input id="email" type="email" placeholder="Email">
 <input id="password" type="password" placeholder="Password">
@@ -33,6 +33,7 @@
       return;
     }
 
+    // ⭐ LOGIN
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
@@ -43,13 +44,20 @@
       return;
     }
 
-    // ⭐ REQUIRED: Set admin role so upload page works
-    await supabase.auth.updateUser({
-      data: { role: "admin" }
-    });
+    // ⭐ GET USER
+    const { data: { user } } = await supabase.auth.getUser();
 
-    // Redirect to upload page
-    window.location.href = "/prosper/admin/upload.html";
+    if (!user) {
+      alert("Unexpected error: no user returned.");
+      return;
+    }
+
+    // ⭐ REDIRECT BASED ON ROLE
+    if (user.user_metadata.role === "admin") {
+      window.location.href = "/prosper/admin/upload.html";
+    } else {
+      window.location.href = "/prosper/schematics.html";
+    }
   };
 </script>
 
