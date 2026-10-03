@@ -1,6 +1,5 @@
 // ============================================
 // PROSPER AUTH SYSTEM
-// Unified authentication for all pages
 // ============================================
 
 // Supabase global from CDN:
@@ -11,8 +10,8 @@ const supabaseClient = supabase.createClient(
   "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
 );
 
-// Expose globally so other pages can use it
-window.supabase = supabaseClient;
+// ⭐ FIX: expose client under a SAFE name
+window.supabaseClient = supabaseClient;
 
 const AuthSystem = {
   client: supabaseClient,
@@ -51,7 +50,6 @@ const AuthSystem = {
     return !!this.currentUser;
   },
 
-  // ⭐ Always get fresh user from Supabase
   async getUser() {
     try {
       const { data: { user } } = await this.client.auth.getUser();
@@ -194,4 +192,3 @@ if (document.readyState === "loading") {
 } else {
   AuthSystem.init();
 }
-
