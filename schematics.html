@@ -71,92 +71,82 @@
 
 <div id="schemContainer" class="schem-grid"></div>
 
-<!-- Load Supabase ONCE globally (index.html) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-<!-- Load your unified AuthSystem -->
-<script src="./AuthSystem.js"></script>
+    const supabase = createClient(
+        "https://gthgxmyccwsygbopksgz.supabase.co",
+        "sb_publishable_rj-DwglUPiebIvlhWzoHhg_2632GYgW"
+    );
 
-<script>
-// Use the SAME client as dashboard/login
-const client = window.supabaseClient;
-
-// Load schematics
-async function loadSchematics() {
-    const { data: schems, error } = await client
-        .from("schematics")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-        console.error("Error loading schematics:", error);
-        return;
-    }
-
-    const container = document.getElementById("schemContainer");
-    container.innerHTML = "";
-
-    schems.forEach(s => {
-        const card = document.createElement("div");
-        card.className = "schem-card";
-
-        // Public image URL
-        const imageUrl = client.storage
-            .from("images")
-            .getPublicUrl(s.image).data.publicUrl;
-
-        // Public schematic file URL
-        const fileUrl = client.storage
+    async function loadSchematics() {
+        const { data: schems, error } = await supabase
             .from("schematics")
-            .getPublicUrl(s.file).data.publicUrl;
+            .select("*")
+            .order("created_at", { ascending: false });
 
-        card.innerHTML = `
-            <img src="${imageUrl}" alt="${s.name}">
-            <h3>${s.name}</h3>
-            <p>${s.description}</p>
-            <p><strong>Tags:</strong> ${Array.isArray(s.tags) ? s.tags.join(", ") : s.tags}</p>
+        if (error) {
+            console.error("Error loading schematics:", error);
+            return;
+        }
 
-            <button onclick="window.location='${fileUrl}'">
-                Download Schematic
-            </button>
+        const container = document.getElementById("schemContainer");
+        container.innerHTML = "";
 
-            <button class="like-btn" onclick="likeSchematic('${s.id}')">
-                ❤️ Like (${s.likes ?? 0})
-            </button>
-        `;
+        schems.forEach(s => {
+            const card = document.createElement("div");
+            card.className = "schem-card";
 
-        container.appendChild(card);
-    });
-}
+            const imageUrl = supabase.storage
+                .from("images")
+                .getPublicUrl(s.image).data.publicUrl;
 
-// Like schematic
-async function likeSchematic(id) {
-    const { data: userData } = await client.auth.getUser();
+            const fileUrl = supabase.storage
+                .from("schematics")
+                .getPublicUrl(s.file).data.publicUrl;
 
-    if (!userData.user) {
-        alert("You must be logged in to like schematics.");
-        return;
+            card.innerHTML = `
+                <img src="${imageUrl}" alt="${s.name}">
+                <h3>${s.name}</h3>
+                <p>${s.description}</p>
+                <p><strong>Tags:</strong> ${Array.isArray(s.tags) ? s.tags.join(", ") : s.tags}</p>
+
+                <button onclick="window.location='${fileUrl}'">
+                    Download Schematic
+                </button>
+
+                <button class="like-btn" onclick="likeSchematic('${s.id}')">
+                    ❤️ Like (${s.likes ?? 0})
+                </button>
+            `;
+
+            container.appendChild(card);
+        });
     }
 
-    const userId = userData.user.id;
+    async function likeSchematic(id) {
+        const { data: { user } } = await supabase.auth.getUser();
 
-    // Insert like
-    const { error } = await client
-        .from("schematic_likes")
-        .insert({ user_id: userId, schematic_id: id });
+        if (!user) {
+            alert("You must be logged in to like schematics.");
+            return;
+        }
 
-    if (error) {
-        alert("You already liked this schematic.");
-        return;
+        const { error } = await supabase
+            .from("schematic_likes")
+            .insert({ user_id: user.id, schematic_id: id });
+
+        if (error) {
+            alert("You already liked this schematic.");
+            return;
+        }
+
+        await supabase.rpc("increment_like", { schem_id: id });
+
+        loadSchematics();
     }
-
-    // Increment like count via RPC
-    await client.rpc("increment_like", { schem_id: id });
 
     loadSchematics();
-}
-
-loadSchematics();
 </script>
 
 </body>
