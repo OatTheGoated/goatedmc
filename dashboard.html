@@ -37,7 +37,7 @@
             <h3 class="pixel-small" style="margin-top:20px;">Profile Picture</h3>
             <img id="profilePic" src="" alt="Profile Picture" style="width:128px; border-radius:8px; margin-bottom:10px;">
 
-            <input id="mcUsername" placeholder="Minecraft Username">
+            <input id="mcUUID" placeholder="Minecraft UUID (32 chars)">
             <button class="btn-red" onclick="saveProfilePic()">Save Profile Picture</button>
 
             <button class="btn-red" style="margin-top:20px;" onclick="logout()">Logout</button>
@@ -70,7 +70,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 // ⭐ Load dashboard data
 async function loadDashboard() {
-    // ⭐ REQUIRED: initialize AuthSystem before using getUser()
     await AuthSystem.init();
 
     const user = await AuthSystem.getUser();
@@ -104,12 +103,16 @@ async function loadDashboard() {
     }
 }
 
-// ⭐ GLOBAL: saveProfilePic
+// ⭐ GLOBAL: saveProfilePic (UUID version)
 window.saveProfilePic = async function () {
-    const mcName = document.getElementById("mcUsername").value.trim();
-    if (!mcName) return alert("Enter a Minecraft username.");
+    const uuid = document.getElementById("mcUUID").value.trim();
 
-    const pfpURL = `https://crafatar.com/avatars/${mcName}?size=128&overlay`;
+    if (!uuid || uuid.length < 32) {
+        return alert("Enter a valid Minecraft UUID (32 characters, no dashes).");
+    }
+
+    // ⭐ UUID → Crafatar (always works)
+    const pfpURL = `https://crafatar.com/avatars/${uuid}?size=128&overlay`;
 
     await AuthSystem.init();
     const user = await AuthSystem.getUser();
